@@ -7,6 +7,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ext\nlohmann\json.hpp" />
     <ClInclude Include="usermode.hpp" />
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\io\io.hpp" />
