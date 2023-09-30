@@ -7,6 +7,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ext\easywsclient\easywsclient.hpp" />
     <ClInclude Include="ext\nlohmann\json.hpp" />
     <ClInclude Include="usermode.hpp" />
     <ClInclude Include="src\pch.hpp" />
@@ -14,6 +15,9 @@
     <ClInclude Include="src\pch\pch.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ext\easywsclient\easywsclient.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">Create</PrecompiledHeader>

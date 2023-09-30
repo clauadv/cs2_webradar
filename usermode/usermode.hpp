@@ -6,3 +6,4 @@
 
 // ext/includes
 #include "ext/nlohmann/json.hpp"
+#include "ext/easywsclient/easywsclient.hpp"
