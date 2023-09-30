@@ -75,7 +75,7 @@ const updatePlayer = (index, data) => {
 
     translateX -= bounding.width * 0.5;
     translateY -= bounding.height * 0.5;
-    div.style.transform = `translate(${translateX}px, ${translateY}px)`;
+    div.style.transform = `translate(${translateX}px, ${translateY }px)`;
     //div.style.transform = `translate(${translateY}px)`;
 }
 
