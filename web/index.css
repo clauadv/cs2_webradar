@@ -1,0 +1,30 @@
+.CT_Player{
+    width: 0.4vw;
+    height: 0.4vw;
+    background-color: red;
+    position: absolute;
+    border-radius: 100%;
+    transform-origin: center;
+    left: 0;
+    top: 0;
+    transition: transform 330ms linear;
+}
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+.radar__container{
+    position: relative;
+}
+
+.radar__image{
+    max-width: 100vw;
+    max-height: 100vh;
+    background-color: gray;
+}
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
