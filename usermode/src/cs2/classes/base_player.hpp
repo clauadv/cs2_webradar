@@ -8,6 +8,7 @@ namespace usermode::classes
 {
 	enum class e_team : int
 	{
+		none,
 		spectator,
 		terrorist,
 		counter_terrorist
