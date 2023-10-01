@@ -15,17 +15,17 @@ namespace usermode::classes
 	public:
 		int get_health()
 		{
-			return driver::m_process.read_t<int>(this + m_offsets.get_health());
+			return m_driver.read_t<int>(this + m_offsets.get_health());
 		}
 
 		classes::e_team get_team()
 		{
-			return static_cast<classes::e_team>(driver::m_process.read_t<int>(this + m_offsets.get_team_num()));
+			return static_cast<classes::e_team>(m_driver.read_t<int>(this + m_offsets.get_team_num()));
 		}
 
 		math::fvector3 get_position()
 		{
-			return driver::m_process.read_t<math::fvector3>(this + m_offsets.get_old_origin());
+			return m_driver.read_t<math::fvector3>(this + m_offsets.get_old_origin());
 		}
 
 		bool is_dead()

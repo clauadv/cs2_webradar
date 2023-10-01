@@ -60,7 +60,7 @@ namespace usermode
 			LOG_INFO("this->m_h_player_pawn -> 0x%llx", this->m_h_player_pawn);
 			LOG_INFO("this->m_i_health -> 0x%llx", this->m_i_health);
 			LOG_INFO("this->m_i_team_num -> 0x%llx", this->m_i_team_num);
-			LOG_INFO("this->m_old_origin -> 0x%llx", this->m_old_origin);
+			LOG_INFO("this->m_old_origin -> 0x%llx \n", this->m_old_origin);
 		#endif
 
 			this->m_initialized = true;

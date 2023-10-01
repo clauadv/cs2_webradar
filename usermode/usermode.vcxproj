@@ -9,8 +9,7 @@
   <ItemGroup>
     <ClInclude Include="ext\easywsclient\easywsclient.hpp" />
     <ClInclude Include="ext\nlohmann\json.hpp" />
-    <ClInclude Include="src\comm\comm.hpp" />
-    <ClInclude Include="src\comm\process.hpp" />
+    <ClInclude Include="src\driver\driver.hpp" />
     <ClInclude Include="src\cs2\classes\base_entity.hpp" />
     <ClInclude Include="src\cs2\classes\base_player.hpp" />
     <ClInclude Include="src\cs2\classes\entity_list.hpp" />

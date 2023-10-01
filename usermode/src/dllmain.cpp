@@ -3,13 +3,11 @@
 
 bool main()
 {
-	if (!driver::initialize())
+	if (!usermode::m_driver.is_initialized())
 	{
 		LOG_ERROR("failed to initialize driver communication");
 		return true;
 	}
-
-	usermode::c_cs2 cs2{};
 
 	// @easywsclient
 	WSADATA wsa_data{};
@@ -25,7 +23,7 @@ bool main()
 
 	for (;;)
 	{
-		const auto local_player = cs2.get_local_player();
+		const auto local_player = usermode::m_cs2.get_local_player();
 		if (!local_player)
 			continue;
 
@@ -34,14 +32,14 @@ bool main()
 			local_team == usermode::classes::e_team::spectator)
 			continue;
 
-		const auto global_vars = cs2.get_global_vars();
+		const auto global_vars = usermode::m_cs2.get_global_vars();
 		if (!global_vars)
 			continue;
 
 		nlohmann::json data{};
 		data["map"] = global_vars->get_map_name();
 
-		const auto entity_list = cs2.get_entity_list();
+		const auto entity_list = usermode::m_cs2.get_entity_list();
 		if (!entity_list)
 			continue;
 
@@ -59,8 +57,8 @@ bool main()
 			if (!player)
 				continue;
 
-			if (player == local_player)
-				continue;
+			// if (player == local_player)
+				// continue;
 
 			const auto team = player->get_team();
 			const auto position = player->get_position();

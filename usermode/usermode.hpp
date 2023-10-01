@@ -16,8 +16,7 @@
 #define LOG_ERROR(text, ...) printf("[error] " text "\n", __VA_ARGS__)
 
 // src/includes
-#include "comm/comm.hpp"
-#include "comm/process.hpp"
+#include "driver/driver.hpp"
 #include "math/vector.hpp"
 #include "cs2/offsets/offsets.hpp"
 #include "cs2/classes/global_vars.hpp"
