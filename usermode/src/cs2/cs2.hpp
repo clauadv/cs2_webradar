@@ -41,19 +41,19 @@ namespace usermode
 			return this->m_client_dll;
 		}
 
-		usermode::classes::c_base_player* get_local_player()
+		classes::c_base_player* get_local_player()
 		{
-			return reinterpret_cast<usermode::classes::c_base_player*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_local_player_pawn()));
+			return reinterpret_cast<classes::c_base_player*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_local_player_pawn()));
 		}
 
-		usermode::classes::c_global_vars* get_global_vars()
+		classes::c_global_vars* get_global_vars()
 		{
-			return reinterpret_cast<usermode::classes::c_global_vars*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_global_vars()));
+			return reinterpret_cast<classes::c_global_vars*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_global_vars()));
 		}
 
-		usermode::classes::c_entity_list* get_entity_list()
+		classes::c_entity_list* get_entity_list()
 		{
-			return reinterpret_cast<usermode::classes::c_entity_list*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_entity_list()));
+			return reinterpret_cast<classes::c_entity_list*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_entity_list()));
 		}
 	};
 }

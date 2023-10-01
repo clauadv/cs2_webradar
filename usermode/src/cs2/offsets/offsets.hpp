@@ -13,6 +13,7 @@ namespace usermode
 		std::uint64_t m_i_health{ 0 };
 		std::uint64_t m_i_team_num{ 0 };
 		std::uint64_t m_old_origin{ 0 };
+
 	public:
 		c_offsets()
 		{
