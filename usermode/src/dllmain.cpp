@@ -6,6 +6,7 @@ bool main()
 	if (!usermode::m_driver.is_initialized())
 	{
 		LOG_ERROR("failed to initialize driver communication");
+		std::this_thread::sleep_for(std::chrono::seconds(5));
 		return true;
 	}
 
@@ -15,10 +16,18 @@ bool main()
 	if (wsa_startup != 0)
 	{
 		LOG_ERROR("failed to initialize winsock");
+		std::this_thread::sleep_for(std::chrono::seconds(5));
 		return true;
 	}
 
-	static auto web_socket = easywsclient::WebSocket::from_url("ws://188.24.175.93:22006/foo");
+	static auto web_socket = easywsclient::WebSocket::from_url("ws://188.24.175.93:22006/cs2_webradar");
+	if (!web_socket)
+	{
+		LOG_ERROR("failed to connect to the web socket");
+		std::this_thread::sleep_for(std::chrono::seconds(5));
+		return true;
+	}
+
 	auto start = std::chrono::system_clock::now();
 
 	for (;;)
