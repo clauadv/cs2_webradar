@@ -147,6 +147,10 @@ const updatePlayer = (index, data) => {
    {
     div.style.backgroundColor = 'cyan';
    }
+   else
+   {
+    div.style.backgroundColor = 'red';
+   }
 
     div.style.transition = `transform ${averageTimeMs}ms linear`;
     div.style.transform = `translate(${translateX}px, ${translateY}px)`;
