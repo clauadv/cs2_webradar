@@ -22,7 +22,7 @@ lastUpdate: time since last update
 var lastReceived = new Date();
 const initConnection = async () => {
     if (!USE_FAKE_DATA){
-        const socket = new WebSocket("ws://188.24.175.93:22006/foo");
+        const socket = new WebSocket("ws://188.24.175.93:22006/cs2_webradar");
         
         socket.onopen = () => {
             console.info('Connected to websocket.');

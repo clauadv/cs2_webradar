@@ -19,7 +19,7 @@ web_socket_server.on("connection", (web_socket, request) => {
     });
 
     web_socket.on("close", () => {
-        console.log(`[info] ${client_address} disconnected`);
+        console.log(`[info] ${client_address} disconnected \n`);
     });
 
     web_socket.on("error", function (error) {
