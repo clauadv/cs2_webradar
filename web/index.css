@@ -7,7 +7,6 @@
     transform-origin: center;
     left: 0;
     top: 0;
-    transition: transform 330ms linear;
 }
 html, body {
     margin: 0;
@@ -16,6 +15,7 @@ html, body {
 
 .radar__container{
     position: relative;
+   
 }
 
 .radar__image{
@@ -27,4 +27,13 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.radar__connection {
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    font-size: normal;
+    left: 3rem;
+    top: 3rem;
+    color: white;
 }
