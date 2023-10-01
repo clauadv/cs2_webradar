@@ -32,65 +32,72 @@ bool main()
 
 	for (;;)
 	{
-		const auto local_player = usermode::m_cs2.get_local_player();
-		if (!local_player)
-			continue;
-
-		const auto local_team = local_player->get_team();
-		if (local_team == usermode::classes::e_team::none ||
-			local_team == usermode::classes::e_team::spectator)
-			continue;
-
-		const auto global_vars = usermode::m_cs2.get_global_vars();
-		if (!global_vars)
-			continue;
-
-		nlohmann::json data{};
-		data["map"] = global_vars->get_map_name();
-
-		nlohmann::json local_player_data{};
-		local_player_data["team"] = local_team;
-		data["local_player"].push_back(local_player_data);
-
-		const auto entity_list = usermode::m_cs2.get_entity_list();
-		if (!entity_list)
-			continue;
-
-		for (std::size_t idx{ 0 }; idx < 32; idx++)
+		const auto now = std::chrono::system_clock::now();
+		const auto duration = now - start;
+		if (duration > std::chrono::milliseconds(200))
 		{
-			const auto entity = entity_list->get_entity(idx);
-			if (!entity)
+			start = now;
+			const auto local_player = usermode::m_cs2.get_local_player();
+			if (!local_player)
 				continue;
 
-			const auto entity_pawn = entity->get_pawn();
-			if (!entity_pawn)
+			const auto local_team = local_player->get_team();
+			if (local_team == usermode::classes::e_team::none ||
+				local_team == usermode::classes::e_team::spectator)
 				continue;
 
-			const auto player = entity_list->get_player(entity_pawn);
-			if (!player)
+			const auto global_vars = usermode::m_cs2.get_global_vars();
+			if (!global_vars)
 				continue;
 
-			// if (player == local_player)
-				// continue;
+			nlohmann::json data{};
+			data["map"] = global_vars->get_map_name();
 
-			const auto team = player->get_team();
-			const auto position = player->get_position();
+			nlohmann::json local_player_data{};
+			local_player_data["team"] = local_team;
+			data["local_player"].push_back(local_player_data);
 
-			nlohmann::json player_data{};
-			player_data["index"] = idx;
-			player_data["name"] = "tactu";
-			player_data["data"]["position"]["x"] = position.x;
-			player_data["data"]["position"]["y"] = position.y;
-			player_data["data"]["team"] = team;
-			player_data["data"]["dead"] = player->is_dead();
+			const auto entity_list = usermode::m_cs2.get_entity_list();
+			if (!entity_list)
+				continue;
 
-			data["players"].push_back(player_data);
+			for (std::size_t idx{ 0 }; idx < 32; idx++)
+			{
+				const auto entity = entity_list->get_entity(idx);
+				if (!entity)
+					continue;
 
-			LOG_INFO("entity -> 0x%llx | team: %d, position: (x: %f, y: %f)", entity, team, position.x, position.y);
+				const auto entity_pawn = entity->get_pawn();
+				if (!entity_pawn)
+					continue;
+
+				const auto player = entity_list->get_player(entity_pawn);
+				if (!player)
+					continue;
+
+				// if (player == local_player)
+					// continue;
+
+				const auto team = player->get_team();
+				const auto position = player->get_position();
+
+				nlohmann::json player_data{};
+				player_data["index"] = idx;
+				player_data["name"] = "tactu";
+				player_data["data"]["position"]["x"] = position.x;
+				player_data["data"]["position"]["y"] = position.y;
+				player_data["data"]["team"] = team;
+				player_data["data"]["dead"] = player->is_dead();
+
+				data["players"].push_back(player_data);
+
+				LOG_INFO("entity -> 0x%llx | team: %d, position: (x: %f, y: %f)", entity, team, position.x, position.y);
+			}
+
+			web_socket->send(data.dump());
 		}
 
-		web_socket->send(data.dump());
-		web_socket->poll();
+		web_socket->poll(16);
 	}
 
 	return true;
