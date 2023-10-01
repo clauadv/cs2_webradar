@@ -39,6 +39,10 @@ bool main()
 		nlohmann::json data{};
 		data["map"] = global_vars->get_map_name();
 
+		nlohmann::json local_player_data{};
+		local_player_data["team"] = local_team;
+		data["local_player"].push_back(local_player_data);
+
 		const auto entity_list = usermode::m_cs2.get_entity_list();
 		if (!entity_list)
 			continue;

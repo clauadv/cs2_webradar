@@ -11,6 +11,7 @@ let currentDataSize = 0;
 let USE_FAKE_DATA = false;
 var dataLog = [];
 let connectionTimeRef = null;
+let local_player_team = -1;
 /*
 player object structure;
 htmlRef; html element reference
@@ -107,7 +108,6 @@ const updatePlayer = (index, data) => {
         return;
     }
 
-
     players[index].data = data;
     //if(isAnimating) return;
     const div = players[index].htmlRef;
@@ -141,6 +141,11 @@ const updatePlayer = (index, data) => {
    else
    {
     div.style.opacity = 1;
+   }
+
+   if (data.team == local_player_team)
+   {
+    div.style.backgroundColor = 'cyan';
    }
 
     div.style.transition = `transform ${averageTimeMs}ms linear`;
@@ -194,10 +199,11 @@ const updateRadarData = async (radarData) => {
         currentMap = radarData.map;
         await onMapChange();
     }
-
    
     console.log('mata');
     if (radarData.players == null) return;
+
+    local_player_team = radarData.local_player[0].team;
 
     radarData.players.forEach(player => {
         updatePlayer(player.index, player.data);
