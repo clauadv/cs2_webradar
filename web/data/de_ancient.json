@@ -1,0 +1,21 @@
+
+{
+	"material":	"overviews/de_ancient",	
+	"pos_x":		"-2953",	
+	"pos_y":		"2164",
+	"scale":		"5",
+	"rotate":	"0",
+	"zoom":		"0",
+
+			
+	"CTSpawn_x":	"0.51",
+	"CTSpawn_y":	"0.17",
+	"TSpawn_x":	"0.485",
+	"TSpawn_y":	"0.87",
+
+	"bombA_x":	"0.31",
+	"bombA_y":	"0.25",
+	"bombB_x":	"0.80",
+	"bombB_y":	"0.40"
+}
+

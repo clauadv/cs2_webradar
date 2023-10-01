@@ -1,0 +1,29 @@
+
+{
+	"material":	"overviews/cs_italy",	
+	"pos_x":		"-2647",	
+	"pos_y":		"2592",
+	"scale":		"4.6", 
+	"rotate":	"1",
+	"zoom":		"1.5",
+
+		
+	"CTSpawn_x":	"0.41",
+	"CTSpawn_y":	"0.91",
+	"TSpawn_x":	"0.6",
+	"TSpawn_y":	"0.1",
+
+	"Hostage1_x":	"0.43",
+	"Hostage1_y":	"0.29",
+	"Hostage2_x":	"0.48",
+	"Hostage2_y":	"0.24",
+	"Hostage3_x":	"0.64",
+	"Hostage3_y":	"0.03",
+	"Hostage4_x":	"0.72",
+	"Hostage4_y":	"0.05"
+
+
+
+
+}
+
