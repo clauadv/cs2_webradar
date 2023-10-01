@@ -1,10 +1,10 @@
-import { WebSocketServer } from 'ws';
-import http from 'http';
+import { WebSocketServer } from "ws";
+import http from "http";
 
 const port = 22006;
 const server = http.createServer();
 const web_socket_server = new WebSocketServer({
-    server: server, path: '/cs2_webradar'
+    server: server, path: "/cs2_webradar"
 });
 
 web_socket_server.on("connection", (web_socket, request) => {
