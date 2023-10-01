@@ -4,6 +4,8 @@
 #include <tlhelp32.h>
 #include <iostream>
 #include <cstdint>
+#include <chrono>
+#include <fstream>
 
 // ext/includes
 #include "ext/nlohmann/json.hpp"
@@ -17,6 +19,7 @@
 #include "comm/comm.hpp"
 #include "comm/process.hpp"
 #include "math/vector.hpp"
+#include "cs2/offsets/offsets.hpp"
 #include "cs2/classes/global_vars.hpp"
 #include "cs2/classes/base_entity.hpp"
 #include "cs2/classes/base_player.hpp"

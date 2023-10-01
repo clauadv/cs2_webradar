@@ -1,8 +1,5 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.hpp"
-#include <chrono>
-
-constexpr std::ptrdiff_t m_iPawnHealth = 0x808;
 
 bool main()
 {

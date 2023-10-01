@@ -1,21 +1,11 @@
 #pragma once
 
-constexpr std::ptrdiff_t localPlayerPawn = 0x1879C18;
-constexpr std::ptrdiff_t globalVars = 0x168FCE8;
-constexpr std::ptrdiff_t entityList = 0x178C8A8;
-
 namespace usermode
 {
 	class c_cs2
 	{
 	private:
 		std::uint64_t m_client_dll{ 0 };
-
-		bool fetch_offsets()
-		{
-			// @https://github.com/a2x/cs2-dumper/tree/main/generated
-			return false;
-		}
 
 	public:
 		c_cs2()
@@ -34,14 +24,16 @@ namespace usermode
 				return;
 			}
 
-			if (!this->fetch_offsets())
+			if (!m_offsets.is_initialized())
 			{
-				LOG_ERROR("failed to fetch offsets");
+				LOG_ERROR("failed to initialize offsets");
 				return;
 			}
-
+			
+		#ifdef DEVELOPER
 			LOG_INFO("driver::m_process -> %d", driver::m_process);
 			LOG_INFO("c_cs2::m_client_dll -> 0x%llx \n", this->m_client_dll);
+		#endif
 		}
 
 		std::uint64_t get_client()
@@ -51,17 +43,17 @@ namespace usermode
 
 		usermode::classes::c_base_player* get_local_player()
 		{
-			return reinterpret_cast<usermode::classes::c_base_player*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + localPlayerPawn));
+			return reinterpret_cast<usermode::classes::c_base_player*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_local_player_pawn()));
 		}
 
 		usermode::classes::c_global_vars* get_global_vars()
 		{
-			return reinterpret_cast<usermode::classes::c_global_vars*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + globalVars));
+			return reinterpret_cast<usermode::classes::c_global_vars*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_global_vars()));
 		}
 
 		usermode::classes::c_entity_list* get_entity_list()
 		{
-			return reinterpret_cast<usermode::classes::c_entity_list*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + entityList));
+			return reinterpret_cast<usermode::classes::c_entity_list*>(driver::m_process.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_entity_list()));
 		}
 	};
 }
