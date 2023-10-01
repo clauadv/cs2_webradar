@@ -18,11 +18,5 @@ namespace usermode::classes
 
 			return map_name;
 		}
-
-		int get_max_clients()
-		{
-			// @https://www.unknowncheats.me/forum/3870682-post1183.html
-			return driver::m_process.read_t<int>(this + 0x10);
-		}
 	};
 }

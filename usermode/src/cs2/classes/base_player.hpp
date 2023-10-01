@@ -27,5 +27,10 @@ namespace usermode::classes
 		{
 			return driver::m_process.read_t<math::fvector3>(this + m_offsets.get_old_origin());
 		}
+
+		bool is_alive()
+		{
+			return this->get_health() > 0;
+		}
 	};
 }
