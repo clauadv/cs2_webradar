@@ -134,6 +134,15 @@ const updatePlayer = (index, data) => {
     //div.style.top = translateY + 'px';
    // div.style.left = translateX + 'px';
 
+   if (data.dead)
+   {
+    div.style.opacity = 0;
+   }
+   else
+   {
+    div.style.opacity = 1;
+   }
+
     div.style.transition = `transform ${averageTimeMs}ms linear`;
     div.style.transform = `translate(${translateX}px, ${translateY}px)`;
 }

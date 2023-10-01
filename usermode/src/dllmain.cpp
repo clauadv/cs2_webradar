@@ -63,12 +63,6 @@ bool main()
 				continue;
 
 			const auto team = player->get_team();
-			if (team == local_team)
-				continue;
-
-			if (!player->is_alive())
-				continue;
-
 			const auto position = player->get_position();
 
 			nlohmann::json player_data{};
@@ -77,6 +71,7 @@ bool main()
 			player_data["data"]["position"]["x"] = position.x;
 			player_data["data"]["position"]["y"] = position.y;
 			player_data["data"]["team"] = team;
+			player_data["data"]["dead"] = player->is_dead();
 
 			data["players"].push_back(player_data);
 
