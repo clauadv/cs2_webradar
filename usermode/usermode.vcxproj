@@ -9,6 +9,15 @@
   <ItemGroup>
     <ClInclude Include="ext\easywsclient\easywsclient.hpp" />
     <ClInclude Include="ext\nlohmann\json.hpp" />
+    <ClInclude Include="src\comm\comm.hpp" />
+    <ClInclude Include="src\comm\process.hpp" />
+    <ClInclude Include="src\cs2\classes\base_entity.hpp" />
+    <ClInclude Include="src\cs2\classes\base_player.hpp" />
+    <ClInclude Include="src\cs2\classes\entity_list.hpp" />
+    <ClInclude Include="src\cs2\cs2.hpp" />
+    <ClInclude Include="src\cs2\classes\global_vars.hpp" />
+    <ClInclude Include="src\cs2\offsets\offsets.hpp" />
+    <ClInclude Include="src\math\vector.hpp" />
     <ClInclude Include="usermode.hpp" />
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\io\io.hpp" />
@@ -64,7 +73,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;NOMINMAX;HURACAN_DX11;USE_OVERLAY;DEVELOPER;WITH_CASE_PRESERVING_NAME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;DEVELOPER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
