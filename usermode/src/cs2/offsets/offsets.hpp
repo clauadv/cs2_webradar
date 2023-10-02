@@ -13,6 +13,7 @@ namespace usermode
 		std::uint64_t m_i_health{ 0 };
 		std::uint64_t m_i_team_num{ 0 };
 		std::uint64_t m_old_origin{ 0 };
+		std::uint64_t m_sanitized_player_name{ 0 };
 
 	public:
 		c_offsets()
@@ -55,12 +56,14 @@ namespace usermode
 			this->m_i_health = data["C_BaseEntity"]["m_iHealth"];
 			this->m_i_team_num = data["C_BaseEntity"]["m_iTeamNum"];
 			this->m_old_origin = data["C_BasePlayerPawn"]["m_vOldOrigin"];
+			this->m_sanitized_player_name = data["CCSPlayerController"]["m_sSanitizedPlayerName"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_h_player_pawn -> 0x%llx", this->m_h_player_pawn);
 			LOG_INFO("this->m_i_health -> 0x%llx", this->m_i_health);
 			LOG_INFO("this->m_i_team_num -> 0x%llx", this->m_i_team_num);
-			LOG_INFO("this->m_old_origin -> 0x%llx \n", this->m_old_origin);
+			LOG_INFO("this->m_old_origin -> 0x%llx", this->m_old_origin);
+			LOG_INFO("this->m_sanitized_player_name -> 0x%llx \n", this->m_sanitized_player_name);
 		#endif
 
 			this->m_initialized = true;
@@ -104,6 +107,11 @@ namespace usermode
 		std::uint64_t get_old_origin()
 		{
 			return this->m_old_origin;
+		}
+
+		std::uint64_t get_sanitized_player_name()
+		{
+			return this->m_sanitized_player_name;
 		}
 	};
 	inline usermode::c_offsets m_offsets{};

@@ -9,5 +9,18 @@ namespace usermode::classes
 		{
 			return m_driver.read_t<std::uint64_t>(this + m_offsets.get_h_player_pawn());
 		}
+
+		std::string get_name()
+		{
+			const auto sanitized_player_name = m_driver.read_t<std::uint64_t>(this + m_offsets.get_sanitized_player_name());
+			if (!sanitized_player_name)
+				return "invalid";
+
+			const auto player_name = m_driver.read_string(sanitized_player_name, 64);
+			if (player_name.empty())
+				return "invalid";
+
+			return player_name;
+		}
 	};
 }

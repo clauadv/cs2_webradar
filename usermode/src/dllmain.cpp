@@ -75,9 +75,10 @@ bool main()
 				if (!player)
 					continue;
 
-				// if (player == local_player)
-					// continue;
+				/* if (player == local_player)
+					continue; */
 
+				const auto name = entity->get_name();
 				const auto team = player->get_team();
 				const auto position = player->get_position();
 
@@ -91,7 +92,7 @@ bool main()
 
 				data["players"].push_back(player_data);
 
-				LOG_INFO("entity -> 0x%llx | team: %d, position: (x: %f, y: %f)", entity, team, position.x, position.y);
+				LOG_INFO("name -> %s | team: %d, position: (x: %f, y: %f), ping (%d)", name, team, position.x, position.y);
 			}
 
 			web_socket->send(data.dump());
