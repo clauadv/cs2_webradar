@@ -14,6 +14,8 @@ namespace usermode
 		std::uint64_t m_i_team_num{ 0 };
 		std::uint64_t m_old_origin{ 0 };
 		std::uint64_t m_sanitized_player_name{ 0 };
+		std::uint64_t m_has_defuser{ 0 };
+		std::uint64_t m_has_helmet{ 0 };
 
 	public:
 		c_offsets()
@@ -57,13 +59,17 @@ namespace usermode
 			this->m_i_team_num = data["C_BaseEntity"]["m_iTeamNum"];
 			this->m_old_origin = data["C_BasePlayerPawn"]["m_vOldOrigin"];
 			this->m_sanitized_player_name = data["CCSPlayerController"]["m_sSanitizedPlayerName"];
+			this->m_has_defuser = data["CCSPlayerController"]["m_bPawnHasDefuser"];
+			this->m_has_helmet = data["CCSPlayerController"]["m_bPawnHasHelmet"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_h_player_pawn -> 0x%llx", this->m_h_player_pawn);
 			LOG_INFO("this->m_i_health -> 0x%llx", this->m_i_health);
 			LOG_INFO("this->m_i_team_num -> 0x%llx", this->m_i_team_num);
 			LOG_INFO("this->m_old_origin -> 0x%llx", this->m_old_origin);
-			LOG_INFO("this->m_sanitized_player_name -> 0x%llx \n", this->m_sanitized_player_name);
+			LOG_INFO("this->m_sanitized_player_name -> 0x%llx", this->m_sanitized_player_name);
+			LOG_INFO("this->m_has_defuser -> 0x%llx", this->m_has_defuser);
+			LOG_INFO("this->m_has_helmet -> 0x%llx \n", this->m_has_helmet);
 		#endif
 
 			this->m_initialized = true;
@@ -112,6 +118,16 @@ namespace usermode
 		std::uint64_t get_sanitized_player_name()
 		{
 			return this->m_sanitized_player_name;
+		}
+
+		std::uint64_t get_has_defuser()
+		{
+			return this->m_has_defuser;
+		}
+
+		std::uint64_t get_has_helmet()
+		{
+			return this->m_has_helmet;
 		}
 	};
 	inline usermode::c_offsets m_offsets{};

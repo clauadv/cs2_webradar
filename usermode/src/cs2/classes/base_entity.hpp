@@ -22,5 +22,15 @@ namespace usermode::classes
 
 			return player_name;
 		}
+
+		bool has_defuser()
+		{
+			return m_driver.read_t<bool>(this + m_offsets.get_has_defuser());
+		}
+
+		bool has_helmet()
+		{
+			return m_driver.read_t<bool>(this + m_offsets.get_has_helmet());
+		}
 	};
 }

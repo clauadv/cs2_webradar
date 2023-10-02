@@ -79,6 +79,9 @@ bool main()
 					continue; */
 
 				const auto name = entity->get_name();
+				const auto has_defuser = entity->has_defuser();
+				const auto has_helmet = entity->has_helmet();
+
 				const auto team = player->get_team();
 				const auto position = player->get_position();
 
@@ -92,7 +95,7 @@ bool main()
 
 				data["players"].push_back(player_data);
 
-				LOG_INFO("name -> %s | team: %d, position: (x: %f, y: %f), ping (%d)", name, team, position.x, position.y);
+				LOG_INFO("name -> %s | team: %d, position: (x: %f, y: %f), has_defuser: %d, has_helmet: %d", name, team, position.x, position.y, has_defuser, has_helmet);
 			}
 
 			web_socket->send(data.dump());
