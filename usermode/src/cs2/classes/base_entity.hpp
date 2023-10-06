@@ -2,6 +2,15 @@
 
 namespace usermode::classes
 {
+	enum class e_color : int
+	{
+		yellow,
+		purple,
+		green,
+		blue,
+		orange
+	};
+
 	class c_base_entity
 	{
 	public:
@@ -16,9 +25,19 @@ namespace usermode::classes
 			if (!sanitized_player_name)
 				return "invalid";
 
-			const auto player_name = m_driver.read_string(sanitized_player_name, 64);
+			auto player_name = m_driver.read_string(sanitized_player_name, 64);
 			if (player_name.empty())
 				return "invalid";
+
+			auto is_ascii = [](char c)
+			{
+				return (c >= 0 && c <= 127);
+			};
+
+			player_name.erase(std::remove_if(player_name.begin(), player_name.end(), [&is_ascii](char c)
+			{
+				return !is_ascii(c); 
+			}), player_name.end());
 
 			return player_name;
 		}
@@ -31,6 +50,11 @@ namespace usermode::classes
 		bool has_helmet()
 		{
 			return m_driver.read_t<bool>(this + m_offsets.get_has_helmet());
+		}
+
+		usermode::classes::e_color get_color()
+		{
+			return m_driver.read_t<usermode::classes::e_color>(this + m_offsets.get_comp_teammate_color());
 		}
 	};
 }

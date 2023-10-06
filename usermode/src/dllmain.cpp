@@ -75,12 +75,18 @@ bool main()
 				if (!player)
 					continue;
 
-				/* if (player == local_player)
-					continue; */
+				if (player == local_player)
+				{
+					const auto eye_angles = local_player->get_eye_angles();
+					LOG_INFO("eye_angles -> (%f, %f, %f)", eye_angles.x, eye_angles.y, eye_angles.z);
+
+					// continue;
+				}
 
 				const auto name = entity->get_name();
 				const auto has_defuser = entity->has_defuser();
 				const auto has_helmet = entity->has_helmet();
+				const auto color = entity->get_color();
 
 				const auto team = player->get_team();
 				const auto position = player->get_position();
@@ -88,6 +94,7 @@ bool main()
 				nlohmann::json player_data{};
 				player_data["index"] = idx;
 				player_data["name"] = "tactu";
+				player_data["color"] = color;
 				player_data["data"]["position"]["x"] = position.x;
 				player_data["data"]["position"]["y"] = position.y;
 				player_data["data"]["team"] = team;
@@ -95,7 +102,7 @@ bool main()
 
 				data["players"].push_back(player_data);
 
-				LOG_INFO("name -> %s | team: %d, position: (x: %f, y: %f), has_defuser: %d, has_helmet: %d", name, team, position.x, position.y, has_defuser, has_helmet);
+				// LOG_INFO("name -> %s | team: %d, color: %d, position: (x: %f, y: %f)", name, team, color, position.x, position.y);
 			}
 
 			web_socket->send(data.dump());

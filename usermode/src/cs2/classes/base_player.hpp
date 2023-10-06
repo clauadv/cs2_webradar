@@ -32,5 +32,10 @@ namespace usermode::classes
 		{
 			return this->get_health() <= 0;
 		}
+
+		usermode::math::fvector3 get_eye_angles()
+		{
+			return m_driver.read_t<math::fvector3>(this + m_offsets.get_ang_eye_angles());
+		}
 	};
 }

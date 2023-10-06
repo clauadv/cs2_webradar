@@ -53,9 +53,7 @@ const initConnection = async () => {
                 currentAverageCalc += diffInMs;
             }
 
-            console.log('dif since last received data ' +  diffInMs)
             lastReceived = new Date();
-            //console.log("Message from server ", obj);
             await updateRadarData(JSON.parse(obj));
             
           })
@@ -79,27 +77,9 @@ const initConnection = async () => {
 const setCurrentMap = (map) => currentMap = map;
 
 const fetchMapData = async () => {
-
-
     var response = await fetch('data/' + currentMap + '.json');
 
     return response.json();
-}
-/*
-{"map":"de_mirage","players":[{"data":{"index":0,"position":{"x":-1485.0078125,"y":-2100.45703125},"team":2}}]}
-*/
-    
-const sampleRadarUpdate = {
-    map: 'de_mirage',
-    players: [{
-        index: 3,
-        name: 'Denis',
-        data: {
-            position: { x: -3530, y: 2013 },
-            angle: 0.3,
-            team: 'CT'
-        }
-    }]
 }
 
 const updatePlayer = (index, data) => {
@@ -117,22 +97,15 @@ const updatePlayer = (index, data) => {
 
     var bounding = htmlRef.getBoundingClientRect();
 
-  //  console.log('crostps ' + JSON.stringify(pos));
-    //div.style.left = pos.x  + '%';
-    //div.style.top = pos.y + '%';
     var positionInfo = mapImg.getBoundingClientRect();
     var translateX = positionInfo.width * pos.x;
     var translateY = positionInfo.height * pos.y;
-  //  console.log('translateX ' + translateX)
 
     translateX -= bounding.width * 0.5;
     translateY -= bounding.height * 0.5;
 
     translateX /= artificialScale;
     translateY /= artificialScale;
-
-    //div.style.top = translateY + 'px';
-   // div.style.left = translateX + 'px';
 
    if (data.dead)
    {
@@ -161,10 +134,6 @@ const onMapChange = async () => {
     mapImg.src = 'images/' + currentMap + '_radar_psd.png';
     mapImg.classList.add('radar__image');
     mapData = await fetchMapData();
-
-    console.log('mapData cristos ' + JSON.stringify(mapData))
-    console.log(mapData);
-
 }
 
 const changeArtificialScale = (scale) => {
@@ -175,9 +144,6 @@ const getRadarPositionOfCoords = (coords) => {
     const mapX = (coords.x - mapData.pos_x) / mapData.scale / 1024.0;
     const mapY = (coords.y - mapData.pos_y) / mapData.scale * -1.0 / 1024.0;
 
-    
-
-   // console.log(mapData)
     return { x: mapX , y: mapY };
 }
 const createPlayer = (index, data) => {
@@ -188,8 +154,6 @@ const createPlayer = (index, data) => {
     div.classList.add('CT_Player');
     const pos = getRadarPositionOfCoords(data.position);
 
-    console.log('pos ' +JSON.stringify(pos));
-
     players[index] = { htmlRef: div, name: 'unk' + index, data: data, lastUpdate: new Date() };
 
 
@@ -197,14 +161,12 @@ const createPlayer = (index, data) => {
 }
 
 const updateRadarData = async (radarData) => {
-    console.log(radarData);
     if (radarData.map == null) return;
     if (radarData.map !== currentMap) {
         currentMap = radarData.map;
         await onMapChange();
     }
    
-    console.log('mata');
     if (radarData.players == null) return;
 
     local_player_team = radarData.local_player[0].team;

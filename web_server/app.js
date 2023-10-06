@@ -22,7 +22,7 @@ web_socket_server.on("connection", (web_socket, request) => {
         console.log(`[info] ${client_address} disconnected \n`);
     });
 
-    web_socket.on("error", function (error) {
+    web_socket.on("error", (error) => {
         console.log(`[error] ${error}`);
     });
 });
