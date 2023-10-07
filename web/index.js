@@ -4,7 +4,6 @@ let mapImg = null;
 let mapDiv = null;
 let mapData = null;
 let artificialScale = 1;
-let isAnimating = false;
 let averageTimeMs = 0;
 let currentAverageCalc = 0;
 let currentDataSize = 0;
@@ -12,20 +11,17 @@ let USE_FAKE_DATA = false;
 var dataLog = [];
 let connectionTimeRef = null;
 let local_player_team = -1;
-/*
-player object structure;
-htmlRef; html element reference
-name; name of player
-data; position [x, y, z], angle: radians
-lastUpdate: time since last update
-*/
+
 var lastReceived = new Date();
 const initConnection = async () => {
     if (!USE_FAKE_DATA){
         const socket = new WebSocket("ws://188.24.175.93:22006/cs2_webradar");
-        
+
         socket.onopen = () => {
             console.info('Connected to websocket.');
+
+            currentMap = "default";
+            onMapChange()
         }
         socket.onclose = () => {
             console.info("Disconnected from websocket.");
@@ -45,7 +41,7 @@ const initConnection = async () => {
             if (currentAverageCalc >= 10)
             {
                 averageTimeMs = currentAverageCalc / currentDataSize;
-                console.info('averageTimeMs ' + averageTimeMs);
+                // console.info('averageTimeMs ' + averageTimeMs);
                 currentDataSize = 0;
                 currentAverageCalc = 0;
             }else{
@@ -74,8 +70,6 @@ const initConnection = async () => {
 
 }
 
-const setCurrentMap = (map) => currentMap = map;
-
 const fetchMapData = async () => {
     var response = await fetch('data/' + currentMap + '.json');
 
@@ -88,8 +82,9 @@ const updatePlayer = (index, data) => {
         return;
     }
 
+    players[index].lastUpdate = new Date();
     players[index].data = data;
-    //if(isAnimating) return;
+
     const div = players[index].htmlRef;
 
     const pos = getRadarPositionOfCoords(data.position);
@@ -152,10 +147,8 @@ const createPlayer = (index, data) => {
     const div = document.createElement('div');
 
     div.classList.add('CT_Player');
-    const pos = getRadarPositionOfCoords(data.position);
 
     players[index] = { htmlRef: div, name: 'unk' + index, data: data, lastUpdate: new Date() };
-
 
     mapDiv.appendChild(players[index].htmlRef);
 }
@@ -175,6 +168,14 @@ const updateRadarData = async (radarData) => {
         updatePlayer(player.index, player.data);
     })
 
+    let time = new Date().getTime();
+    players.forEach(player => {
+        if (((time - player.lastUpdate.getTime()) / 1000) >= 1)
+        {
+            player.htmlRef.remove();
+            player = null;
+        }
+    })
 }
 const DOMContentLoaded = async (ev) => {
     mapDiv = document.createElement('div');
@@ -187,7 +188,6 @@ const DOMContentLoaded = async (ev) => {
 
     document.body.appendChild(mapDiv);
 
-
     connectionTimeRef = document.createElement('div');
     connectionTimeRef.classList.add('radar__connection');
 
@@ -195,15 +195,7 @@ const DOMContentLoaded = async (ev) => {
 
     changeArtificialScale(1)
 
-
     await initConnection();
-    
 }
-
-
-
-
-
-
 
 document.addEventListener('DOMContentLoaded', DOMContentLoaded);
