@@ -29,8 +29,8 @@ const globals =
     m_players: []
 };
 
-const LOG_INFO = async (...args) => console.info(`[info] ${args.join(' ')}`);
-const LOG_ERROR = async (...args) => console.error(`[error] ${args.join(' ')}`);
+const LOG_INFO = async (...args) => console.info(`[info] ${args.join(" ")}`);
+const LOG_ERROR = async (...args) => console.error(`[error] ${args.join(" ")}`);
 
 const draw_latency = async () =>
 {
@@ -181,7 +181,7 @@ const update_player = (idx, data) =>
 const on_map_change = async () =>
 {
     globals.map.m_image.src = `data/${globals.map.m_current}/radar.png`;
-    globals.map.m_image.classList.add('radar__image');
+    globals.map.m_image.classList.add("radar__image");
     globals.map.m_data = await (await fetch(`data/${globals.map.m_current}/data.json`)).json();
     LOG_INFO(`changed map to ${globals.map.m_current}`);
 }
@@ -245,8 +245,8 @@ const dom_content_loaded = async () =>
     globals.m_left_div = document.createElement("div");
     globals.m_right_div = document.createElement("div");
 
-    globals.map.m_div.classList.add('radar__container');
-    globals.map.m_image.classList.add('radar__image');
+    globals.map.m_div.classList.add("radar__container");
+    globals.map.m_image.classList.add("radar__image");
 
     globals.map.m_div.appendChild(globals.map.m_image);
     document.body.appendChild(globals.m_left_div);
@@ -256,8 +256,8 @@ const dom_content_loaded = async () =>
     globals.m_left_div.classList.add("player__list");
     globals.m_right_div.classList.add("player__list");
 
-    globals.latency.m_html = document.createElement('div');
-    globals.latency.m_html.classList.add('radar__latency');
+    globals.latency.m_html = document.createElement("div");
+    globals.latency.m_html.classList.add("radar__latency");
 
     globals.map.m_div.appendChild(globals.latency.m_html);
     globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
