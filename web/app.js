@@ -166,7 +166,7 @@ const update_player = (idx, data) =>
         y: (image_bounding.height * position.y - div_bounding.height * 0.5) / globals.map.m_zoom_level
     };
 
-    const view_angle = 270 - data.m_eye_angles.y;
+    const view_angle = 270 - data.m_eye_angle;
     const rotation = calculate_rotation(view_angle, globals.m_players[idx]);
 
     const angle_div = globals.m_players[idx].m_angle_html;

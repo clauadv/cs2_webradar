@@ -34,7 +34,7 @@ bool main()
 	{
 		const auto now = std::chrono::system_clock::now();
 		const auto duration = now - start;
-		if (duration > std::chrono::milliseconds(200))
+		if (duration > std::chrono::milliseconds(100))
 		{
 			start = now;
 			const auto local_player = usermode::m_cs2.get_local_player();
@@ -51,10 +51,10 @@ bool main()
 				continue;
 
 			nlohmann::json data{};
-			data["map"] = global_vars->get_map_name();
+			data["m_map"] = global_vars->get_map_name();
 
 			nlohmann::json local_player_data{};
-			local_player_data["team"] = local_team;
+			local_player_data["m_team"] = local_team;
 			data["local_player"].push_back(local_player_data);
 
 			const auto entity_list = usermode::m_cs2.get_entity_list();
@@ -75,34 +75,26 @@ bool main()
 				if (!player)
 					continue;
 
-				if (player == local_player)
-				{
-					const auto eye_angles = local_player->get_eye_angles();
-					LOG_INFO("eye_angles -> (%f, %f, %f)", eye_angles.x, eye_angles.y, eye_angles.z);
-
-					// continue;
-				}
-
 				const auto name = entity->get_name();
-				const auto has_defuser = entity->has_defuser();
-				const auto has_helmet = entity->has_helmet();
 				const auto color = entity->get_color();
-
-				const auto team = player->get_team();
 				const auto position = player->get_position();
+				const auto eye_angles = player->get_eye_angles().normalize();
+				const auto team = player->get_team();
+				const auto is_dead = player->is_dead();
 
 				nlohmann::json player_data{};
-				player_data["index"] = idx;
-				player_data["name"] = "tactu";
-				player_data["color"] = color;
-				player_data["data"]["position"]["x"] = position.x;
-				player_data["data"]["position"]["y"] = position.y;
-				player_data["data"]["team"] = team;
-				player_data["data"]["dead"] = player->is_dead();
+				player_data["m_idx"] = idx;
+				player_data["data"]["m_name"] = name;
+				player_data["data"]["m_color"] = color;
+				player_data["data"]["m_position"]["x"] = position.x;
+				player_data["data"]["m_position"]["y"] = position.y;
+				player_data["data"]["m_eye_angle"] = eye_angles.y;
+				player_data["data"]["m_team"] = team;
+				player_data["data"]["m_is_dead"] = is_dead;
 
 				data["players"].push_back(player_data);
 
-				// LOG_INFO("name -> %s | team: %d, color: %d, position: (x: %f, y: %f)", name, team, color, position.x, position.y);
+				LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name, color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
 			web_socket->send(data.dump());
