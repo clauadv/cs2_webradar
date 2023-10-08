@@ -74,7 +74,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;DEVELOPER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>MinSpace</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
@@ -89,6 +89,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <BuildStlModules>false</BuildStlModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
