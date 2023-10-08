@@ -112,16 +112,17 @@ const add_player = (idx) => {
 
     globals.map.m_div.appendChild(globals.m_players[idx].m_html);
 }
-var el, rot;
-function rotateThis(nR) {
+
+function calculateRotaiton(nR, player) {
     var aR;
-    rot = rot || 0; // if rot undefined or 0, make 0, else rot
-    aR = rot % 360;
+    player.rotation = player.rotation || 0; // if rot undefined or 0, make 0, else rot
+    aR = player.rotation % 360;
     if ( aR < 0 ) { aR += 360; }
-    if ( aR < 180 && (nR > (aR + 180)) ) { rot -= 360; }
-    if ( aR >= 180 && (nR <= (aR - 180)) ) { rot += 360; }
-    rot += (nR - aR);
-    return ("rotate( " + rot + "deg )");
+    if ( aR < 180 && (nR > (aR + 180)) ) { player.rotation -= 360; }
+    if ( aR >= 180 && (nR <= (aR - 180)) ) { player.rotation += 360; }
+    player.rotation += (nR - aR);
+
+    return ("rotate( " + player.rotation + "deg )");
 }
 const update_player = (idx, data) => {
     if (!globals.m_players[idx]) {
@@ -147,18 +148,12 @@ const update_player = (idx, data) => {
 
     const view_angle = 270 - data.m_eye_angles.y;
 
-    var apparentRot = view_angle % 360;
-    if ( apparentRot < 0 ) { apparentRot += 360; } 
-
     div.style.opacity = (data.m_is_dead ? "0" : "1");
     div.style.backgroundColor = (data.m_team == globals.local_player.m_team ? "cyan" : "red");
 
     div.style.transition = `transform ${globals.latency.m_average_time}ms linear`;
-    div.style.transform = `translate(${image_translation.x}px, ${image_translation.y}px) ${rotateThis(view_angle)}`;
+    div.style.transform = `translate(${image_translation.x}px, ${image_translation.y}px) ${calculateRotaiton(view_angle, globals.m_players[idx])}`;
     
-    globals.m_last_data[idx] = {};
-    Object.assign(globals.m_last_data[idx], JSON.parse(JSON.stringify(data)))
-   // globals.m_last_data[idx] = Object.assign(globals.m_last_data[idx], globals.m_players[idx].m_data);
 }
 
 const on_map_change = async () => {
