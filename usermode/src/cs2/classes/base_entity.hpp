@@ -4,11 +4,11 @@ namespace usermode::classes
 {
 	enum class e_color : int
 	{
-		yellow,
-		purple,
-		green,
 		blue,
-		orange
+		green,
+		yellow,
+		orange,
+		purple
 	};
 
 	class c_base_entity

@@ -32,23 +32,25 @@ html, body
 
 .player
 {
-    width: 1.2vw;
-    height: 1.2vw;
+    width: 1vw;
+    height: 1vw;
     position: absolute;
+    border-radius: 100%;
+    transform-origin: center;
     left: 0;
-    top: 0;   
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    background-color: transparent;
+    top: 0;
 }
-.player__body {
-    width: 1.2vw;
-    height: 1.2vw;
-    background-color: blue;
+
+.player__angle {
+    width: 1vw;
+    height: 1vw;
     border-radius: 50% 50% 50% 0%;
     transform: rotate(315deg);
-    align-items: center;
-    display: flex;
-    justify-content: center;
+}
+
+.player__list
+{
+    width: 10rem;
+    height: 10rem;
+    background-color: transparent;
 }
