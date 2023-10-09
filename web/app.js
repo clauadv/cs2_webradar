@@ -1,3 +1,5 @@
+import {create_player_card, update_player_card} from './leaderboard'
+
 const USE_NEW_DESIGN = true;
 
 const globals =
@@ -141,10 +143,14 @@ const add_player = (idx) =>
     globals.m_players[idx] =
     {
         m_html: div,
+        m_player_card: undefined,
         m_angle_html: angle
     };
 
+    
     globals.map.m_div.appendChild(globals.m_players[idx].m_html);
+
+    create_player_card(globals.m_players[idx]);
 }
 
 const update_player = (idx, data) =>
