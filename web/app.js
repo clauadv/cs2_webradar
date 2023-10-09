@@ -1,4 +1,4 @@
-const USE_NEW_DESIGN = false;
+const USE_NEW_DESIGN = true;
 
 const globals =
 {
@@ -241,13 +241,14 @@ const update_radar = async (data) =>
 
 const dom_content_loaded = async () =>
 {
+    let old_container = document.getElementById("old-container");
+
     if (USE_NEW_DESIGN) 
-    {
+    {   
+        old_container.style.display = "none";
         document.getElementsByClassName("ui-container")[0].style.display = "flex";
         return;
     }
-
-    let old_container = document.getElementById("old-container");
 
     globals.map.m_div = document.createElement("div");
     globals.map.m_image = document.createElement("img");
