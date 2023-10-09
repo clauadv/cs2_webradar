@@ -61,9 +61,30 @@ bool main()
 			if (!entity_list)
 				continue;
 
+			[&]()
+			{
+				const auto weapon_services = local_player->get_weapon_services();
+				if (!weapon_services)
+					return;
+
+				const auto my_weapons = weapon_services->get_my_weapons();
+				if (!my_weapons.first)
+					return;
+
+				for (std::size_t idx{ 0 }; idx < my_weapons.first; idx++)
+				{
+					const auto weapon = my_weapons.second->get(entity_list, idx);
+					if (!weapon)
+						continue;
+
+					const auto item_definition_index = weapon->get_item_definition_index();
+					LOG_INFO("item_definition_index -> %d %s", item_definition_index, ((idx == my_weapons.first - 1) ? "\n" : ""));
+				}
+			}();
+
 			for (std::size_t idx{ 0 }; idx < 32; idx++)
 			{
-				const auto entity = entity_list->get_entity(idx);
+				const auto entity = entity_list->get<usermode::classes::c_base_entity*>(idx);
 				if (!entity)
 					continue;
 
@@ -71,7 +92,7 @@ bool main()
 				if (!entity_pawn)
 					continue;
 
-				const auto player = entity_list->get_player(entity_pawn);
+				const auto player = entity_list->get<usermode::classes::c_base_player*>(entity_pawn);
 				if (!player)
 					continue;
 
@@ -94,7 +115,7 @@ bool main()
 
 				data["players"].push_back(player_data);
 
-				LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name, color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
+				// LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name, color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
 			web_socket->send(data.dump());

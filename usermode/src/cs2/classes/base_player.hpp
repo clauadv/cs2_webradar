@@ -37,5 +37,10 @@ namespace usermode::classes
 		{
 			return m_driver.read_t<math::fvector3>(this + m_offsets.get_ang_eye_angles());
 		}
+
+		usermode::classes::c_player_weapon_services* get_weapon_services()
+		{
+			return reinterpret_cast<usermode::classes::c_player_weapon_services*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_weapon_services()));
+		}
 	};
 }
