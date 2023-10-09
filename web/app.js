@@ -6,7 +6,7 @@ const globals =
         m_image: null,
         m_data: null,
         m_current: "invalid",
-        m_zoom_level: 1
+        m_zoom_level: 3
     },
 
     latency:
@@ -140,18 +140,21 @@ const update_player = (idx, data) => {
     const position = get_radar_position(data.m_position);
 
     const image_bounding = globals.map.m_image.getBoundingClientRect();
-    const image_translation =
+    var image_translation =
     {
-        x: (image_bounding.width * position.x - div_bounding.width * 0.5) / globals.map.m_zoom_level,
-        y: (image_bounding.height * position.y - div_bounding.height * 0.5) / globals.map.m_zoom_level
+        x: (image_bounding.width * position.x - div_bounding.width * 0.5), /// globals.map.m_zoom_level * 2,
+        y: (image_bounding.height * position.y - div_bounding.height * 0.5) /// globals.map.m_zoom_level* 2,
     };
 
-    const view_angle = 270 - data.m_eye_angles.y;
+    console.log(JSON.stringify(data))
+
+    const view_angle = 270 - data.m_eye_angle;
 
     div.style.opacity = (data.m_is_dead ? "0" : "1");
     div.style.backgroundColor = (data.m_team == globals.local_player.m_team ? "cyan" : "red");
 
     div.style.transition = `transform ${globals.latency.m_average_time}ms linear`;
+
     div.style.transform = `translate(${image_translation.x}px, ${image_translation.y}px) ${calculateRotaiton(view_angle, globals.m_players[idx])}`;
     
 }
@@ -205,9 +208,31 @@ const update_radar = async (data) => {
         update_player(player.m_idx, player.data);
     });
 
+
+    {
+        var main_player = data.players[0];
+        if (main_player !== undefined){
+            const data = main_player.data;
+
+            const position = get_radar_position(data.m_position);
+
+            const image_bounding = globals.map.m_image.getBoundingClientRect();
+           /* const image_translation =
+            {
+                x: (image_bounding.width * position.x - div_bounding.width * 0.5) / globals.map.m_zoom_level,
+                y: (image_bounding.height * position.y - div_bounding.height * 0.5) / globals.map.m_zoom_level
+            };
+        */
+           // globals.map.m_image.style.transform = `translate(${position.x * 100}%,${position.y * 100}%)`;
+
+        }
+    }
+
     const current_time = new Date().getTime();
     globals.m_players.filter(player => (current_time - player.m_last_time) / 1000 >= 1).forEach(player => player.m_html.remove());
+
 }
+
 
 const dom_content_loaded = async () => {
     globals.map.m_div = document.createElement("div");
@@ -223,8 +248,8 @@ const dom_content_loaded = async () => {
     globals.latency.m_html.classList.add('radar__latency');
 
     globals.map.m_div.appendChild(globals.latency.m_html);
-    globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
-
+    //globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
+   // globals.map.m_image.style.transform = `scale(${globals.map.m_zoom_level})`;
     await setup_connection();
 }
 

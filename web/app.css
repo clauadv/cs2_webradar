@@ -11,12 +11,16 @@ html, body
 .radar__container
 {
     position: relative;   
+    overflow: hidden;
+    transform-origin: center;
 }
 
 .radar__image
 {
     max-width: 100vw;
     max-height: 100vh;
+    transform: rotate(131deg);
+   
 }
 
 .radar__latency
