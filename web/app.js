@@ -239,30 +239,30 @@ const update_radar = async (data) =>
 
 const dom_content_loaded = async () =>
 {
-    globals.map.m_div = document.createElement("div");
-    globals.map.m_image = document.createElement("img");
+    // globals.map.m_div = document.createElement("div");
+    // globals.map.m_image = document.createElement("img");
 
-    globals.m_left_div = document.createElement("div");
-    globals.m_right_div = document.createElement("div");
+    // globals.m_left_div = document.createElement("div");
+    // globals.m_right_div = document.createElement("div");
 
-    globals.map.m_div.classList.add("radar__container");
-    globals.map.m_image.classList.add("radar__image");
+    // globals.map.m_div.classList.add("radar__container");
+    // globals.map.m_image.classList.add("radar__image");
 
-    globals.map.m_div.appendChild(globals.map.m_image);
-    document.body.appendChild(globals.m_left_div);
-    document.body.appendChild(globals.map.m_div);
-    document.body.appendChild(globals.m_right_div);
+    // globals.map.m_div.appendChild(globals.map.m_image);
+    // document.body.appendChild(globals.m_left_div);
+    // document.body.appendChild(globals.map.m_div);
+    // document.body.appendChild(globals.m_right_div);
 
-    globals.m_left_div.classList.add("player__list");
-    globals.m_right_div.classList.add("player__list");
+    // globals.m_left_div.classList.add("player__list");
+    // globals.m_right_div.classList.add("player__list");
 
-    globals.latency.m_html = document.createElement("div");
-    globals.latency.m_html.classList.add("radar__latency");
+    // globals.latency.m_html = document.createElement("div");
+    // globals.latency.m_html.classList.add("radar__latency");
 
-    globals.map.m_div.appendChild(globals.latency.m_html);
-    globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
+    // globals.map.m_div.appendChild(globals.latency.m_html);
+    // globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
 
-    await setup_connection();
+    //await setup_connection();
 }
 
 document.addEventListener("DOMContentLoaded", dom_content_loaded);
