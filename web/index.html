@@ -1,12 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>cs2_webradar</title>
-    <link rel="stylesheet" href="app.css">
-</head>
-<body>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div id="old-container"></div>
+    <div class="ui-container" style="display: none;">
+      <ul class="players-list players-left">
+        <li class="player-card">
+          <div class="player-card-first-row">
+            <div class="player-card-name">lightsquare</div>
+            <div class="player-card-vitals">
+              <div class="player-card-vital">
+                <div class="icon">
+                  <img
+                    class="icon-image"
+                    src="./assets/icons/health.svg"
+                    alt=""
+                  />
+                </div>
+                100
+              </div>
+              <div class="player-card-vital">
+                <div class="masked-icon">
+                  <img
+                    class="icon-image-for-mask"
+                    src="./assets/equipment/armor.svg"
+                    alt=""
+                  />
+                </div>
+                100
+              </div>
+            </div>
+          </div>
+          <div class="player-card-first-row">
+            <div class="player-card-column">
+              <div class="player-card-money">$<span>16000</span></div>
+              <div class="player-card-stats">
+                <div class="player-card-stat">
+                  <div class="player-card-statname">K</div>
+                  <div class="player-card-statvalue">10</div>
+                </div>
+                <div class="player-card-stat">
+                  <div class="player-card-statname">D</div>
+                  <div class="player-card-statvalue">10</div>
+                </div>
+                <div class="player-card-stat">
+                  <div class="player-card-statname">A</div>
+                  <div class="player-card-statvalue">10</div>
+                </div>
+              </div>
+            </div>
+            <div class="player-card-column player-card-column-right">
+              <div class="player-card-weapons-primary">
+                <img
+                  class="player-card-img-primary"
+                  src="./assets/equipment/ak47.svg"
+                />
+              </div>
+              <div class="player-card-weapons-secondary">
+                <img
+                  class="player-card-img-secondary"
+                  src="./assets/equipment/usp_silencer.svg"
+                />
+              </div>
+              <div class="player-card-row-utilities">
+                <div class="player-card-weapons-utility">
+                  <img
+                    class="player-card-img-utility"
+                    src="./assets/equipment/frag_grenade.svg"
+                  />
+                </div>
+                <div class="player-card-weapons-utility">
+                  <img
+                    class="player-card-img-utility"
+                    src="./assets/equipment/frag_grenade.svg"
+                  />
+                </div>
+                <div class="player-card-weapons-utility">
+                  <img
+                    class="player-card-img-utility"
+                    src="./assets/equipment/frag_grenade.svg"
+                  />
+                </div>
+                <div class="player-card-weapons-utility">
+                  <img
+                    class="player-card-img-utility"
+                    src="./assets/equipment/frag_grenade.svg"
+                  />
+                </div>
+                <div class="player-card-weapons-utility">
+                    <img
+                      class="player-card-img-utility"
+                      src="./assets/equipment/frag_grenade.svg"
+                    />
+                  </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="player-card">samper</li>
+        <li class="player-card">samper</li>
+        <li class="player-card">samper</li>
+        <li class="player-card">samper</li>
+      </ul>
+      <div class="radar">
+        <img class="radar-image" src="./data/de_mirage/radar2.png" />
+      </div>
+      <ul class="players-list players-right">
+        <li class="player-card">samper</li>
+        <li class="player-card">samper</li>
+        <li class="player-card">samper</li>
+        <li class="player-card">samper</li>
+        <li class="player-card">samper</li>
+      </ul>
+    </div>
     <script src="app.js"></script>
-</body>
+  </body>
 </html>

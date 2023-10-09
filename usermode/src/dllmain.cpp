@@ -3,7 +3,7 @@
 
 bool main()
 {
-	if (!usermode::m_driver.is_initialized())
+	if (!m_driver.is_initialized())
 	{
 		LOG_ERROR("failed to initialize driver communication");
 		std::this_thread::sleep_for(std::chrono::seconds(5));
@@ -34,16 +34,16 @@ bool main()
 	{
 		const auto now = std::chrono::system_clock::now();
 		const auto duration = now - start;
-		if (duration > std::chrono::milliseconds(200))
+		if (duration > std::chrono::milliseconds(100))
 		{
 			start = now;
+
 			const auto local_player = usermode::m_cs2.get_local_player();
 			if (!local_player)
 				continue;
 
 			const auto local_team = local_player->get_team();
-			if (local_team == usermode::classes::e_team::none ||
-				local_team == usermode::classes::e_team::spectator)
+			if (local_team == cs2::e_team::none || local_team == cs2::e_team::spectator)
 				continue;
 
 			const auto global_vars = usermode::m_cs2.get_global_vars();
@@ -51,19 +51,64 @@ bool main()
 				continue;
 
 			nlohmann::json data{};
-			data["map"] = global_vars->get_map_name();
+			data["m_map"] = global_vars->get_map_name();
 
 			nlohmann::json local_player_data{};
-			local_player_data["team"] = local_team;
+			local_player_data["m_team"] = local_team;
 			data["local_player"].push_back(local_player_data);
 
 			const auto entity_list = usermode::m_cs2.get_entity_list();
 			if (!entity_list)
 				continue;
 
+			/*[&]()
+			{
+				for (std::size_t idx{ 0 }; idx < 1024; idx++)
+				{
+					const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
+					if (!entity)
+						continue;
+
+					const auto class_name = entity->get_name();
+					if (class_name.find("weapon_c4") == std::string::npos)
+						continue;
+
+					LOG_INFO("c4 -> 0x%llx", class_name);
+				}
+			}();*/
+
+			/*[&]()
+			{
+				const auto weapon_services = local_player->get_weapon_services();
+				if (!weapon_services)
+					return;
+
+				/*const auto active_weapon = weapon_services->get_active_weapon(entity_list);
+				if (!active_weapon)
+					return;
+
+				const auto weapon_name = active_weapon->get_name();
+				LOG_INFO("weapon_name -> %s", weapon_name);
+				
+
+				const auto my_weapons = weapon_services->get_my_weapons();
+				if (!my_weapons.first)
+					return;
+
+				for (std::size_t idx{ 0 }; idx < my_weapons.first; idx++)
+				{
+					const auto weapon = my_weapons.second->get(entity_list, idx);
+					if (!weapon)
+						continue;
+
+					const auto weapon_name = weapon->get_weapon_name();
+					LOG_INFO("weapon_name -> %s %s", weapon_name.data(), ((idx == my_weapons.first - 1) ? "\n" : ""));
+				}
+			}();*/
+
 			for (std::size_t idx{ 0 }; idx < 32; idx++)
 			{
-				const auto entity = entity_list->get_entity(idx);
+				const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
 				if (!entity)
 					continue;
 
@@ -71,38 +116,30 @@ bool main()
 				if (!entity_pawn)
 					continue;
 
-				const auto player = entity_list->get_player(entity_pawn);
+				const auto player = entity_list->get<cs2::c_base_player*>(entity_pawn);
 				if (!player)
 					continue;
 
-				if (player == local_player)
-				{
-					const auto eye_angles = local_player->get_eye_angles();
-					LOG_INFO("eye_angles -> (%f, %f, %f)", eye_angles.x, eye_angles.y, eye_angles.z);
-
-					// continue;
-				}
-
 				const auto name = entity->get_name();
-				const auto has_defuser = entity->has_defuser();
-				const auto has_helmet = entity->has_helmet();
 				const auto color = entity->get_color();
-
-				const auto team = player->get_team();
 				const auto position = player->get_position();
+				const auto eye_angles = player->get_eye_angles().normalize();
+				const auto team = player->get_team();
+				const auto is_dead = player->is_dead();
 
 				nlohmann::json player_data{};
-				player_data["index"] = idx;
-				player_data["name"] = "tactu";
-				player_data["color"] = color;
-				player_data["data"]["position"]["x"] = position.x;
-				player_data["data"]["position"]["y"] = position.y;
-				player_data["data"]["team"] = team;
-				player_data["data"]["dead"] = player->is_dead();
+				player_data["m_idx"] = idx;
+				player_data["data"]["m_name"] = name;
+				player_data["data"]["m_color"] = color;
+				player_data["data"]["m_position"]["x"] = position.x;
+				player_data["data"]["m_position"]["y"] = position.y;
+				player_data["data"]["m_eye_angle"] = eye_angles.y;
+				player_data["data"]["m_team"] = team;
+				player_data["data"]["m_is_dead"] = is_dead;
 
 				data["players"].push_back(player_data);
 
-				// LOG_INFO("name -> %s | team: %d, color: %d, position: (x: %f, y: %f)", name, team, color, position.x, position.y);
+				LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
 			web_socket->send(data.dump());

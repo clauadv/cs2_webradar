@@ -1,6 +1,6 @@
 #pragma once
 
-namespace usermode::classes
+namespace cs2
 {
 	class c_global_vars
 	{
@@ -13,7 +13,7 @@ namespace usermode::classes
 				return "invalid";
 
 			const auto map_name = m_driver.read_string(current_map_name, 64);
-			if (map_name.empty())
+			if (map_name.empty() || map_name.contains("<empty>"))
 				return "invalid";
 
 			return map_name;

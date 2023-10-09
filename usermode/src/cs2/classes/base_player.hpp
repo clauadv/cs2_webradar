@@ -1,6 +1,6 @@
 #pragma once
 
-namespace usermode::classes
+namespace cs2
 {
 	enum class e_team : int
 	{
@@ -18,9 +18,9 @@ namespace usermode::classes
 			return m_driver.read_t<int>(this + m_offsets.get_health());
 		}
 
-		classes::e_team get_team()
+		cs2::e_team get_team()
 		{
-			return static_cast<classes::e_team>(m_driver.read_t<int>(this + m_offsets.get_team_num()));
+			return static_cast<cs2::e_team>(m_driver.read_t<int>(this + m_offsets.get_team_num()));
 		}
 
 		math::fvector3 get_position()
@@ -33,9 +33,14 @@ namespace usermode::classes
 			return this->get_health() <= 0;
 		}
 
-		usermode::math::fvector3 get_eye_angles()
+		math::fvector3 get_eye_angles()
 		{
 			return m_driver.read_t<math::fvector3>(this + m_offsets.get_ang_eye_angles());
+		}
+
+		cs2::c_player_weapon_services* get_weapon_services()
+		{
+			return reinterpret_cast<cs2::c_player_weapon_services*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_weapon_services()));
 		}
 	};
 }

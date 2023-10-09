@@ -9,6 +9,8 @@
   <ItemGroup>
     <ClInclude Include="ext\easywsclient\easywsclient.hpp" />
     <ClInclude Include="ext\nlohmann\json.hpp" />
+    <ClInclude Include="src\cs2\classes\base_player_weapon.hpp" />
+    <ClInclude Include="src\cs2\classes\player_weapon_services.hpp" />
     <ClInclude Include="src\driver\driver.hpp" />
     <ClInclude Include="src\cs2\classes\base_entity.hpp" />
     <ClInclude Include="src\cs2\classes\base_player.hpp" />
@@ -61,8 +63,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)\$(Configuration)\$(ProjectName)\intermediates\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\$(Configuration)\intermediates\</IntDir>
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -74,7 +76,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;DEVELOPER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>MinSpace</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
@@ -89,6 +91,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <BuildStlModules>false</BuildStlModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

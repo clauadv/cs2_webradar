@@ -1,19 +1,24 @@
 #pragma once
 
-namespace usermode::classes
+namespace cs2
 {
 	enum class e_color : int
 	{
-		yellow,
-		purple,
-		green,
 		blue,
-		orange
+		green,
+		yellow,
+		orange,
+		purple
 	};
 
 	class c_base_entity
 	{
 	public:
+		std::uint64_t get_designer_name()
+		{
+			return m_driver.read_t<std::uint64_t>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_entity()) + m_offsets.get_designer_name());
+		}
+
 		std::uint64_t get_pawn()
 		{
 			return m_driver.read_t<std::uint64_t>(this + m_offsets.get_h_player_pawn());
@@ -25,19 +30,9 @@ namespace usermode::classes
 			if (!sanitized_player_name)
 				return "invalid";
 
-			auto player_name = m_driver.read_string(sanitized_player_name, 64);
+			auto player_name = m_driver.read_string(sanitized_player_name, 32);
 			if (player_name.empty())
 				return "invalid";
-
-			auto is_ascii = [](char c)
-			{
-				return (c >= 0 && c <= 127);
-			};
-
-			player_name.erase(std::remove_if(player_name.begin(), player_name.end(), [&is_ascii](char c)
-			{
-				return !is_ascii(c); 
-			}), player_name.end());
 
 			return player_name;
 		}
@@ -52,9 +47,9 @@ namespace usermode::classes
 			return m_driver.read_t<bool>(this + m_offsets.get_has_helmet());
 		}
 
-		usermode::classes::e_color get_color()
+		cs2::e_color get_color()
 		{
-			return m_driver.read_t<usermode::classes::e_color>(this + m_offsets.get_comp_teammate_color());
+			return m_driver.read_t<cs2::e_color>(this + m_offsets.get_comp_teammate_color());
 		}
 	};
 }
