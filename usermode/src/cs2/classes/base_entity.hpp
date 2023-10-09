@@ -14,6 +14,11 @@ namespace cs2
 	class c_base_entity
 	{
 	public:
+		std::uint64_t get_designer_name()
+		{
+			return m_driver.read_t<std::uint64_t>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_entity()) + m_offsets.get_designer_name());
+		}
+
 		std::uint64_t get_pawn()
 		{
 			return m_driver.read_t<std::uint64_t>(this + m_offsets.get_h_player_pawn());
@@ -25,7 +30,7 @@ namespace cs2
 			if (!sanitized_player_name)
 				return "invalid";
 
-			auto player_name = m_driver.read_string(sanitized_player_name, 64);
+			auto player_name = m_driver.read_string(sanitized_player_name, 32);
 			if (player_name.empty())
 				return "invalid";
 

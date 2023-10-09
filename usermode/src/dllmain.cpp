@@ -61,7 +61,23 @@ bool main()
 			if (!entity_list)
 				continue;
 
-			[&]()
+			/*[&]()
+			{
+				for (std::size_t idx{ 0 }; idx < 1024; idx++)
+				{
+					const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
+					if (!entity)
+						continue;
+
+					const auto class_name = entity->get_name();
+					if (class_name.find("weapon_c4") == std::string::npos)
+						continue;
+
+					LOG_INFO("c4 -> 0x%llx", class_name);
+				}
+			}();*/
+
+			/*[&]()
 			{
 				const auto weapon_services = local_player->get_weapon_services();
 				if (!weapon_services)
@@ -71,9 +87,9 @@ bool main()
 				if (!active_weapon)
 					return;
 
-				const auto weapon_name = active_weapon->get_weapon_name();
+				const auto weapon_name = active_weapon->get_name();
 				LOG_INFO("weapon_name -> %s", weapon_name);
-				*/
+				
 
 				const auto my_weapons = weapon_services->get_my_weapons();
 				if (!my_weapons.first)
@@ -88,7 +104,7 @@ bool main()
 					const auto weapon_name = weapon->get_weapon_name();
 					LOG_INFO("weapon_name -> %s %s", weapon_name.data(), ((idx == my_weapons.first - 1) ? "\n" : ""));
 				}
-			}();
+			}();*/
 
 			for (std::size_t idx{ 0 }; idx < 32; idx++)
 			{
