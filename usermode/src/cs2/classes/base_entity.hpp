@@ -1,6 +1,6 @@
 #pragma once
 
-namespace usermode::classes
+namespace cs2
 {
 	enum class e_color : int
 	{
@@ -52,9 +52,9 @@ namespace usermode::classes
 			return m_driver.read_t<bool>(this + m_offsets.get_has_helmet());
 		}
 
-		usermode::classes::e_color get_color()
+		cs2::e_color get_color()
 		{
-			return m_driver.read_t<usermode::classes::e_color>(this + m_offsets.get_comp_teammate_color());
+			return m_driver.read_t<cs2::e_color>(this + m_offsets.get_comp_teammate_color());
 		}
 	};
 }

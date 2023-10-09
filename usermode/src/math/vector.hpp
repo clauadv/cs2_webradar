@@ -1,6 +1,6 @@
 #pragma once
 
-namespace usermode::math
+namespace math
 {
 	template<typename T>
 	union vector3

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace usermode
+namespace cs2
 {
 	class c_offsets
 	{
@@ -119,5 +119,5 @@ namespace usermode
 		std::uint64_t get_item() { return this->m_item; }
 		std::uint64_t get_item_definition_index() { return this->m_item_definition_index; }
 	};
-	inline usermode::c_offsets m_offsets{};
 }
+inline cs2::c_offsets m_offsets{};

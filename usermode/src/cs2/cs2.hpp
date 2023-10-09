@@ -36,24 +36,21 @@ namespace usermode
 		#endif
 		}
 
-		std::uint64_t get_client()
+		std::uint64_t get_client() { return this->m_client_dll; }
+
+		cs2::c_base_player* get_local_player()
 		{
-			return this->m_client_dll;
+			return reinterpret_cast<cs2::c_base_player*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_local_player_pawn()));
 		}
 
-		classes::c_base_player* get_local_player()
+		cs2::c_global_vars* get_global_vars()
 		{
-			return reinterpret_cast<classes::c_base_player*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_local_player_pawn()));
+			return reinterpret_cast<cs2::c_global_vars*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_global_vars()));
 		}
 
-		classes::c_global_vars* get_global_vars()
+		cs2::c_entity_list* get_entity_list()
 		{
-			return reinterpret_cast<classes::c_global_vars*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_global_vars()));
-		}
-
-		classes::c_entity_list* get_entity_list()
-		{
-			return reinterpret_cast<classes::c_entity_list*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_entity_list()));
+			return reinterpret_cast<cs2::c_entity_list*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_entity_list()));
 		}
 	};
 	inline usermode::c_cs2 m_cs2{};

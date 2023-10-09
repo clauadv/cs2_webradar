@@ -1,6 +1,6 @@
 #pragma once
 
-namespace usermode::classes
+namespace cs2
 {
 	class c_global_vars
 	{

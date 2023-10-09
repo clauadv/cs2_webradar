@@ -3,7 +3,7 @@
 
 bool main()
 {
-	if (!usermode::m_driver.is_initialized())
+	if (!m_driver.is_initialized())
 	{
 		LOG_ERROR("failed to initialize driver communication");
 		std::this_thread::sleep_for(std::chrono::seconds(5));
@@ -42,8 +42,8 @@ bool main()
 				continue;
 
 			const auto local_team = local_player->get_team();
-			if (local_team == usermode::classes::e_team::none ||
-				local_team == usermode::classes::e_team::spectator)
+			if (local_team == cs2::e_team::none ||
+				local_team == cs2::e_team::spectator)
 				continue;
 
 			const auto global_vars = usermode::m_cs2.get_global_vars();
@@ -84,7 +84,7 @@ bool main()
 
 			for (std::size_t idx{ 0 }; idx < 32; idx++)
 			{
-				const auto entity = entity_list->get<usermode::classes::c_base_entity*>(idx);
+				const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
 				if (!entity)
 					continue;
 
@@ -92,7 +92,7 @@ bool main()
 				if (!entity_pawn)
 					continue;
 
-				const auto player = entity_list->get<usermode::classes::c_base_player*>(entity_pawn);
+				const auto player = entity_list->get<cs2::c_base_player*>(entity_pawn);
 				if (!player)
 					continue;
 
