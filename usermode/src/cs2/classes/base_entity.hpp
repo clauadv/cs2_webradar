@@ -29,16 +29,6 @@ namespace cs2
 			if (player_name.empty())
 				return "invalid";
 
-			auto is_ascii = [](char c)
-			{
-				return (c >= 0 && c <= 127);
-			};
-
-			player_name.erase(std::remove_if(player_name.begin(), player_name.end(), [&is_ascii](char c)
-			{
-				return !is_ascii(c); 
-			}), player_name.end());
-
 			return player_name;
 		}
 

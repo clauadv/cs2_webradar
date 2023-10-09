@@ -14,5 +14,14 @@ namespace cs2
 				reinterpret_cast<cs2::c_base_player_weapon*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_h_my_weapons() + 0x08))
 			};
 		}
+
+		cs2::c_base_player_weapon* get_active_weapon(cs2::c_entity_list* entity_list)
+		{
+			const auto handle = m_driver.read_t<std::int32_t>(this + m_offsets.get_active_weapon());
+			if (handle == -1)
+				return nullptr;
+
+			return entity_list->get<cs2::c_base_player_weapon*>(handle & 0x7fff);
+		}
 	};
 }

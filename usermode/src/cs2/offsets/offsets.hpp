@@ -20,9 +20,9 @@ namespace cs2
 		std::uint64_t m_ang_eye_angles{ 0 };
 		std::uint64_t m_weapon_services{ 0 };
 		std::uint64_t m_h_my_weapons{ 0 };
-		std::uint64_t m_attribute_manager{ 0 };
-		std::uint64_t m_item{ 0 };
-		std::uint64_t m_item_definition_index{ 0 };
+		std::uint64_t m_active_weapon{ 0 };
+		std::uint64_t m_entity{ 0 };
+		std::uint64_t m_designer_name{ 0 };
 
 	public:
 		c_offsets()
@@ -72,9 +72,9 @@ namespace cs2
 			this->m_ang_eye_angles = data["C_CSPlayerPawnBase"]["m_angEyeAngles"];
 			this->m_weapon_services = data["C_BasePlayerPawn"]["m_pWeaponServices"];
 			this->m_h_my_weapons = data["CPlayer_WeaponServices"]["m_hMyWeapons"];
-			this->m_attribute_manager = data["C_EconEntity"]["m_AttributeManager"];
-			this->m_item = data["C_AttributeContainer"]["m_Item"];
-			this->m_item_definition_index = data["C_EconItemView"]["m_iItemDefinitionIndex"];
+			this->m_active_weapon = data["CPlayer_WeaponServices"]["m_hActiveWeapon"];
+			this->m_entity = data["CEntityInstance"]["m_pEntity"];
+			this->m_designer_name = data["CEntityIdentity"]["m_designerName"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_h_player_pawn -> 0x%llx", this->m_h_player_pawn);
@@ -88,9 +88,9 @@ namespace cs2
 			LOG_INFO("this->m_ang_eye_angles -> 0x%llx", this->m_ang_eye_angles);
 			LOG_INFO("this->m_weapon_services -> 0x%llx", this->m_weapon_services);
 			LOG_INFO("this->m_h_my_weapons -> 0x%llx", this->m_h_my_weapons);
-			LOG_INFO("this->m_attribute_manager -> 0x%llx", this->m_attribute_manager);
-			LOG_INFO("this->m_item -> 0x%llx", this->m_item);
-			LOG_INFO("this->m_item_definition_index -> 0x%llx \n", this->m_item_definition_index);
+			LOG_INFO("this->m_entity -> 0x%llx", this->m_entity);
+			LOG_INFO("this->m_active_weapon -> 0x%llx", this->m_active_weapon);
+			LOG_INFO("this->m_designer_name -> 0x%llx \n", this->m_designer_name);
 		#endif
 
 			this->m_initialized = true;
@@ -115,9 +115,9 @@ namespace cs2
 		std::uint64_t get_ang_eye_angles() { return this->m_ang_eye_angles; }
 		std::uint64_t get_weapon_services() { return this->m_weapon_services; }
 		std::uint64_t get_h_my_weapons() { return this->m_h_my_weapons; }
-		std::uint64_t get_attribute_manager() { return this->m_attribute_manager; }
-		std::uint64_t get_item() { return this->m_item; }
-		std::uint64_t get_item_definition_index() { return this->m_item_definition_index; }
+		std::uint64_t get_active_weapon() { return this->m_active_weapon; }
+		std::uint64_t get_entity() { return this->m_entity; }
+		std::uint64_t get_designer_name() { return this->m_designer_name; }
 	};
 }
 inline cs2::c_offsets m_offsets{};

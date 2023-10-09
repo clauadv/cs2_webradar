@@ -37,13 +37,13 @@ bool main()
 		if (duration > std::chrono::milliseconds(100))
 		{
 			start = now;
+
 			const auto local_player = usermode::m_cs2.get_local_player();
 			if (!local_player)
 				continue;
 
 			const auto local_team = local_player->get_team();
-			if (local_team == cs2::e_team::none ||
-				local_team == cs2::e_team::spectator)
+			if (local_team == cs2::e_team::none || local_team == cs2::e_team::spectator)
 				continue;
 
 			const auto global_vars = usermode::m_cs2.get_global_vars();
@@ -67,6 +67,14 @@ bool main()
 				if (!weapon_services)
 					return;
 
+				/*const auto active_weapon = weapon_services->get_active_weapon(entity_list);
+				if (!active_weapon)
+					return;
+
+				const auto weapon_name = active_weapon->get_weapon_name();
+				LOG_INFO("weapon_name -> %s", weapon_name);
+				*/
+
 				const auto my_weapons = weapon_services->get_my_weapons();
 				if (!my_weapons.first)
 					return;
@@ -77,8 +85,8 @@ bool main()
 					if (!weapon)
 						continue;
 
-					const auto item_definition_index = weapon->get_item_definition_index();
-					LOG_INFO("item_definition_index -> %d %s", item_definition_index, ((idx == my_weapons.first - 1) ? "\n" : ""));
+					const auto weapon_name = weapon->get_weapon_name();
+					LOG_INFO("weapon_name -> %s %s", weapon_name.data(), ((idx == my_weapons.first - 1) ? "\n" : ""));
 				}
 			}();
 
@@ -115,7 +123,7 @@ bool main()
 
 				data["players"].push_back(player_data);
 
-				// LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name, color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
+				LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
 			web_socket->send(data.dump());
