@@ -1,3 +1,5 @@
+const USE_NEW_DESIGN = false;
+
 const globals =
 {
     map:
@@ -239,30 +241,38 @@ const update_radar = async (data) =>
 
 const dom_content_loaded = async () =>
 {
-    // globals.map.m_div = document.createElement("div");
-    // globals.map.m_image = document.createElement("img");
+    if (USE_NEW_DESIGN) 
+    {
+        document.getElementsByClassName("ui-container")[0].style.display = "flex";
+        return;
+    }
 
-    // globals.m_left_div = document.createElement("div");
-    // globals.m_right_div = document.createElement("div");
+    let old_container = document.getElementById("old-container");
 
-    // globals.map.m_div.classList.add("radar__container");
-    // globals.map.m_image.classList.add("radar__image");
+    globals.map.m_div = document.createElement("div");
+    globals.map.m_image = document.createElement("img");
 
-    // globals.map.m_div.appendChild(globals.map.m_image);
-    // document.body.appendChild(globals.m_left_div);
-    // document.body.appendChild(globals.map.m_div);
-    // document.body.appendChild(globals.m_right_div);
+    globals.m_left_div = document.createElement("div");
+    globals.m_right_div = document.createElement("div");
 
-    // globals.m_left_div.classList.add("player__list");
-    // globals.m_right_div.classList.add("player__list");
+    globals.map.m_div.classList.add("radar__container");
+    globals.map.m_image.classList.add("radar__image");
 
-    // globals.latency.m_html = document.createElement("div");
-    // globals.latency.m_html.classList.add("radar__latency");
+    globals.map.m_div.appendChild(globals.map.m_image);
+    old_container.appendChild(globals.m_left_div);
+    old_container.appendChild(globals.map.m_div);
+    old_container.appendChild(globals.m_right_div);
 
-    // globals.map.m_div.appendChild(globals.latency.m_html);
-    // globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
+    globals.m_left_div.classList.add("player__list");
+    globals.m_right_div.classList.add("player__list");
 
-    //await setup_connection();
+    globals.latency.m_html = document.createElement("div");
+    globals.latency.m_html.classList.add("radar__latency");
+
+    globals.map.m_div.appendChild(globals.latency.m_html);
+    globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
+
+    await setup_connection();
 }
 
 document.addEventListener("DOMContentLoaded", dom_content_loaded);
