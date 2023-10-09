@@ -38,7 +38,7 @@ bool main()
 		{
 			start = now;
 
-			const auto local_player = usermode::m_cs2.get_local_player();
+			const auto local_player = m_cs2.get_local_player();
 			if (!local_player)
 				continue;
 
@@ -46,7 +46,7 @@ bool main()
 			if (local_team == cs2::e_team::none || local_team == cs2::e_team::spectator)
 				continue;
 
-			const auto global_vars = usermode::m_cs2.get_global_vars();
+			const auto global_vars = m_cs2.get_global_vars();
 			if (!global_vars)
 				continue;
 
@@ -57,54 +57,9 @@ bool main()
 			local_player_data["m_team"] = local_team;
 			data["local_player"].push_back(local_player_data);
 
-			const auto entity_list = usermode::m_cs2.get_entity_list();
+			const auto entity_list = m_cs2.get_entity_list();
 			if (!entity_list)
 				continue;
-
-			/*[&]()
-			{
-				for (std::size_t idx{ 0 }; idx < 1024; idx++)
-				{
-					const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
-					if (!entity)
-						continue;
-
-					const auto class_name = entity->get_name();
-					if (class_name.find("weapon_c4") == std::string::npos)
-						continue;
-
-					LOG_INFO("c4 -> 0x%llx", class_name);
-				}
-			}();*/
-
-			/*[&]()
-			{
-				const auto weapon_services = local_player->get_weapon_services();
-				if (!weapon_services)
-					return;
-
-				/*const auto active_weapon = weapon_services->get_active_weapon(entity_list);
-				if (!active_weapon)
-					return;
-
-				const auto weapon_name = active_weapon->get_name();
-				LOG_INFO("weapon_name -> %s", weapon_name);
-				
-
-				const auto my_weapons = weapon_services->get_my_weapons();
-				if (!my_weapons.first)
-					return;
-
-				for (std::size_t idx{ 0 }; idx < my_weapons.first; idx++)
-				{
-					const auto weapon = my_weapons.second->get(entity_list, idx);
-					if (!weapon)
-						continue;
-
-					const auto weapon_name = weapon->get_weapon_name();
-					LOG_INFO("weapon_name -> %s %s", weapon_name.data(), ((idx == my_weapons.first - 1) ? "\n" : ""));
-				}
-			}();*/
 
 			for (std::size_t idx{ 0 }; idx < 32; idx++)
 			{
@@ -116,7 +71,7 @@ bool main()
 				if (!entity_pawn)
 					continue;
 
-				const auto player = entity_list->get<cs2::c_base_player*>(entity_pawn);
+				const auto player = entity_list->get<cs2::c_base_player*>(entity_pawn & 0x7fff);
 				if (!player)
 					continue;
 

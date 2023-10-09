@@ -53,5 +53,5 @@ namespace usermode
 			return reinterpret_cast<cs2::c_entity_list*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_entity_list()));
 		}
 	};
-	inline usermode::c_cs2 m_cs2{};
 }
+inline usermode::c_cs2 m_cs2{};
