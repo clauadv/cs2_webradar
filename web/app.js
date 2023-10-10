@@ -1,8 +1,8 @@
-import {create_player_card, update_player_card} from './leaderboard'
+import { create_player_card, update_player_card } from "./player_card.js"
 
 const USE_NEW_DESIGN = true;
-
-const globals =
+ 
+export const globals =
 {
     map:
     {
@@ -27,8 +27,8 @@ const globals =
         m_team: -1
     },
 
-    m_left_div: null,
-    m_right_div: null,
+    m_terro_div: null,
+    m_counter_div: null,
 
     m_players: []
 };
@@ -36,28 +36,24 @@ const globals =
 const LOG_INFO = async (...args) => console.info(`[info] ${args.join(" ")}`);
 const LOG_ERROR = async (...args) => console.error(`[error] ${args.join(" ")}`);
 
-const draw_latency = async () =>
-{
+const draw_latency = async () => {
     const current_time = new Date().getTime();
     const last_connection_time = globals.latency.m_last_time;
     const diff_in_ms = current_time - last_connection_time;
 
-    if (globals.latency.m_average_time === 0)
-    {
+    if (globals.latency.m_average_time === 0) {
         globals.latency.m_average_time = diff_in_ms;
     }
 
     globals.latency.m_html.innerText = `${globals.latency.m_average_time}ms`;
 
-    if (globals.latency.m_average_calc >= 10)
-    {
+    if (globals.latency.m_average_calc >= 10) {
         globals.latency.m_average_time = globals.latency.m_average_calc / globals.latency.m_data_count;
 
         globals.latency.m_data_count = 0;
         globals.latency.m_average_calc = 0;
     }
-    else
-    {
+    else {
         globals.latency.m_data_count++;
         globals.latency.m_average_calc += diff_in_ms;
     }
@@ -65,28 +61,23 @@ const draw_latency = async () =>
     globals.latency.m_last_time = new Date().getTime();
 }
 
-const setup_connection = async () =>
-{
+const setup_connection = async () => {
     const web_socket = new WebSocket("ws://188.24.175.93:22006/cs2_webradar");
 
-    web_socket.onopen = async () =>
-    {
+    web_socket.onopen = async () => {
         LOG_INFO("connected to the web socket");
         on_map_change();
     }
 
-    web_socket.onclose = async () =>
-    {
+    web_socket.onclose = async () => {
         LOG_ERROR("disconnected from the web socket");
     }
 
-    web_socket.onerror = async (error) =>
-    {
+    web_socket.onerror = async (error) => {
         LOG_ERROR(`${error}`);
     }
 
-    web_socket.onmessage = async (event) =>
-    {
+    web_socket.onmessage = async (event) => {
         const parsed_data = JSON.parse(await event.data.text());
         await update_radar(parsed_data);
 
@@ -94,12 +85,10 @@ const setup_connection = async () =>
     };
 }
 
-const get_color = (color) =>
-{
+const get_color = (color) => {
     let new_color = "grey";
 
-    switch (color)
-    {
+    switch (color) {
         case 0:
             new_color = "#84c8ed";
             break;
@@ -122,16 +111,14 @@ const get_color = (color) =>
     return new_color;
 }
 
-const calculate_rotation = (view_angle, player) =>
-{
+const calculate_rotation = (view_angle, player) => {
     player.m_rotation = (player.m_rotation || 0) % 360;
     player.m_rotation += (view_angle - player.m_rotation + 540) % 360 - 180;
 
     return player.m_rotation;
 }
 
-const add_player = (idx) =>
-{
+const add_player = (idx) => {
     const div = document.createElement("div");
     div.classList.add("player");
 
@@ -139,27 +126,42 @@ const add_player = (idx) =>
     angle.classList.add("player__angle");
 
     div.appendChild(angle);
+    
 
     globals.m_players[idx] =
     {
         m_html: div,
-        m_player_card: undefined,
+        m_player_card: null,
         m_angle_html: angle
     };
-
     
-    globals.map.m_div.appendChild(globals.m_players[idx].m_html);
+    let playerCard = create_player_card(globals.m_players[idx], globals.m_players);
 
-    create_player_card(globals.m_players[idx]);
+    globals.m_players[idx].m_player_card = playerCard;
+
+    console.log(globals.m_players[idx]);
+
+    globals.map.m_div.appendChild(globals.m_players[idx].m_html);
 }
 
-const update_player = (idx, data) =>
-{
-    if (!globals.m_players[idx])
-    {
+const update_player = (idx, data) => {
+    if (!globals.m_players[idx]) {
         add_player(idx);
         return;
     }
+
+    if (data.m_team == 2 && (globals.m_players[idx].m_player_card.m_parent_element.getAttribute("data-team") != data.m_team)){
+        globals.m_terro_div.appendChild(globals.m_players[idx].m_player_card.m_parent_element);
+    }
+    else if (data.m_team == 3 && (globals.m_players[idx].m_player_card.m_parent_element.getAttribute("data-team") != data.m_team)) {
+        globals.m_counter_div.appendChild(globals.m_players[idx].m_player_card.m_parent_element);
+    }
+
+    globals.m_players[idx].m_player_card.m_parent_element.setAttribute("data-team", data.m_team);
+
+    console.log(data.m_weapons);
+
+    update_player_card(globals.m_players[idx], data);
 
     globals.m_players[idx].m_last_time = new Date().getTime();
 
@@ -186,24 +188,20 @@ const update_player = (idx, data) =>
     div.style.transform = `translate(${image_translation.x}px, ${image_translation.y}px) rotate(${rotation}deg)`;
 }
 
-const on_map_change = async () =>
-{
+const on_map_change = async () => {
     globals.map.m_image.src = `data/${globals.map.m_current}/radar.png`;
     globals.map.m_image.classList.add("radar__image");
     globals.map.m_data = await (await fetch(`data/${globals.map.m_current}/data.json`)).json();
     LOG_INFO(`changed map to ${globals.map.m_current}`);
 }
 
-const get_radar_position = (coords) =>
-{
-    if (!(coords.x || coords.y))
-    {
+const get_radar_position = (coords) => {
+    if (!(coords.x || coords.y)) {
         LOG_ERROR("player positions are invalid");
         return { x: 0, y: 0 };
     }
 
-    if (!(globals.map.m_data.x || globals.map.m_data.y))
-    {
+    if (!(globals.map.m_data.x || globals.map.m_data.y)) {
         LOG_ERROR("map positions are invalid");
         return { x: 0, y: 0 };
     }
@@ -217,22 +215,18 @@ const get_radar_position = (coords) =>
     return position;
 }
 
-const update_radar = async (data) =>
-{
-    if (!data.m_map)
-    {
+const update_radar = async (data) => {
+    if (!data.m_map) {
         LOG_ERROR("data.m_map is null");
         return;
     }
 
-    if (data.m_map !== globals.map.m_current)
-    {
+    if (data.m_map !== globals.map.m_current) {
         globals.map.m_current = data.m_map;
         await on_map_change();
     }
 
-    if (!data.players)
-    {
+    if (!data.players) {
         LOG_ERROR("data.players is null");
         return;
     }
@@ -245,15 +239,18 @@ const update_radar = async (data) =>
     globals.m_players.filter(player => (current_time - player.m_last_time) / 1000 >= 1).forEach(player => player.m_html.remove());
 }
 
-const dom_content_loaded = async () =>
-{
+const dom_content_loaded = async () => {
     let old_container = document.getElementById("old-container");
 
-    if (USE_NEW_DESIGN) 
-    {   
-        old_container.style.display = "none";
+    if (USE_NEW_DESIGN) {
+        // old_container.style.display = "none";
         document.getElementsByClassName("ui-container")[0].style.display = "flex";
-        return;
+        globals.m_terro_div = document.getElementById("t");
+        globals.m_counter_div = document.getElementById("ct");
+
+
+        console.log("samp")
+        // return;
     }
 
     globals.map.m_div = document.createElement("div");
@@ -275,11 +272,14 @@ const dom_content_loaded = async () =>
 
     globals.latency.m_html = document.createElement("div");
     globals.latency.m_html.classList.add("radar__latency");
-
     globals.map.m_div.appendChild(globals.latency.m_html);
-    //globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
-   // globals.map.m_image.style.transform = `scale(${globals.map.m_zoom_level})`;
+
+
+    LOG_INFO("connected to the web socket");
     await setup_connection();
+
+    // globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
+    // globals.map.m_image.style.transform = `scale(${globals.map.m_zoom_level})`;
 }
 
 document.addEventListener("DOMContentLoaded", dom_content_loaded);
