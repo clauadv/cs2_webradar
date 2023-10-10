@@ -92,8 +92,6 @@ bool main()
 				const auto team = player->get_team();
 				const auto is_dead = player->is_dead();
 
-				// CSMatchStats_t m_matchStats; // 0x90	
-
 				nlohmann::json player_data{};
 				player_data["m_idx"] = idx;
 				player_data["data"]["m_name"] = name;
@@ -112,61 +110,31 @@ bool main()
 					if (!weapon)
 						continue;
 
-					const auto weapon_data = m_driver.read_t<std::uint64_t>(weapon + 0x360);
+					const auto weapon_data = weapon->get_data();
 					if (!weapon_data)
 						continue;
 
-					const auto weapon_type = m_driver.read_t<int>(weapon_data + 0x240);
+					const auto weapon_type = weapon_data->get_id();
 					const auto weapon_name = weapon->get_name();
 
-					switch (weapon_type)
-					{
-						case 0:
-							player_data["data"]["m_weapons"]["melee"] = weapon_name;
-							break;
-						case 1:
-							player_data["data"]["m_weapons"]["secondary"] = weapon_name;
-							break;
-						case 2:
-						case 3:
-						case 4:
-						case 5:
-						case 6:
-							player_data["data"]["m_weapons"]["primary"] = weapon_name;
-							break;
-						case 7:
-							player_data["data"]["m_weapons"]["bomb"] = weapon_name;
-							break;
-						case 9:
-							player_data["data"]["m_weapons"]["utility"] = weapon_name;
-							break;
-					}
-
-					// LOG_INFO("weapon_name -> %s %s", weapon_name.data(), ((idx == my_weapons.first - 1) ? "\n" : ""));
+					// LOG_INFO("weapon_name -> %s (%d) %s", weapon_name.data(), weapon_type, ((idx == my_weapons.first - 1) ? "\n" : ""));
 				}
 
 				[&]()
 				{
-					const auto action_tracking_service = m_driver.read_t<std::uint64_t>(entity + 0x6e0);
+					const auto action_tracking_service = entity->get_action_tracking_services();
 					if (!action_tracking_service)
 						return;
 
-					const auto match_stats = m_driver.read_t<std::uint64_t>(action_tracking_service + 0x90);
-					if (!match_stats)
-						return;
-
-					const auto kills = m_driver.read_t<int>(action_tracking_service + 0x90 + 0x30);
-					const auto deaths = m_driver.read_t<int>(action_tracking_service + 0x90 + 0x34);
-					const auto assists = m_driver.read_t<int>(action_tracking_service + 0x90 + 0x38);
+					const auto kills = action_tracking_service->get_kills();
+					const auto deaths = action_tracking_service->get_deaths();
+					const auto assists = action_tracking_service->get_assists();
 
 					player_data["data"]["m_stats"]["kills"] = kills;
 					player_data["data"]["m_stats"]["deaths"] = deaths;
 					player_data["data"]["m_stats"]["assists"] = assists;
 
-					// CCSPlayerController_ActionTrackingServices* m_pActionTrackingServices; // 0x6e0
-					// CSMatchStats_t m_matchStats; // 0x90	
-
-					// sLOG_INFO("kills: %d, deaths: %d, assists: %d", kills, deaths, assists);
+					// LOG_INFO("kills: %d, deaths: %d, assists: %d", kills, deaths, assists);
 				}();
 
 				data["players"].push_back(player_data);

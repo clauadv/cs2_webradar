@@ -14,14 +14,9 @@ namespace cs2
 	class c_base_entity
 	{
 	public:
-		std::uint64_t get_designer_name()
-		{
-			return m_driver.read_t<std::uint64_t>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_entity()) + m_offsets.get_designer_name());
-		}
-
 		std::string get_name()
 		{
-			const auto designer_name = this->get_designer_name();
+			const auto designer_name = m_driver.read_t<std::uint64_t>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_entity()) + m_offsets.get_designer_name());
 			if (!designer_name)
 				return "invalid";
 
@@ -30,6 +25,11 @@ namespace cs2
 				return "invalid";
 
 			return name;
+		}
+
+		cs2::c_action_tracking_services* get_action_tracking_services()
+		{
+			return reinterpret_cast<cs2::c_action_tracking_services*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_action_tracking_services()));
 		}
 
 		std::uint64_t get_pawn()

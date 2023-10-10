@@ -24,6 +24,13 @@ namespace cs2
 		std::uint64_t m_active_weapon{ 0 };
 		std::uint64_t m_entity{ 0 };
 		std::uint64_t m_designer_name{ 0 };
+		std::uint64_t m_subclass_id{ 0 };
+		std::uint64_t m_weapon_type{ 0 };
+		std::uint64_t m_action_tracking_services{ 0 };
+		std::uint64_t m_match_stats{ 0 };
+		std::uint64_t m_kills{ 0 };
+		std::uint64_t m_deaths{ 0 };
+		std::uint64_t m_assists{ 0 };
 
 	public:
 		c_offsets()
@@ -77,6 +84,13 @@ namespace cs2
 			this->m_active_weapon = data["CPlayer_WeaponServices"]["m_hActiveWeapon"];
 			this->m_entity = data["CEntityInstance"]["m_pEntity"];
 			this->m_designer_name = data["CEntityIdentity"]["m_designerName"];
+			this->m_subclass_id = data["C_BaseEntity"]["m_nSubclassID"];
+			this->m_weapon_type = data["CCSWeaponBaseVData"]["m_WeaponType"];
+			this->m_action_tracking_services = data["CCSPlayerController"]["m_pActionTrackingServices"];
+			this->m_match_stats = data["CCSPlayerController_ActionTrackingServices"]["m_matchStats"];
+			this->m_kills = data["CSPerRoundStats_t"]["m_iKills"];
+			this->m_deaths = data["CSPerRoundStats_t"]["m_iDeaths"];
+			this->m_assists = data["CSPerRoundStats_t"]["m_iAssists"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_player_pawn -> 0x%llx", this->m_player_pawn);
@@ -93,7 +107,14 @@ namespace cs2
 			LOG_INFO("this->m_my_weapons -> 0x%llx", this->m_my_weapons);
 			LOG_INFO("this->m_entity -> 0x%llx", this->m_entity);
 			LOG_INFO("this->m_active_weapon -> 0x%llx", this->m_active_weapon);
-			LOG_INFO("this->m_designer_name -> 0x%llx \n", this->m_designer_name);
+			LOG_INFO("this->m_designer_name -> 0x%llx", this->m_designer_name);
+			LOG_INFO("this->m_subclass_id -> 0x%llx", this->m_subclass_id);
+			LOG_INFO("this->m_weapon_type -> 0x%llx", this->m_weapon_type);
+			LOG_INFO("this->m_action_tracking_services -> 0x%llx", this->m_action_tracking_services);
+			LOG_INFO("this->m_match_stats -> 0x%llx", this->m_match_stats);
+			LOG_INFO("this->m_kills -> 0x%llx", this->m_kills);
+			LOG_INFO("this->m_deaths -> 0x%llx", this->m_deaths);
+			LOG_INFO("this->m_assists -> 0x%llx \n", this->m_assists);
 		#endif
 
 			this->m_initialized = true;
@@ -122,6 +143,13 @@ namespace cs2
 		std::uint64_t get_active_weapon() { return this->m_active_weapon; }
 		std::uint64_t get_entity() { return this->m_entity; }
 		std::uint64_t get_designer_name() { return this->m_designer_name; }
+		std::uint64_t get_subclass_id() { return this->m_subclass_id; }
+		std::uint64_t get_weapon_type() { return this->m_weapon_type; }
+		std::uint64_t get_action_tracking_services() { return this->m_action_tracking_services; }
+		std::uint64_t get_math_stats() { return this->m_match_stats; }
+		std::uint64_t get_kills() { return this->m_kills; }
+		std::uint64_t get_deaths() { return this->m_deaths; }
+		std::uint64_t get_assists() { return this->m_assists; }
 	};
 }
 inline cs2::c_offsets m_offsets{};
