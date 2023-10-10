@@ -1,25 +1,35 @@
 
+function setAndFormatStat(stat, value) {
+    stat.textContent = value;
+    let digit = stat.previousElementSibling;
+    if (stat.textContent > 10) {
+        digit.textContent = ""
+    } else {
+        digit.textContent = "0"
+    }
+}
+
 export const update_player_card = (player, playerData) => {
-    player.m_player_card.m_name_element.textContent = playerData.m_name;
-    player.m_player_card.m_health_element.textContent = playerData.m_health;
-    player.m_player_card.m_armor_element.textContent = playerData.m_armor;
-    player.m_player_card.m_kills_element.textContent = playerData.m_stats.kills;
-    player.m_player_card.m_deaths_element.textContent = playerData.m_stats.deaths;
-    player.m_player_card.m_assists_element.textContent = playerData.m_stats.assists;
+    let playerCard = player.m_player_card;
+    playerCard.m_name_element.textContent = playerData.m_name;
+
+    playerCard.m_health_element.textContent = playerData.m_health;
+    playerCard.m_armor_element.textContent = playerData.m_armor;
+    setAndFormatStat(playerCard.m_stats[0].element, playerData.m_stats.kills);
+    setAndFormatStat(playerCard.m_stats[1].element, playerData.m_stats.deaths);
+    setAndFormatStat(playerCard.m_stats[2].element, playerData.m_stats.assists);
 };
 
 export const create_player_card = (player, playerData) => {
     // const {m_name_element, m_health_element, m_armor_element} = player.m_player_card;
-    
+
     player.m_player_card = {
         m_parent_element: undefined,
         m_name_element: undefined,
         m_health_element: undefined,
         m_armor_element: undefined,
         m_money_element: undefined,
-        m_kills_element: undefined,
-        m_deaths_element: undefined,
-        m_assists_element: undefined
+        m_stats: [{ displayName: "kills", element: undefined }, { displayName: "deaths", element: undefined }, { displayName: "assists", element: undefined }]
     };
 
     // let parentElement = player.m_player_card.m_parent_element;
@@ -97,37 +107,38 @@ export const create_player_card = (player, playerData) => {
     moneyElement.appendChild(dolarSign);
     playerCardObject.m_money_element = document.createTextNode("0");
     moneyElement.appendChild(playerCardObject.m_money_element);
-    
+
     // // Create stats container
     let statsContainer = document.createElement("div");
     statsContainer.className = "player-card-stats";
 
     // // Create K, D, A stats
-    // player.m_player_card.stats.forEach((stat) => {
-        
-    // });
 
-    for (let index = 0; index <= 2; index++) {
+    playerCardObject.m_stats.forEach(stat => {
         const statElement = document.createElement("div");
         statElement.className = "player-card-stat";
         const statName = document.createElement("div");
         statName.className = "player-card-statname";
-        statName.textContent = index == 0 && "K" || index == 1 && "D" || index == 2 && "A";
+
+        statName.textContent = stat.displayName[0].toUpperCase();
+
         const statValue = document.createElement("div");
         statValue.className = "player-card-statvalue";
-        let statValueTextNode = document.createTextNode("0");
+        let statValueSingleDigit = document.createElement("span");
+        statValueSingleDigit.style.color = "var(--text-secondary)";
+        statValueSingleDigit.textContent = "0";
+        statValueSingleDigit.setAttribute("data-digit", false);
+        let statValueTextNode = document.createElement("span");
+        statValueTextNode.textContent = "0";
+        statValue.appendChild(statValueSingleDigit);
         statValue.appendChild(statValueTextNode);
-        if (index == 0)
-            playerCardObject.m_kills_element = statValueTextNode;
-        else if (index == 1)
-            playerCardObject.m_deaths_element = statValueTextNode;
-        else if (index == 2)
-            playerCardObject.m_assists_element = statValueTextNode;
+
+        stat.element = statValueTextNode;
 
         statElement.appendChild(statName);
         statElement.appendChild(statValue);
         statsContainer.appendChild(statElement);
-    }
+    })
 
     leftColumn.appendChild(moneyElement);
     leftColumn.appendChild(statsContainer);
@@ -139,48 +150,48 @@ export const create_player_card = (player, playerData) => {
     rightColumn.className = "player-card-column player-card-column-right";
 
     // // Create primary weapon element
-    // const primaryWeapon = document.createElement("div");
-    // primaryWeapon.className = "player-card-weapons-primary";
-    // const primaryWeaponImage = document.createElement("img");
-    // primaryWeaponImage.className = "player-card-img-primary";
-    // primaryWeaponImage.src = "./assets/equipment/ak47.svg";
-    // primaryWeapon.appendChild(primaryWeaponImage);
+    const primaryWeapon = document.createElement("div");
+    primaryWeapon.className = "player-card-weapons-primary";
+    const primaryWeaponImage = document.createElement("img");
+    primaryWeaponImage.className = "player-card-img-primary";
+    primaryWeaponImage.src = "./assets/equipment/ak47.svg";
+    primaryWeapon.appendChild(primaryWeaponImage);
 
     // // Create secondary weapon element
-    // const secondaryWeapon = document.createElement("div");
-    // secondaryWeapon.className = "player-card-weapons-secondary";
-    // const secondaryWeaponImage = document.createElement("img");
-    // secondaryWeaponImage.className = "player-card-img-secondary";
-    // secondaryWeaponImage.src = "./assets/equipment/usp_silencer.svg";
-    // secondaryWeapon.appendChild(secondaryWeaponImage);
+    const secondaryWeapon = document.createElement("div");
+    secondaryWeapon.className = "player-card-weapons-secondary";
+    const secondaryWeaponImage = document.createElement("img");
+    secondaryWeaponImage.className = "player-card-img-secondary";
+    secondaryWeaponImage.src = "./assets/equipment/usp_silencer.svg";
+    secondaryWeapon.appendChild(secondaryWeaponImage);
 
     // // Create utilities container
-    // const utilitiesContainer = document.createElement("div");
-    // utilitiesContainer.className = "player-card-row-utilities";
+    const utilitiesContainer = document.createElement("div");
+    utilitiesContainer.className = "player-card-row-utilities";
 
     // // Create utility elements (frag grenade in this case)
-    // for (let i = 0; i < 5; i++) {
-    //     const utility = document.createElement("div");
-    //     utility.className = "player-card-weapons-utility";
-    //     const utilityImage = document.createElement("img");
-    //     utilityImage.className = "player-card-img-utility";
-    //     utilityImage.src = "./assets/equipment/frag_grenade.svg";
-    //     utility.appendChild(utilityImage);
-    //     utilitiesContainer.appendChild(utility);
-    // }
+    for (let i = 0; i < 5; i++) {
+        const utility = document.createElement("div");
+        utility.className = "player-card-weapons-utility";
+        const utilityImage = document.createElement("img");
+        utilityImage.className = "player-card-img-utility";
+        utilityImage.src = "./assets/equipment/frag_grenade.svg";
+        utility.appendChild(utilityImage);
+        utilitiesContainer.appendChild(utility);
+    }
 
     // // Append primary weapon, secondary weapon, and utilities container to the right column
-    // rightColumn.appendChild(primaryWeapon);
-    // rightColumn.appendChild(secondaryWeapon);
-    // rightColumn.appendChild(utilitiesContainer);
+    rightColumn.appendChild(primaryWeapon);
+    rightColumn.appendChild(secondaryWeapon);
+    rightColumn.appendChild(utilitiesContainer);
 
     // // Append left column and right column to the second row
-    // secondRow.appendChild(leftColumn);
-    // secondRow.appendChild(rightColumn);
+    secondRow.appendChild(leftColumn);
+    secondRow.appendChild(rightColumn);
 
     // // Append first row and second row to the player card
-    // playerCard.appendChild(firstRow);
-    // playerCard.appendChild(secondRow);
+    player.m_player_card.m_parent_element.appendChild(firstRow);
+    player.m_player_card.m_parent_element.appendChild(secondRow);
 
     return playerCardObject;
     // Append the player card to the desired parent element (e.g., a list)

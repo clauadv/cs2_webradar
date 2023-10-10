@@ -1,9 +1,10 @@
 import { create_player_card, update_player_card } from "./player_card.js"
 
 const USE_NEW_DESIGN = true;
- 
+
 export const globals =
-{
+{   
+    ui_container_element: null,
     map:
     {
         m_div: null,
@@ -45,7 +46,10 @@ const draw_latency = async () => {
         globals.latency.m_average_time = diff_in_ms;
     }
 
-    globals.latency.m_html.innerText = `${globals.latency.m_average_time}ms`;
+    if (globals.map.m_current == "invalid")
+        globals.latency.m_html.innerText = "not connected";
+    else 
+        globals.latency.m_html.innerText = `${globals.latency.m_average_time}ms`;
 
     if (globals.latency.m_average_calc >= 10) {
         globals.latency.m_average_time = globals.latency.m_average_calc / globals.latency.m_data_count;
@@ -126,7 +130,7 @@ const add_player = (idx) => {
     angle.classList.add("player__angle");
 
     div.appendChild(angle);
-    
+
 
     globals.m_players[idx] =
     {
@@ -134,7 +138,7 @@ const add_player = (idx) => {
         m_player_card: null,
         m_angle_html: angle
     };
-    
+
     let playerCard = create_player_card(globals.m_players[idx], globals.m_players);
 
     globals.m_players[idx].m_player_card = playerCard;
@@ -150,7 +154,7 @@ const update_player = (idx, data) => {
         return;
     }
 
-    if (data.m_team == 2 && (globals.m_players[idx].m_player_card.m_parent_element.getAttribute("data-team") != data.m_team)){
+    if (data.m_team == 2 && (globals.m_players[idx].m_player_card.m_parent_element.getAttribute("data-team") != data.m_team)) {
         globals.m_terro_div.appendChild(globals.m_players[idx].m_player_card.m_parent_element);
     }
     else if (data.m_team == 3 && (globals.m_players[idx].m_player_card.m_parent_element.getAttribute("data-team") != data.m_team)) {
@@ -158,8 +162,6 @@ const update_player = (idx, data) => {
     }
 
     globals.m_players[idx].m_player_card.m_parent_element.setAttribute("data-team", data.m_team);
-
-    console.log(data.m_weapons);
 
     update_player_card(globals.m_players[idx], data);
 
@@ -240,46 +242,28 @@ const update_radar = async (data) => {
 }
 
 const dom_content_loaded = async () => {
-    let old_container = document.getElementById("old-container");
+    globals.ui_container_element = document.querySelector(".ui-container");
 
-    if (USE_NEW_DESIGN) {
-        // old_container.style.display = "none";
-        document.getElementsByClassName("ui-container")[0].style.display = "flex";
-        globals.m_terro_div = document.getElementById("t");
-        globals.m_counter_div = document.getElementById("ct");
+    globals.m_terro_div = document.querySelector("#t");
+    globals.m_counter_div = document.querySelector("#ct");
 
+    globals.map.m_div = document.querySelector("#radar");
+    globals.map.m_image = document.querySelector("#radar-image");
 
-        console.log("samp")
-        // return;
-    }
+    let latency_container = document.createElement("div");
+    latency_container.classList.add("radar__latency");
 
-    globals.map.m_div = document.createElement("div");
-    globals.map.m_image = document.createElement("img");
+    let latency_icon = document.createElement("img");
+    latency_icon.style.width = "1.3rem";
+    latency_icon.src = "./assets/icons/gauge.svg";
+    globals.latency.m_html = document.createElement("span");
 
-    globals.m_left_div = document.createElement("div");
-    globals.m_right_div = document.createElement("div");
+    latency_container.appendChild(latency_icon);
+    latency_container.appendChild(globals.latency.m_html);
+    
+    globals.ui_container_element.appendChild(latency_container);
 
-    globals.map.m_div.classList.add("radar__container");
-    globals.map.m_image.classList.add("radar__image");
-
-    globals.map.m_div.appendChild(globals.map.m_image);
-    old_container.appendChild(globals.m_left_div);
-    old_container.appendChild(globals.map.m_div);
-    old_container.appendChild(globals.m_right_div);
-
-    globals.m_left_div.classList.add("player__list");
-    globals.m_right_div.classList.add("player__list");
-
-    globals.latency.m_html = document.createElement("div");
-    globals.latency.m_html.classList.add("radar__latency");
-    globals.map.m_div.appendChild(globals.latency.m_html);
-
-
-    LOG_INFO("connected to the web socket");
     await setup_connection();
-
-    // globals.map.m_div.style.transform = `scale(${globals.map.m_zoom_level})`
-    // globals.map.m_image.style.transform = `scale(${globals.map.m_zoom_level})`;
 }
 
 document.addEventListener("DOMContentLoaded", dom_content_loaded);

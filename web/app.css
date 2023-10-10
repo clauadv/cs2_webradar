@@ -43,18 +43,20 @@ li {
     height: 100vh;
     display: flex;
     align-items: center;
+    justify-content: center;
     background: radial-gradient(50% 50% at 50% 50%, rgba(20, 40, 55, 0.95) 0%, rgba(7, 20, 30, 0.95) 100%);
     backdrop-filter: blur(7.5px);
 }
 
 .radar {
-    width: 100%;
-    height: 100%;
+    position: relative;   
+    overflow: hidden;
+    transform-origin: center;
 }
 
 .radar-image {
-    width: auto;
-    height: 100%;
+    width: 100%;
+    height: auto;
 }
 
 .icon {
@@ -139,6 +141,9 @@ li {
 
 .player-card-name {
     font-family: "TASAExplorer";
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .player-card-money {
@@ -154,6 +159,10 @@ li {
     font-family: "TASAOrbiter";
     font-size: 0.875rem;
     color: var(--text-secondary);
+}
+
+.player-card-statvalue {
+    font-variant-numeric: tabular-nums;
 }
 
 .masked-img {
@@ -217,13 +226,12 @@ li {
 
 .radar__latency
 {
+    display: flex;
+    gap: 0.25rem;
     position: absolute;
-    justify-content: center;
-    align-items: center;
     font-size: normal;
-    left: 3rem;
-    top: 3rem;
-    color: white;
+    right: 0.625rem;
+    top: 0.625rem;
 }
 
 .player
