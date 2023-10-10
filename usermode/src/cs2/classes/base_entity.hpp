@@ -14,27 +14,27 @@ namespace cs2
 	class c_base_entity
 	{
 	public:
-		std::uint64_t get_designer_name()
+		std::string get_name()
 		{
-			return m_driver.read_t<std::uint64_t>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_entity()) + m_offsets.get_designer_name());
+			const auto designer_name = m_driver.read_t<std::uint64_t>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_entity()) + m_offsets.get_designer_name());
+			if (!designer_name)
+				return "invalid";
+
+			const auto name = m_driver.read_string(designer_name, 32);
+			if (name.empty())
+				return "invalid";
+
+			return name;
+		}
+
+		cs2::c_action_tracking_services* get_action_tracking_services()
+		{
+			return reinterpret_cast<cs2::c_action_tracking_services*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_action_tracking_services()));
 		}
 
 		std::uint64_t get_pawn()
 		{
-			return m_driver.read_t<std::uint64_t>(this + m_offsets.get_h_player_pawn());
-		}
-
-		std::string get_name()
-		{
-			const auto sanitized_player_name = m_driver.read_t<std::uint64_t>(this + m_offsets.get_sanitized_player_name());
-			if (!sanitized_player_name)
-				return "invalid";
-
-			auto player_name = m_driver.read_string(sanitized_player_name, 32);
-			if (player_name.empty())
-				return "invalid";
-
-			return player_name;
+			return m_driver.read_t<std::uint64_t>(this + m_offsets.get_player_pawn());
 		}
 
 		bool has_defuser()

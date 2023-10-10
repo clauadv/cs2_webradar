@@ -13,5 +13,11 @@ namespace cs2
 
 			return entity_list->get<cs2::c_base_player_weapon*>(handle & 0x7fff);
 		}
+
+		cs2::c_weapon_base_data* get_data()
+		{
+			// @NOTE: https://www.unknowncheats.me/forum/3878143-post6.html
+			return reinterpret_cast<cs2::c_weapon_base_data*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_subclass_id() + 0x08));
+		}
 	};
 }

@@ -9,7 +9,9 @@
   <ItemGroup>
     <ClInclude Include="ext\easywsclient\easywsclient.hpp" />
     <ClInclude Include="ext\nlohmann\json.hpp" />
+    <ClInclude Include="src\cs2\classes\action_tracking_services.hpp" />
     <ClInclude Include="src\cs2\classes\base_player_weapon.hpp" />
+    <ClInclude Include="src\cs2\classes\weapon_base_data.hpp" />
     <ClInclude Include="src\cs2\classes\player_weapon_services.hpp" />
     <ClInclude Include="src\driver\driver.hpp" />
     <ClInclude Include="src\cs2\classes\base_entity.hpp" />
