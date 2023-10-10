@@ -7,6 +7,7 @@ export const update_player_card = (player, playerData) => {
     player.m_player_card.m_deaths_element.textContent = playerData.m_stats.deaths;
     player.m_player_card.m_assists_element.textContent = playerData.m_stats.assists;
 };
+
 export const create_player_card = (player, playerData) => {
     // const {m_name_element, m_health_element, m_armor_element} = player.m_player_card;
     
