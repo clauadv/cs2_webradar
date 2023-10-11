@@ -153,7 +153,7 @@ bool main()
 								break;
 						}
 
-						LOG_INFO("weapon_name -> %s (%d) %s", weapon_name.data(), weapon_type, ((idx == my_weapons.first - 1) ? "\n" : ""));
+						// LOG_INFO("weapon_name -> %s (%d) %s", weapon_name.data(), weapon_type, ((idx == my_weapons.first - 1) ? "\n" : ""));
 					}
 				}();
 
@@ -179,7 +179,7 @@ bool main()
 					data["players"].push_back(player_data);
 				}
 
-				// LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
+				LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
 			// LOG_INFO("%s", data.dump().c_str());

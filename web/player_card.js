@@ -25,13 +25,29 @@ export const update_player_card = (player, playerData) => {
     playerCard.m_armor_element.textContent = playerData.m_armor;
     playerCard.m_money_element.textContent = playerData.m_money;
 
-    playerCard.m_weapon_primary.m_element.style = `-webkit-mask: url("./assets/equipment/${playerData.m_weapons.primary.replace("weapon_", "")}.svg") no-repeat center / contain`;
-    playerCard.m_weapon_primary.m_image.src = `./assets/equipment/${playerData.m_weapons.primary.replace("weapon_", "")}.svg`;
+    if (playerData.m_weapons != undefined && playerData.m_weapons.primary != undefined)
+    {
+        playerCard.m_weapon_primary.m_element.style = `-webkit-mask: url("./assets/equipment/${playerData.m_weapons.primary.replace("weapon_", "")}.svg") no-repeat center / contain`;
+        playerCard.m_weapon_primary.m_image.src = `./assets/equipment/${playerData.m_weapons.primary.replace("weapon_", "")}.svg`;
+    }
+    else
+    {
+        playerCard.m_weapon_primary.m_element.style = `-webkit-mask: url("") no-repeat center / contain`;
+        playerCard.m_weapon_primary.m_image.src = ``;
+    }
 
-    playerCard.m_weapon_secondary.m_element.style = `-webkit-mask: url("./assets/equipment/${playerData.m_weapons.secondary.replace("weapon_", "")}.svg") no-repeat center / contain`;
-    playerCard.m_weapon_secondary.m_image.src = `./assets/equipment/${playerData.m_weapons.secondary.replace("weapon_", "")}.svg`;
+    if (playerData.m_weapons != undefined && playerData.m_weapons.secondary != undefined)
+    {
+        playerCard.m_weapon_secondary.m_element.style = `-webkit-mask: url("./assets/equipment/${playerData.m_weapons.secondary.replace("weapon_", "")}.svg") no-repeat center / contain`;
+        playerCard.m_weapon_secondary.m_image.src = `./assets/equipment/${playerData.m_weapons.secondary.replace("weapon_", "")}.svg`;
+    }
+    else
+    {
+        playerCard.m_weapon_secondary.m_element.style = `-webkit-mask: url("") no-repeat center / contain`;
+        playerCard.m_weapon_secondary.m_image.src = ``;
+    }
 
-    if (playerData.m_weapons.utility != undefined)
+    if (playerData.m_weapons != undefined && playerData.m_weapons.utility != undefined)
     {
         while (playerCard.m_utilities_container.firstChild)
         {
@@ -215,7 +231,7 @@ export const create_player_card = (player, playerData) => {
     playerCardObject.m_utilities_container.className = "player-card-row-utilities";
 
     // // Create utility elements (frag grenade in this case)
-    if (playerData.m_weapons.utility != undefined)
+    if (playerData.m_weapons != undefined && playerData.m_weapons.utility != undefined)
     {
         for (let i = 0; i < playerData.m_weapons.utility.length; i++) {
             const obj = { m_element: undefined, m_image: undefined };        

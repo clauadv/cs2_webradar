@@ -14,7 +14,7 @@ const web_socket_server = new WebSocketServer(
 web_socket_server.on("connection", (web_socket, request) =>
 {
     const client_address = request.socket.remoteAddress.replace("::ffff:", "");
-    if (client_address != "188.24.175.93") web_socket.close();
+    // if (client_address != "188.24.175.93") web_socket.close();
 
     LOG_INFO(`${client_address} connected`);
 
