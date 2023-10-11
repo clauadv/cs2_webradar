@@ -51,5 +51,10 @@ namespace cs2
 		{
 			return m_driver.read_t<cs2::e_color>(this + m_offsets.get_comp_teammate_color());
 		}
+
+		cs2::c_in_game_money_services* get_in_game_money_services()
+		{
+			return reinterpret_cast<cs2::c_in_game_money_services*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_in_game_money_services()));
+		}
 	};
 }

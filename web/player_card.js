@@ -2,7 +2,7 @@
 function setAndFormatStat(stat, value) {
     stat.textContent = value;
     let digit = stat.previousElementSibling;
-    if (stat.textContent > 10) {
+    if (stat.textContent >= 10) {
         digit.textContent = ""
     } else {
         digit.textContent = "0"
@@ -13,8 +13,50 @@ export const update_player_card = (player, playerData) => {
     let playerCard = player.m_player_card;
     playerCard.m_name_element.textContent = playerData.m_name;
 
+    if (playerData.m_has_helmet)
+    {
+        playerCard.m_armor_icon.style = `-webkit-mask: url("./assets/equipment/helmet.svg") no-repeat center / contain`;
+    }
+    else {
+        playerCard.m_armor_icon.style = `-webkit-mask: url("./assets/equipment/armor.svg") no-repeat center / contain`;
+    }
+
     playerCard.m_health_element.textContent = playerData.m_health;
     playerCard.m_armor_element.textContent = playerData.m_armor;
+    playerCard.m_money_element.textContent = playerData.m_money;
+
+    playerCard.m_weapon_primary.m_element.style = `-webkit-mask: url("./assets/equipment/${playerData.m_weapons.primary.replace("weapon_", "")}.svg") no-repeat center / contain`;
+    playerCard.m_weapon_primary.m_image.src = `./assets/equipment/${playerData.m_weapons.primary.replace("weapon_", "")}.svg`;
+
+    playerCard.m_weapon_secondary.m_element.style = `-webkit-mask: url("./assets/equipment/${playerData.m_weapons.secondary.replace("weapon_", "")}.svg") no-repeat center / contain`;
+    playerCard.m_weapon_secondary.m_image.src = `./assets/equipment/${playerData.m_weapons.secondary.replace("weapon_", "")}.svg`;
+
+    if (playerData.m_weapons.utility != undefined)
+    {
+        while (playerCard.m_utilities_container.firstChild)
+        {
+            playerCard.m_utilities_container.firstChild.remove();
+        }
+
+        for (let i = 0; i < playerData.m_weapons.utility.length; i++) {
+            const weapon = playerData.m_weapons.utility[i];
+
+            const obj = { m_element: undefined, m_image: undefined };        
+            obj.m_element = document.createElement("div");
+            obj.m_element.className = "player-card-weapons-utility";
+            obj.m_element.style = `-webkit-mask: url("./assets/equipment/${weapon.replace("weapon_", "")}.svg") no-repeat center / contain`;
+            obj.m_image = document.createElement("img");
+            obj.m_image.className = "player-card-img-utility";
+            obj.m_image.src = `./assets/equipment/${weapon.replace("weapon_", "")}.svg`;;
+            obj.m_element.appendChild(obj.m_image);
+            playerCard.m_utilities_container.appendChild(obj.m_element);
+        }
+    }
+    else {
+        if (playerCard.m_utilities_container.firstChild)
+            playerCard.m_utilities_container.firstChild.remove();
+    }
+
     setAndFormatStat(playerCard.m_stats[0].element, playerData.m_stats.kills);
     setAndFormatStat(playerCard.m_stats[1].element, playerData.m_stats.deaths);
     setAndFormatStat(playerCard.m_stats[2].element, playerData.m_stats.assists);
@@ -28,7 +70,12 @@ export const create_player_card = (player, playerData) => {
         m_name_element: undefined,
         m_health_element: undefined,
         m_armor_element: undefined,
+        m_armor_icon: undefined,
         m_money_element: undefined,
+        m_weapon_primary: [{ m_element: undefined }, { m_image: undefined }],
+        m_weapon_secondary: [{ m_element: undefined }, { m_image: undefined }],
+        m_weapon_utility: [],
+        m_utilities_container: undefined,
         m_stats: [{ displayName: "kills", element: undefined }, { displayName: "deaths", element: undefined }, { displayName: "assists", element: undefined }]
     };
 
@@ -37,7 +84,7 @@ export const create_player_card = (player, playerData) => {
 
     if (player.m_player_card.m_parent_element) {
         player.m_player_card.m_parent_element.destroy();
-        console.log("destroyed existing player card");
+        // console.log("destroyed existing player card");
     }
 
     // Create a new <li> element with class "player-card"
@@ -51,7 +98,6 @@ export const create_player_card = (player, playerData) => {
     // Create the player name element
     playerCardObject.m_name_element = document.createElement("div");
     playerCardObject.m_name_element.className = "player-card-name";
-    console.log(playerData);
     playerCardObject.m_name_element.textContent = "loading";
 
     // Create the vitals container
@@ -74,13 +120,13 @@ export const create_player_card = (player, playerData) => {
     // Create armor vital
     let armor = document.createElement("div");
     armor.className = "player-card-vital";
-    const armorIcon = document.createElement("div");
-    armorIcon.className = "masked-icon";
+    playerCardObject.m_armor_icon = document.createElement("div");
+    playerCardObject.m_armor_icon.className = "masked-icon";
     const armorImage = document.createElement("img");
     armorImage.className = "icon-image-for-mask";
     armorImage.src = "./assets/equipment/armor.svg";
-    armorIcon.appendChild(armorImage);
-    armor.appendChild(armorIcon);
+    playerCardObject.m_armor_icon.appendChild(armorImage);
+    armor.appendChild(playerCardObject.m_armor_icon);
     playerCardObject.m_armor_element = document.createTextNode("0");
     armor.appendChild(playerCardObject.m_armor_element);
 
@@ -98,7 +144,6 @@ export const create_player_card = (player, playerData) => {
     // Create the left column for money and stats
     const leftColumn = document.createElement("div");
     leftColumn.className = "player-card-column";
-
 
     // // Create money element
     const moneyElement = document.createElement("div");
@@ -150,40 +195,44 @@ export const create_player_card = (player, playerData) => {
     rightColumn.className = "player-card-column player-card-column-right";
 
     // // Create primary weapon element
-    const primaryWeapon = document.createElement("div");
-    primaryWeapon.className = "player-card-weapons-primary";
-    const primaryWeaponImage = document.createElement("img");
-    primaryWeaponImage.className = "player-card-img-primary";
-    primaryWeaponImage.src = "./assets/equipment/ak47.svg";
-    primaryWeapon.appendChild(primaryWeaponImage);
+    playerCardObject.m_weapon_primary.m_element = document.createElement("div");
+    playerCardObject.m_weapon_primary.m_element.className = "player-card-weapons-primary";
+    playerCardObject.m_weapon_primary.m_image = document.createElement("img");
+    playerCardObject.m_weapon_primary.m_image.className = "player-card-img-primary";
+    playerCardObject.m_weapon_primary.m_image.src = "./assets/equipment/ak47.svg";
+    playerCardObject.m_weapon_primary.m_element.appendChild(playerCardObject.m_weapon_primary.m_image);
 
     // // Create secondary weapon element
-    const secondaryWeapon = document.createElement("div");
-    secondaryWeapon.className = "player-card-weapons-secondary";
-    const secondaryWeaponImage = document.createElement("img");
-    secondaryWeaponImage.className = "player-card-img-secondary";
-    secondaryWeaponImage.src = "./assets/equipment/usp_silencer.svg";
-    secondaryWeapon.appendChild(secondaryWeaponImage);
+    playerCardObject.m_weapon_secondary.m_element = document.createElement("div");
+    playerCardObject.m_weapon_secondary.m_element.className = "player-card-weapons-secondary";
+    playerCardObject.m_weapon_secondary.m_image = document.createElement("img");
+    playerCardObject.m_weapon_secondary.m_image.className = "player-card-img-secondary";
+    playerCardObject.m_weapon_secondary.m_image.src = "./assets/equipment/usp_silencer.svg";
+    playerCardObject.m_weapon_secondary.m_element.appendChild(playerCardObject.m_weapon_secondary.m_image);
 
     // // Create utilities container
-    const utilitiesContainer = document.createElement("div");
-    utilitiesContainer.className = "player-card-row-utilities";
+    playerCardObject.m_utilities_container = document.createElement("div");
+    playerCardObject.m_utilities_container.className = "player-card-row-utilities";
 
     // // Create utility elements (frag grenade in this case)
-    for (let i = 0; i < 5; i++) {
-        const utility = document.createElement("div");
-        utility.className = "player-card-weapons-utility";
-        const utilityImage = document.createElement("img");
-        utilityImage.className = "player-card-img-utility";
-        utilityImage.src = "./assets/equipment/frag_grenade.svg";
-        utility.appendChild(utilityImage);
-        utilitiesContainer.appendChild(utility);
+    if (playerData.m_weapons.utility != undefined)
+    {
+        for (let i = 0; i < playerData.m_weapons.utility.length; i++) {
+            const obj = { m_element: undefined, m_image: undefined };        
+            obj.m_element = document.createElement("div");
+            obj.m_element.className = "player-card-weapons-utility";
+            obj.m_image = document.createElement("img");
+            obj.m_image.className = "player-card-img-utility";
+            obj.m_image.src = "./assets/equipment/frag_grenade.svg";
+            obj.m_element.appendChild(obj.m_image);
+            playerCardObject.m_utilities_container.appendChild(obj.m_element);
+        }
     }
 
     // // Append primary weapon, secondary weapon, and utilities container to the right column
-    rightColumn.appendChild(primaryWeapon);
-    rightColumn.appendChild(secondaryWeapon);
-    rightColumn.appendChild(utilitiesContainer);
+    rightColumn.appendChild(playerCardObject.m_weapon_primary.m_element);
+    rightColumn.appendChild(playerCardObject.m_weapon_secondary.m_element);
+    rightColumn.appendChild(playerCardObject.m_utilities_container);
 
     // // Append left column and right column to the second row
     secondRow.appendChild(leftColumn);

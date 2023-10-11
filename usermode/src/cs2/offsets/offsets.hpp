@@ -31,6 +31,7 @@ namespace cs2
 		std::uint64_t m_kills{ 0 };
 		std::uint64_t m_deaths{ 0 };
 		std::uint64_t m_assists{ 0 };
+		std::uint64_t m_in_game_money_services{ 0 };
 
 	public:
 		c_offsets()
@@ -91,6 +92,7 @@ namespace cs2
 			this->m_kills = data["CSPerRoundStats_t"]["m_iKills"];
 			this->m_deaths = data["CSPerRoundStats_t"]["m_iDeaths"];
 			this->m_assists = data["CSPerRoundStats_t"]["m_iAssists"];
+			this->m_in_game_money_services = data["CCSPlayerController"]["m_pInGameMoneyServices"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_player_pawn -> 0x%llx", this->m_player_pawn);
@@ -114,7 +116,8 @@ namespace cs2
 			LOG_INFO("this->m_match_stats -> 0x%llx", this->m_match_stats);
 			LOG_INFO("this->m_kills -> 0x%llx", this->m_kills);
 			LOG_INFO("this->m_deaths -> 0x%llx", this->m_deaths);
-			LOG_INFO("this->m_assists -> 0x%llx \n", this->m_assists);
+			LOG_INFO("this->m_assists -> 0x%llx", this->m_assists);
+			LOG_INFO("this->m_in_game_money_services -> 0x%llx \n", this->m_in_game_money_services);
 		#endif
 
 			this->m_initialized = true;
@@ -150,6 +153,7 @@ namespace cs2
 		std::uint64_t get_kills() { return this->m_kills; }
 		std::uint64_t get_deaths() { return this->m_deaths; }
 		std::uint64_t get_assists() { return this->m_assists; }
+		std::uint64_t get_in_game_money_services() { return this->m_in_game_money_services; }
 	};
 }
 inline cs2::c_offsets m_offsets{};

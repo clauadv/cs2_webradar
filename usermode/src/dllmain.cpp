@@ -51,6 +51,7 @@ bool main()
 				continue;
 
 			nlohmann::json data{};
+			data["players"] = nlohmann::json::array();
 			data["m_map"] = global_vars->get_map_name();
 
 			nlohmann::json local_player_data{};
@@ -61,7 +62,7 @@ bool main()
 			if (!entity_list)
 				continue;
 
-			for (std::size_t idx{ 0 }; idx < 32; idx++)
+			for (std::size_t idx{ 0 }; idx < 64 && global_vars->get_map_name().compare("invalid"); idx++)
 			{
 				const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
 				if (!entity)
@@ -75,18 +76,11 @@ bool main()
 				if (!player)
 					continue;
 
-				const auto weapon_services = player->get_weapon_services();
-				if (!weapon_services)
-					continue;
-
-				const auto my_weapons = weapon_services->get_my_weapons();
-				if (!my_weapons.first)
-					continue;
-
 				const auto name = reinterpret_cast<cs2::c_base_player*>(entity)->get_name();
 				const auto color = entity->get_color();
 				const auto health = player->get_health();
 				const auto armor = player->get_armor();
+				const auto has_helmet = entity->has_helmet();
 				const auto position = player->get_position();
 				const auto eye_angles = player->get_eye_angles().normalize();
 				const auto team = player->get_team();
@@ -98,27 +92,70 @@ bool main()
 				player_data["data"]["m_color"] = color;
 				player_data["data"]["m_health"] = health;
 				player_data["data"]["m_armor"] = armor;
+				player_data["data"]["m_has_helmet"] = has_helmet;
 				player_data["data"]["m_position"]["x"] = position.x;
 				player_data["data"]["m_position"]["y"] = position.y;
 				player_data["data"]["m_eye_angle"] = eye_angles.y;
 				player_data["data"]["m_team"] = team;
 				player_data["data"]["m_is_dead"] = is_dead;
 
-				for (std::size_t idx{ 0 }; idx < my_weapons.first; idx++)
+				[&]()
 				{
-					const auto weapon = my_weapons.second->get(entity_list, idx);
-					if (!weapon)
-						continue;
+					const auto in_game_money_services = entity->get_in_game_money_services();
+					if (!in_game_money_services)
+						return;
 
-					const auto weapon_data = weapon->get_data();
-					if (!weapon_data)
-						continue;
+					const auto money = in_game_money_services->get_money();
+					player_data["data"]["m_money"] = money;
+				}();
 
-					const auto weapon_type = weapon_data->get_id();
-					const auto weapon_name = weapon->get_name();
+				[&]()
+				{
+					const auto weapon_services = player->get_weapon_services();
+					if (!weapon_services)
+						return;
 
-					// LOG_INFO("weapon_name -> %s (%d) %s", weapon_name.data(), weapon_type, ((idx == my_weapons.first - 1) ? "\n" : ""));
-				}
+					const auto my_weapons = weapon_services->get_my_weapons();
+					if (!my_weapons.first)
+						return;
+
+					for (std::size_t idx{ 0 }; idx < my_weapons.first; idx++)
+					{
+						const auto weapon = my_weapons.second->get(entity_list, idx);
+						if (!weapon)
+							continue;
+
+						const auto weapon_data = weapon->get_data();
+						if (!weapon_data)
+							continue;
+
+						const auto weapon_type = weapon_data->get_id();
+						const auto weapon_name = weapon->get_name();
+
+						switch (weapon_type)
+						{
+							case cs2::e_weapon_type::submachine_gun:
+							case cs2::e_weapon_type::rifle:
+							case cs2::e_weapon_type::shotgun:
+							case cs2::e_weapon_type::sniper_rifle:
+							case cs2::e_weapon_type::machine_gun:
+								player_data["data"]["m_weapons"]["primary"] = weapon_name;
+								break;
+
+							case cs2::e_weapon_type::pistol:
+								player_data["data"]["m_weapons"]["secondary"] = weapon_name;
+								break;
+
+							case cs2::e_weapon_type::c4:
+							case cs2::e_weapon_type::taser:
+							case cs2::e_weapon_type::grenade:
+								player_data["data"]["m_weapons"]["utility"].push_back(weapon_name);
+								break;
+						}
+
+						LOG_INFO("weapon_name -> %s (%d) %s", weapon_name.data(), weapon_type, ((idx == my_weapons.first - 1) ? "\n" : ""));
+					}
+				}();
 
 				[&]()
 				{
@@ -137,11 +174,15 @@ bool main()
 					// LOG_INFO("kills: %d, deaths: %d, assists: %d", kills, deaths, assists);
 				}();
 
-				data["players"].push_back(player_data);
+				if (!player_data.empty())
+				{
+					data["players"].push_back(player_data);
+				}
 
 				// LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
+			// LOG_INFO("%s", data.dump().c_str());
 			web_socket->send(data.dump());
 		}
 

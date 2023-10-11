@@ -3,7 +3,7 @@ import { create_player_card, update_player_card } from "./player_card.js"
 const USE_NEW_DESIGN = true;
 
 export const globals =
-{   
+{
     ui_container_element: null,
     map:
     {
@@ -20,7 +20,8 @@ export const globals =
         m_last_time: new Date().getTime(),
         m_average_time: 0,
         m_average_calc: 0,
-        m_data_count: 0
+        m_data_count: 0,
+        m_is_connected: false
     },
 
     local_player:
@@ -46,9 +47,9 @@ const draw_latency = async () => {
         globals.latency.m_average_time = diff_in_ms;
     }
 
-    if (globals.map.m_current == "invalid")
+    if (!globals.latency.m_is_connected)
         globals.latency.m_html.innerText = "not connected";
-    else 
+    else
         globals.latency.m_html.innerText = `${globals.latency.m_average_time}ms`;
 
     if (globals.latency.m_average_calc >= 10) {
@@ -70,11 +71,13 @@ const setup_connection = async () => {
 
     web_socket.onopen = async () => {
         LOG_INFO("connected to the web socket");
-        on_map_change();
+        globals.latency.m_is_connected = true;
+        await on_map_change();
     }
 
     web_socket.onclose = async () => {
         LOG_ERROR("disconnected from the web socket");
+        globals.latency.m_is_connected = false;
     }
 
     web_socket.onerror = async (error) => {
@@ -122,7 +125,7 @@ const calculate_rotation = (view_angle, player) => {
     return player.m_rotation;
 }
 
-const add_player = (idx) => {
+const add_player = (idx, data) => {
     const div = document.createElement("div");
     div.classList.add("player");
 
@@ -131,28 +134,31 @@ const add_player = (idx) => {
 
     div.appendChild(angle);
 
+    // console.log(`added player with idx ${idx}`)
 
     globals.m_players[idx] =
     {
+        m_idx: idx,
         m_html: div,
         m_player_card: null,
-        m_angle_html: angle
+        m_angle_html: angle,
+        m_last_time: new Date().getTime(),
     };
 
-    let playerCard = create_player_card(globals.m_players[idx], globals.m_players);
+    let playerCard = create_player_card(globals.m_players[idx], data);
 
     globals.m_players[idx].m_player_card = playerCard;
-
-    console.log(globals.m_players[idx]);
 
     globals.map.m_div.appendChild(globals.m_players[idx].m_html);
 }
 
 const update_player = (idx, data) => {
     if (!globals.m_players[idx]) {
-        add_player(idx);
+        add_player(idx, data);
         return;
     }
+
+    // console.log(`updated player with idx ${idx}`)
 
     if (data.m_team == 2 && (globals.m_players[idx].m_player_card.m_parent_element.getAttribute("data-team") != data.m_team)) {
         globals.m_terro_div.appendChild(globals.m_players[idx].m_player_card.m_parent_element);
@@ -191,9 +197,32 @@ const update_player = (idx, data) => {
 }
 
 const on_map_change = async () => {
+    if (globals.map.m_current == "invalid")
+    {
+        document.getElementsByClassName("awaiting")[0].style.display = "block";
+        globals.map.m_image.style.display = "none";
+
+        document.body.style.backgroundImage = "url()";
+
+        while (globals.m_counter_div.firstChild)
+        {
+            globals.m_counter_div.firstChild.remove();
+        }
+
+        while (globals.m_terro_div.firstChild)
+        {
+            globals.m_terro_div.firstChild.remove();
+        }
+
+        return;
+    }
+
+    document.getElementsByClassName("awaiting")[0].style.display = "none";
     globals.map.m_image.src = `data/${globals.map.m_current}/radar.png`;
     globals.map.m_image.classList.add("radar__image");
     globals.map.m_data = await (await fetch(`data/${globals.map.m_current}/data.json`)).json();
+    globals.map.m_image.style.display = "flex";
+    document.body.style.backgroundImage = `url(./data/${globals.map.m_current}/background.png)`;
     LOG_INFO(`changed map to ${globals.map.m_current}`);
 }
 
@@ -238,7 +267,21 @@ const update_radar = async (data) => {
     data.players.forEach(player => update_player(player.m_idx, player.data));
 
     const current_time = new Date().getTime();
-    globals.m_players.filter(player => (current_time - player.m_last_time) / 1000 >= 1).forEach(player => player.m_html.remove());
+
+    for (var i = 0; i < globals.m_players.length; i++)
+    {
+        const player = globals.m_players[i];
+        if (player == undefined)
+            continue;
+
+        if ((current_time - player.m_last_time) / 1000 >= 1)
+        {
+            console.log(`removed ${i}`)
+            globals.m_players[i].m_html.remove();
+            globals.m_players[i].m_player_card.m_parent_element.remove();
+            globals.m_players[i] = undefined;
+        }
+    }
 }
 
 const dom_content_loaded = async () => {
@@ -260,7 +303,7 @@ const dom_content_loaded = async () => {
 
     latency_container.appendChild(latency_icon);
     latency_container.appendChild(globals.latency.m_html);
-    
+
     globals.ui_container_element.appendChild(latency_container);
 
     await setup_connection();

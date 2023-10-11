@@ -13,7 +13,7 @@
     --text-secondary: hsla(206, 35%, 55%, 1);
 }
 
-html, body {   
+body {   
     margin: 0;
     font-family: "TASAOrbiter";
     color: var(--text-normal);
@@ -73,8 +73,15 @@ li {
     width: 1rem;
     height: 1rem;
     background-color: var(--text-secondary); /* defines the background color of the image */
-    mask: url("./assets/equipment/armor.svg") no-repeat center / contain;
-    -webkit-mask: url("./assets/equipment/armor.svg") no-repeat center / contain;
+}
+
+.awaiting {
+    font-family: "TASAExplorer";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    display: none;
 }
 
 .icon-image-for-mask {
@@ -82,7 +89,6 @@ li {
     height: auto;
     opacity: 0;
 }
-
 
 .players-list {
     display: flex;
