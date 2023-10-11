@@ -34,7 +34,7 @@ bool main()
 	{
 		const auto now = std::chrono::system_clock::now();
 		const auto duration = now - start;
-		if (duration > std::chrono::milliseconds(100))
+		if (duration > std::chrono::milliseconds(25))
 		{
 			start = now;
 
@@ -81,6 +81,7 @@ bool main()
 				const auto health = player->get_health();
 				const auto armor = player->get_armor();
 				const auto has_helmet = entity->has_helmet();
+				const auto has_defuser = entity->has_defuser();
 				const auto position = player->get_position();
 				const auto eye_angles = player->get_eye_angles().normalize();
 				const auto team = player->get_team();
@@ -93,6 +94,7 @@ bool main()
 				player_data["data"]["m_health"] = health;
 				player_data["data"]["m_armor"] = armor;
 				player_data["data"]["m_has_helmet"] = has_helmet;
+				player_data["data"]["m_has_defuser"] = has_defuser;
 				player_data["data"]["m_position"]["x"] = position.x;
 				player_data["data"]["m_position"]["y"] = position.y;
 				player_data["data"]["m_eye_angle"] = eye_angles.y;
@@ -107,6 +109,22 @@ bool main()
 
 					const auto money = in_game_money_services->get_money();
 					player_data["data"]["m_money"] = money;
+				}();
+
+				[&]()
+				{
+					const auto weapon_services = player->get_weapon_services();
+					if (!weapon_services)
+						return;
+
+					const auto active_weapon = weapon_services->get_active_weapon(entity_list);
+					if (!active_weapon)
+						return;
+
+					auto weapon_name = active_weapon->get_name();
+					weapon_name.erase(weapon_name.begin(), weapon_name.begin() + 7);
+
+					player_data["data"]["m_weapons"]["m_active"] = weapon_name;
 				}();
 
 				[&]()
@@ -130,7 +148,13 @@ bool main()
 							continue;
 
 						const auto weapon_type = weapon_data->get_id();
-						const auto weapon_name = weapon->get_name();
+						auto weapon_name = weapon->get_name();
+						weapon_name.erase(weapon_name.begin(), weapon_name.begin() + 7);
+
+						if (weapon_name.find("taser") != std::string::npos)
+						{
+							player_data["data"]["m_weapons"]["utility"].push_back(weapon_name);
+						}
 
 						switch (weapon_type)
 						{
@@ -179,7 +203,7 @@ bool main()
 					data["players"].push_back(player_data);
 				}
 
-				LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
+				// LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
 			// LOG_INFO("%s", data.dump().c_str());
