@@ -20,7 +20,7 @@ namespace cs2
 			if (!designer_name)
 				return "invalid";
 
-			const auto name = m_driver.read_string(designer_name, 32);
+			const auto name = m_driver.read_t<std::string>(designer_name);
 			if (name.empty())
 				return "invalid";
 

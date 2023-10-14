@@ -1,3 +1,5 @@
+import { createEffect, createSignal } from "solid-js";
+
 const get_color = (color) => {
     let new_color = "#f7d622";
 
@@ -24,7 +26,7 @@ const get_color = (color) => {
     return new_color;
 }
 
-export const Mot = (props) => {
+export const Player = (props) => {
     const { data, map_data, radar_img, local_team } = props;
 
     const samp = get_radar_position(map_data, data.m_position);
@@ -43,7 +45,7 @@ export const Mot = (props) => {
         <div className="player" style={
             `transform: translate(${image_translation.x}px, ${image_translation.y}px);
              background-color: ${data.m_team == local_team && get_color(data.m_color) || `red`};
-             opacity: ${(data.m_is_dead || (samp.x <= 0 && samp.y <= 0)) && `0` || `1`}`
+             opacity: ${(data.m_is_dead || (samp.x <= 0 && samp.y <= 0)) && `0` || `1;`}`
         }>
             <div className="player__angle"></div>
         </div>
@@ -79,7 +81,7 @@ export const Radar = (props) => {
             <img ref={radar_img} class="radar-image" src={image} />
 
             <For each={players()}>{(player) =>
-                <Mot data={player.data} map_data={map_data} radar_img={radar_img} local_team={local_team()}></Mot>
+                <Player data={player.data} map_data={map_data} radar_img={radar_img} local_team={local_team()}></Player>
             }</For>
         </div >
     )

@@ -19,7 +19,7 @@ namespace cs2
 			if (!sanitized_player_name)
 				return "invalid";
 
-			auto player_name = m_driver.read_string(sanitized_player_name, 32);
+			auto player_name = m_driver.read_t<std::string>(sanitized_player_name);
 			if (player_name.empty())
 				return "invalid";
 
@@ -59,6 +59,19 @@ namespace cs2
 		cs2::c_player_weapon_services* get_weapon_services()
 		{
 			return m_driver.read_t<cs2::c_player_weapon_services*>(this + m_offsets.get_weapon_services());
+		}
+
+		std::string get_model_path()
+		{
+			const auto model_name_ptr = m_driver.read_t<std::uint64_t>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_game_scene_node()) + m_offsets.get_model_state() + m_offsets.get_model_name());
+			if (!model_name_ptr)
+				return "invalid";
+
+			const auto model_name = m_driver.read_t<std::string>(model_name_ptr);
+			if (model_name.empty())
+				return "invalid";
+
+			return model_name;
 		}
 	};
 }

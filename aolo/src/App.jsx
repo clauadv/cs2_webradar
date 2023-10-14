@@ -1,4 +1,5 @@
 import { createEffect, createSignal, onMount } from 'solid-js'
+import { render } from 'solid-js/web'
 import './App.css'
 import { PlayerCard } from "./PlayerCard";
 import { Radar } from "./Radar";
@@ -63,4 +64,4 @@ const App = () => {
 	)
 }
 
-export default App
+render(() => <App />, document.getElementById('root'));

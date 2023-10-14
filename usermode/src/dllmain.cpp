@@ -59,6 +59,25 @@ bool main()
 			if (!entity_list)
 				continue;
 
+			for (std::size_t idx{ 0 }; idx < 1024 && global_vars->get_map_name().compare("invalid"); idx++)
+			{
+				const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
+				if (!entity)
+					continue;
+
+				const auto name = entity->get_name();
+				if (!name.contains("c4"))
+					continue;
+
+				const auto game_scene_node = m_driver.read_t<std::uint64_t>(entity + 0x310);
+				const auto vec_abs_origin = m_driver.read_t<math::fvector3>(game_scene_node + 0xc8);
+
+				LOG_INFO("vec_abs_origin -> (%f, %f)", vec_abs_origin.x, vec_abs_origin.y);
+
+				data["bomb"]["x"] = vec_abs_origin.x;
+				data["bomb"]["y"] = vec_abs_origin.y;
+			}
+
 			for (std::size_t idx{ 0 }; idx < 64 && global_vars->get_map_name().compare("invalid"); idx++)
 			{
 				const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
@@ -73,6 +92,12 @@ bool main()
 				if (!player)
 					continue;
 
+				[&]()
+				{
+					const auto model_path = player->get_model_path();
+					LOG_INFO("model_path -> %s", model_path.data());
+				}();
+
 				const auto item_services = player->get_item_services();
 				if (!item_services)
 					continue;
@@ -84,6 +109,7 @@ bool main()
 				const auto has_helmet = item_services->has_helmet();
 				const auto has_defuser = item_services->has_defuser();
 				const auto position = player->get_position();
+
 				const auto eye_angles = player->get_eye_angles().normalize();
 				const auto team = player->get_team();
 				const auto is_dead = player->is_dead();
@@ -98,6 +124,7 @@ bool main()
 				player_data["data"]["m_has_defuser"] = has_defuser;
 				player_data["data"]["m_position"]["x"] = position.x;
 				player_data["data"]["m_position"]["y"] = position.y;
+				player_data["data"]["m_position"]["z"] = position.z;
 				player_data["data"]["m_eye_angle"] = eye_angles.y;
 				player_data["data"]["m_team"] = team;
 				player_data["data"]["m_is_dead"] = is_dead;
@@ -157,6 +184,15 @@ bool main()
 							player_data["data"]["m_weapons"]["utility"].push_back(weapon_name);
 						}
 
+						if (weapon_name.find("c4") != std::string::npos)
+						{
+							player_data["data"]["bomb_carrier"] = true;
+						}
+						else
+						{
+							player_data["data"]["bomb_carrier"] = false;
+						}
+
 						switch (weapon_type)
 						{
 							case cs2::e_weapon_type::submachine_gun:
@@ -204,7 +240,7 @@ bool main()
 					data["players"].push_back(player_data);
 				}
 
-				LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
+				 // LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
 			// LOG_INFO("%s", data.dump().c_str());

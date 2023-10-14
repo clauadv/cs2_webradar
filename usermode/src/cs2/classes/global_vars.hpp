@@ -12,7 +12,7 @@ namespace cs2
 			if (!current_map_name)
 				return "invalid";
 
-			const auto map_name = m_driver.read_string(current_map_name, 32);
+			const auto map_name = m_driver.read_t<std::string>(current_map_name);
 			if (map_name.empty() || map_name.contains("<empty>"))
 				return "invalid";
 
