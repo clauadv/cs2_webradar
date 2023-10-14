@@ -38,7 +38,7 @@ namespace cs2
 
 		cs2::e_team get_team()
 		{
-			return static_cast<cs2::e_team>(m_driver.read_t<int>(this + m_offsets.get_team_num()));
+			return m_driver.read_t<cs2::e_team>(this + m_offsets.get_team_num());
 		}
 
 		math::fvector3 get_position()
@@ -58,7 +58,7 @@ namespace cs2
 
 		cs2::c_player_weapon_services* get_weapon_services()
 		{
-			return reinterpret_cast<cs2::c_player_weapon_services*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_weapon_services()));
+			return m_driver.read_t<cs2::c_player_weapon_services*>(this + m_offsets.get_weapon_services());
 		}
 	};
 }

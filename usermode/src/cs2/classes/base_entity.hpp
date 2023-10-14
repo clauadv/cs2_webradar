@@ -29,22 +29,12 @@ namespace cs2
 
 		cs2::c_action_tracking_services* get_action_tracking_services()
 		{
-			return reinterpret_cast<cs2::c_action_tracking_services*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_action_tracking_services()));
+			return m_driver.read_t<cs2::c_action_tracking_services*>(this + m_offsets.get_action_tracking_services());
 		}
 
 		std::uint64_t get_pawn()
 		{
 			return m_driver.read_t<std::uint64_t>(this + m_offsets.get_player_pawn());
-		}
-
-		bool has_defuser()
-		{
-			return m_driver.read_t<bool>(this + m_offsets.get_has_defuser());
-		}
-
-		bool has_helmet()
-		{
-			return m_driver.read_t<bool>(this + m_offsets.get_has_helmet());
 		}
 
 		cs2::e_color get_color()
@@ -54,7 +44,12 @@ namespace cs2
 
 		cs2::c_in_game_money_services* get_in_game_money_services()
 		{
-			return reinterpret_cast<cs2::c_in_game_money_services*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_in_game_money_services()));
+			return m_driver.read_t<cs2::c_in_game_money_services*>(this + m_offsets.get_in_game_money_services());
+		}
+
+		cs2::c_item_services* get_item_services()
+		{
+			return m_driver.read_t<cs2::c_item_services*>(this + m_offsets.get_item_services());
 		}
 	};
 }

@@ -16,7 +16,7 @@ namespace cs2
 			if (!controller)
 				return nullptr;
 
-			return reinterpret_cast<T>(m_driver.read_t<std::uint64_t>(controller));
+			return m_driver.read_t<T>(controller);
 		}
 	};
 }

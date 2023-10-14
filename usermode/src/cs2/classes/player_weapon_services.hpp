@@ -11,7 +11,7 @@ namespace cs2
 			return
 			{
 				m_driver.read_t<int>(this + m_offsets.get_my_weapons()),
-				reinterpret_cast<cs2::c_base_player_weapon*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_my_weapons() + 0x08))
+				m_driver.read_t<cs2::c_base_player_weapon*>(this + m_offsets.get_my_weapons() + 0x08)
 			};
 		}
 

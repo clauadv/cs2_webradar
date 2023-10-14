@@ -16,6 +16,7 @@ namespace cs2
 		std::uint64_t m_old_origin{ 0 };
 		std::uint64_t m_sanitized_player_name{ 0 };
 		std::uint64_t m_comp_teammate_color{ 0 };
+		std::uint64_t m_item_services{ 0 };
 		std::uint64_t m_has_defuser{ 0 };
 		std::uint64_t m_has_helmet{ 0 };
 		std::uint64_t m_ang_eye_angles{ 0 };
@@ -38,7 +39,7 @@ namespace cs2
 		{
 			nlohmann::json data{};
 
-			std::ifstream offsets_json{ "offsets.json" };
+			/*std::ifstream offsets_json{ "offsets.json" };
 			if (!offsets_json.good())
 			{
 				LOG_ERROR("failed to open offsets.json");
@@ -46,11 +47,11 @@ namespace cs2
 				return;
 			}
 
-			offsets_json >> data;
+			offsets_json >> data;*/
 
-			this->m_entity_list = data["client_dll"]["entityList"];
-			this->m_global_vars = data["client_dll"]["globalVars"];
-			this->m_local_player_pawn = data["client_dll"]["localPlayerPawn"];
+			this->m_entity_list = 0x178fc88;// data["client_dll"]["entityList"];
+			this->m_global_vars = 0x1692ee8; // data["client_dll"]["globalVars"];
+			this->m_local_player_pawn = 0x187cfc8; // data["client_dll"]["localPlayerPawn"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_entity_list -> 0x%llx", this->m_entity_list);
@@ -77,8 +78,9 @@ namespace cs2
 			this->m_old_origin = data["C_BasePlayerPawn"]["m_vOldOrigin"];
 			this->m_sanitized_player_name = data["CCSPlayerController"]["m_sSanitizedPlayerName"];
 			this->m_comp_teammate_color = data["CCSPlayerController"]["m_iCompTeammateColor"];
-			this->m_has_defuser = data["CCSPlayerController"]["m_bPawnHasDefuser"];
-			this->m_has_helmet = data["CCSPlayerController"]["m_bPawnHasHelmet"];
+			this->m_item_services = data["C_BasePlayerPawn"]["m_pItemServices"];
+			this->m_has_defuser = data["CCSPlayer_ItemServices"]["m_bHasDefuser"];
+			this->m_has_helmet = data["CCSPlayer_ItemServices"]["m_bHasHelmet"];
 			this->m_ang_eye_angles = data["C_CSPlayerPawnBase"]["m_angEyeAngles"];
 			this->m_weapon_services = data["C_BasePlayerPawn"]["m_pWeaponServices"];
 			this->m_my_weapons = data["CPlayer_WeaponServices"]["m_hMyWeapons"];
@@ -102,6 +104,7 @@ namespace cs2
 			LOG_INFO("this->m_old_origin -> 0x%llx", this->m_old_origin);
 			LOG_INFO("this->m_sanitized_player_name -> 0x%llx", this->m_sanitized_player_name);
 			LOG_INFO("this->m_comp_teammate_color -> 0x%llx", this->m_comp_teammate_color);
+			LOG_INFO("this->m_item_services -> 0x%llx", this->m_item_services);
 			LOG_INFO("this->m_has_defuser -> 0x%llx", this->m_has_defuser);
 			LOG_INFO("this->m_has_helmet -> 0x%llx", this->m_has_helmet);
 			LOG_INFO("this->m_ang_eye_angles -> 0x%llx", this->m_ang_eye_angles);
@@ -138,6 +141,7 @@ namespace cs2
 		std::uint64_t get_old_origin() { return this->m_old_origin; }
 		std::uint64_t get_sanitized_player_name() { return this->m_sanitized_player_name; }
 		std::uint64_t get_comp_teammate_color() { return this->m_comp_teammate_color; }
+		std::uint64_t get_item_services() { return this->m_item_services; }
 		std::uint64_t get_has_defuser() { return this->m_has_defuser; }
 		std::uint64_t get_has_helmet() { return this->m_has_helmet; }
 		std::uint64_t get_ang_eye_angles() { return this->m_ang_eye_angles; }

@@ -34,7 +34,7 @@ bool main()
 	{
 		const auto now = std::chrono::system_clock::now();
 		const auto duration = now - start;
-		if (duration > std::chrono::milliseconds(25))
+		if (duration > std::chrono::milliseconds(16))
 		{
 			start = now;
 
@@ -52,11 +52,8 @@ bool main()
 
 			nlohmann::json data{};
 			data["players"] = nlohmann::json::array();
+			data["m_local_team"] = local_team;
 			data["m_map"] = global_vars->get_map_name();
-
-			nlohmann::json local_player_data{};
-			local_player_data["m_team"] = local_team;
-			data["local_player"].push_back(local_player_data);
 
 			const auto entity_list = m_cs2.get_entity_list();
 			if (!entity_list)
@@ -76,12 +73,16 @@ bool main()
 				if (!player)
 					continue;
 
+				const auto item_services = player->get_item_services();
+				if (!item_services)
+					continue;
+
 				const auto name = reinterpret_cast<cs2::c_base_player*>(entity)->get_name();
 				const auto color = entity->get_color();
 				const auto health = player->get_health();
 				const auto armor = player->get_armor();
-				const auto has_helmet = entity->has_helmet();
-				const auto has_defuser = entity->has_defuser();
+				const auto has_helmet = item_services->has_helmet();
+				const auto has_defuser = item_services->has_defuser();
 				const auto position = player->get_position();
 				const auto eye_angles = player->get_eye_angles().normalize();
 				const auto team = player->get_team();
@@ -203,7 +204,7 @@ bool main()
 					data["players"].push_back(player_data);
 				}
 
-				// LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
+				LOG_INFO("name -> %s | color: %d, position: (%f, %f, %f), eye_angle: %f, team: %d, is_dead: %d", name.data(), color, position.x, position.y, position.z, eye_angles.y, team, is_dead);
 			}
 
 			// LOG_INFO("%s", data.dump().c_str());

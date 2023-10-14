@@ -40,17 +40,17 @@ namespace usermode
 
 		cs2::c_base_player* get_local_player()
 		{
-			return reinterpret_cast<cs2::c_base_player*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_local_player_pawn()));
+			return m_driver.read_t<cs2::c_base_player*>(this->m_client_dll + m_offsets.get_local_player_pawn());
 		}
 
 		cs2::c_global_vars* get_global_vars()
 		{
-			return reinterpret_cast<cs2::c_global_vars*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_global_vars()));
+			return m_driver.read_t<cs2::c_global_vars*>(this->m_client_dll + m_offsets.get_global_vars());
 		}
 
 		cs2::c_entity_list* get_entity_list()
 		{
-			return reinterpret_cast<cs2::c_entity_list*>(m_driver.read_t<std::uint64_t>(this->m_client_dll + m_offsets.get_entity_list()));
+			return m_driver.read_t<cs2::c_entity_list*>(this->m_client_dll + m_offsets.get_entity_list());
 		}
 	};
 }

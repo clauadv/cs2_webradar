@@ -17,7 +17,7 @@ namespace cs2
 		cs2::c_weapon_base_data* get_data()
 		{
 			// @NOTE: https://www.unknowncheats.me/forum/3878143-post6.html
-			return reinterpret_cast<cs2::c_weapon_base_data*>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_subclass_id() + 0x08));
+			return m_driver.read_t<cs2::c_weapon_base_data*>(this + m_offsets.get_subclass_id() + 0x08);
 		}
 	};
 }
