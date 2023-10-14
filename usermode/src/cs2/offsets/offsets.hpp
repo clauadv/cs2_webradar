@@ -42,7 +42,7 @@ namespace cs2
 		{
 			nlohmann::json data{};
 
-			/*std::ifstream offsets_json{ "offsets.json" };
+			std::ifstream offsets_json{ "offsets.json" };
 			if (!offsets_json.good())
 			{
 				LOG_ERROR("failed to open offsets.json");
@@ -50,11 +50,11 @@ namespace cs2
 				return;
 			}
 
-			offsets_json >> data;*/
+			offsets_json >> data;
 
-			this->m_entity_list = 0x178fc88;// data["client_dll"]["entityList"];
-			this->m_global_vars = 0x1692ee8; // data["client_dll"]["globalVars"];
-			this->m_local_player_pawn = 0x187cfc8; // data["client_dll"]["localPlayerPawn"];
+			this->m_entity_list = data["client_dll"]["dwEntityList"];
+			this->m_global_vars = data["client_dll"]["dwGlobalVars"];
+			this->m_local_player_pawn = data["client_dll"]["dwLocalPlayerPawn"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_entity_list -> 0x%llx", this->m_entity_list);

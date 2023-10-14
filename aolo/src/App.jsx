@@ -50,7 +50,7 @@ const App = () => {
 					<Radar players={players} image={`./data/${mapData().name}/radar.png`} map_data={mapData} local_team={localTeam}></Radar>
 				) || (
 					<div id="radar" class="radar">
-						<h1>Waiting for map</h1>
+						<h1>Waiting for data</h1>
 					</div>
 				)
 			}

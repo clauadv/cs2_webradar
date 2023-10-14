@@ -236,8 +236,8 @@ li {
 
 .player
 {
-  width: 1vw;
-  height: 1vw;
+  width: 0.8vw;
+  height: 0.8vw;
   position: absolute;
   border-radius: 100%;
   transform-origin: center;
