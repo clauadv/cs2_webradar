@@ -17,7 +17,6 @@ body {
   margin: 0;
   font-family: "TASAOrbiter";
   color: var(--text-normal);
-  background-image: url("./data/de_mirage/background.png");
 }
 
 ul {
@@ -73,15 +72,6 @@ li {
   width: 1rem;
   height: 1rem;
   background-color: var(--text-secondary); /* defines the background color of the image */
-}
-
-.awaiting {
-  font-family: "TASAExplorer";
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  display: none;
 }
 
 .icon-image-for-mask {
@@ -254,7 +244,6 @@ li {
   left: 0;
   top: 0;
   background-color: red;
-  transition: transform 25ms linear;
 }
 
 .player__angle {
