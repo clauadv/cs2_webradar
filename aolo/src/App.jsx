@@ -1,5 +1,6 @@
-import { createEffect, createSignal, onMount } from 'solid-js'
+/* @refresh reload */
 import { render } from 'solid-js/web'
+import { createEffect, createSignal, onMount, onCleanup } from 'solid-js'
 import './App.css'
 import { PlayerCard } from "./PlayerCard";
 import { Radar } from "./Radar";
@@ -8,9 +9,12 @@ const App = () => {
 	const [players, setPlayers] = createSignal([]);
 	const [mapData, setMapData] = createSignal();
 	const [localTeam, setLocalTeam] = createSignal();
+	let web_socket = null;
 
 	onMount(async () => {
-		const web_socket = new WebSocket("ws://188.24.175.93:22006/cs2_webradar");
+		if (!web_socket) {
+			web_socket = new WebSocket("ws://188.24.175.93:22006/cs2_webradar");
+		}
 
 		web_socket.onopen = async () => {
 			console.info("connected to the web socket");
@@ -21,7 +25,7 @@ const App = () => {
 		}
 
 		web_socket.onerror = async (error) => {
-			LOG_ERROR(`${error}`);
+			console.error(error);
 		}
 
 		web_socket.onmessage = async (event) => {
@@ -35,6 +39,13 @@ const App = () => {
 				document.body.style.backgroundImage = `url(./data/${map}/background.png)`;
 			}
 		};
+	});
+
+	onCleanup(() => {
+		if (web_socket) {
+			web_socket.close();
+			web_socket = null;
+		}
 	});
 
 	return (
@@ -64,4 +75,7 @@ const App = () => {
 	)
 }
 
-render(() => <App />, document.getElementById('root'));
+const dispose = render(() => <App />, document.getElementById('root'));
+if (import.meta.hot) {
+	import.meta.hot.dispose(dispose);
+}
