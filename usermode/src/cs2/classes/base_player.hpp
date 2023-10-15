@@ -61,17 +61,17 @@ namespace cs2
 			return m_driver.read_t<cs2::c_player_weapon_services*>(this + m_offsets.get_weapon_services());
 		}
 
-		std::string get_model_path()
+		std::string get_model_name()
 		{
 			const auto model_name_ptr = m_driver.read_t<std::uint64_t>(m_driver.read_t<std::uint64_t>(this + m_offsets.get_game_scene_node()) + m_offsets.get_model_state() + m_offsets.get_model_name());
 			if (!model_name_ptr)
 				return "invalid";
 
-			const auto model_name = m_driver.read_t<std::string>(model_name_ptr);
-			if (model_name.empty())
+			const auto model_path = m_driver.read_t<std::string>(model_name_ptr);
+			if (model_path.empty())
 				return "invalid";
 
-			return model_name;
+			return model_path.substr(model_path.rfind("/") + 1, model_path.rfind(".") - model_path.rfind("/") - 1);
 		}
 	};
 }

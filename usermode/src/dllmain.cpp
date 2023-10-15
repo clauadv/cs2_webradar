@@ -94,8 +94,8 @@ bool main()
 
 				[&]()
 				{
-					const auto model_path = player->get_model_path();
-					LOG_INFO("model_path -> %s", model_path.data());
+					const auto model_name = player->get_model_name();
+					LOG_INFO("model_name -> %s", model_name.data());
 				}();
 
 				const auto item_services = player->get_item_services();
