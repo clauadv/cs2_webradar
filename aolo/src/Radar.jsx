@@ -29,25 +29,30 @@ const get_color = (color) => {
 export const Player = (props) => {
     const { data, map_data, radar_img, local_team } = props;
 
-    const samp = get_radar_position(map_data, data.m_position);
+    const position = get_radar_position(map_data, data.m_position);
+    const invalid_position = position.x <= 0 && position.y <= 0;
 
-    const mata = document.getElementsByClassName("player")[0];
-    const mata_bounding = mata && mata.getBoundingClientRect() || 0;
+    const player_class = document.getElementsByClassName("player")[0];
+    const player_bounding = player_class && player_class.getBoundingClientRect() || 0;
 
     const image_bounding = radar_img.getBoundingClientRect();
     var image_translation =
     {
-        x: (image_bounding.width * samp.x - mata_bounding.width * 0.5),
-        y: (image_bounding.height * samp.y - mata_bounding.height * 0.5)
+        x: (image_bounding.width * position.x - player_bounding.width * 0.5),
+        y: (image_bounding.height * position.y - player_bounding.height * 0.5)
     };
 
     return (
         <div className="player" style={
             `transform: translate(${image_translation.x}px, ${image_translation.y}px);
              background-color: ${data.m_team == local_team && get_color(data.m_color) || `red`};
-             opacity: ${(data.m_is_dead || (samp.x <= 0 && samp.y <= 0)) && `0` || `1;`}`
+             opacity: ${data.m_is_dead && `0.5` || invalid_position && `0` || `1`};
+             ${data.m_is_dead && `
+             -webkit-mask: url('./assets/icons/icon-enemy-death_png.png') no-repeat center / contain;
+             width: 1vw;
+             height: 1vw;`}`
         }>
-            <div className="player__angle"></div>
+             {/* <div className="player-angle"></div> */}
         </div>
     )
 }
