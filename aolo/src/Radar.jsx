@@ -1,7 +1,7 @@
 import { createEffect, createSignal } from "solid-js";
 
 const get_color = (color) => {
-    let new_color = "#f7d622";
+    let new_color = "white";
 
     switch (color) {
         case 0:
