@@ -9,6 +9,7 @@ namespace cs2
 		std::uint64_t m_entity_list{ 0 };
 		std::uint64_t m_global_vars{ 0 };
 		std::uint64_t m_local_player_pawn{ 0 };
+		std::uint64_t m_game_build{ 0 };
 		std::uint64_t m_player_pawn{ 0 };
 		std::uint64_t m_health{ 0 };
 		std::uint64_t m_armor{ 0 };
@@ -55,11 +56,13 @@ namespace cs2
 			this->m_entity_list = data["client_dll"]["dwEntityList"];
 			this->m_global_vars = data["client_dll"]["dwGlobalVars"];
 			this->m_local_player_pawn = data["client_dll"]["dwLocalPlayerPawn"];
+			this->m_game_build = 0x53efd8; // 48 8b 1d ? ? ? ? 48 85 db 74 ? 80 3b
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_entity_list -> 0x%llx", this->m_entity_list);
 			LOG_INFO("this->m_global_vars -> 0x%llx", this->m_global_vars);
 			LOG_INFO("this->m_local_player_pawn -> 0x%llx", this->m_local_player_pawn);
+			LOG_INFO("this->m_game_build -> 0x%llx", this->m_game_build);
 		#endif
 
 			data.clear();
@@ -143,6 +146,7 @@ namespace cs2
 		std::uint64_t get_entity_list() { return this->m_entity_list; }
 		std::uint64_t get_global_vars() { return this->m_global_vars; }
 		std::uint64_t get_local_player_pawn() { return this->m_local_player_pawn; }
+		std::uint64_t get_game_build() { return this->m_game_build; }
 		std::uint64_t get_player_pawn() { return this->m_player_pawn; }
 		std::uint64_t get_health() { return this->m_health; }
 		std::uint64_t get_armor() { return this->m_armor; }

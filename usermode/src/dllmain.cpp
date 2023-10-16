@@ -38,6 +38,13 @@ bool main()
 		{
 			start = now;
 
+			const auto game_build = m_cs2.get_game_build();
+			if (game_build != "8418039")
+			{
+				LOG_ERROR("game build mismatch (new: %s)", game_build.data());
+				break;
+			}
+
 			const auto local_player = m_cs2.get_local_player();
 			if (!local_player)
 				continue;
@@ -72,7 +79,7 @@ bool main()
 				const auto game_scene_node = m_driver.read_t<std::uint64_t>(entity + 0x310);
 				const auto vec_abs_origin = m_driver.read_t<math::fvector3>(game_scene_node + 0xc8);
 
-				LOG_INFO("vec_abs_origin -> (%f, %f)", vec_abs_origin.x, vec_abs_origin.y);
+				// LOG_INFO("vec_abs_origin -> (%f, %f)", vec_abs_origin.x, vec_abs_origin.y);
 
 				data["bomb"]["x"] = vec_abs_origin.x;
 				data["bomb"]["y"] = vec_abs_origin.y;
@@ -95,7 +102,7 @@ bool main()
 				[&]()
 				{
 					const auto model_name = player->get_model_name();
-					LOG_INFO("model_name -> %s", model_name.data());
+					// LOG_INFO("model_name -> %s", model_name.data());
 				}();
 
 				const auto item_services = player->get_item_services();

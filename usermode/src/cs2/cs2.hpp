@@ -6,6 +6,7 @@ namespace usermode
 	{
 	private:
 		std::uint64_t m_client_dll{ 0 };
+		std::uint64_t m_engine2_dll{ 0 };
 
 	public:
 		c_cs2()
@@ -24,6 +25,13 @@ namespace usermode
 				return;
 			}
 
+			this->m_engine2_dll = m_driver.get_base("engine2.dll");
+			if (!this->m_engine2_dll)
+			{
+				LOG_ERROR("failed to get an address for engine2.dll");
+				return;
+			}
+
 			if (!m_offsets.is_initialized())
 			{
 				LOG_ERROR("failed to initialize offsets");
@@ -32,11 +40,10 @@ namespace usermode
 			
 		#ifdef DEVELOPER
 			LOG_INFO("driver::m_process -> %d", m_driver.get_process_id());
-			LOG_INFO("this->m_client_dll -> 0x%llx \n", this->m_client_dll);
+			LOG_INFO("this->m_client_dll -> 0x%llx", this->m_client_dll);
+			LOG_INFO("this->m_engine2_dll -> 0x%llx \n", this->m_engine2_dll);
 		#endif
 		}
-
-		std::uint64_t get_client() { return this->m_client_dll; }
 
 		cs2::c_base_player* get_local_player()
 		{
@@ -51,6 +58,15 @@ namespace usermode
 		cs2::c_entity_list* get_entity_list()
 		{
 			return m_driver.read_t<cs2::c_entity_list*>(this->m_client_dll + m_offsets.get_entity_list());
+		}
+
+		std::string get_game_build()
+		{
+			const auto engine_build_info = m_driver.read_t<std::uint64_t>(this->m_engine2_dll + m_offsets.get_game_build());
+			if (!engine_build_info)
+				return "invalid";
+
+			return m_driver.read_t<std::string>(engine_build_info);
 		}
 	};
 }
