@@ -7,7 +7,7 @@ export const PlayerCard = ({ playerData, right }) => {
             <div className="flex flex-col gap-[0.375rem] justify-center items-center">
                 <div>{playerData.m_name}</div>
                 <div className="triangle" style={{ borderColor: `${get_color(playerData.m_color)} transparent transparent transparent` }}></div>
-                <img className={`h-[128px] ${right && `scale-x-[-1]`}`} src={`./assets/characters/customplayer_${playerData.m_model_name}_varianta_png.png`}></img>
+                <img className={`h-[128px] ${right && `scale-x-[-1]`}`} src={`./assets/characters/${playerData.m_model_name}.png`}></img>
             </div>
 
             <div className={`flex flex-col ${right && `flex-row-reverse`} justify-center gap-2`}>
@@ -15,12 +15,12 @@ export const PlayerCard = ({ playerData, right }) => {
 
                 <div className={`flex ${right && `flex-row-reverse`} gap-2`}>
                     <div className="flex gap-[2px] items-center">
-                        <MaskedIcon path={`./assets/icons/health.svg`} height={16}></MaskedIcon>
+                        <MaskedIcon path={`./assets/equipment/health.svg`} height={16}></MaskedIcon>
                         <span className="text-radar-primary">{playerData.m_health}</span>
                     </div>
 
                     <div className="flex gap-[2px] items-center">
-                        <MaskedIcon path={`./assets/equipment/armor.png`} height={16}></MaskedIcon>
+                        <MaskedIcon path={`./assets/equipment/${playerData.m_has_helmet && `armor_helmet` || `armor`}.svg`} height={16}></MaskedIcon>
                         <span className="text-radar-primary">{playerData.m_armor}</span>
                     </div>
                 </div>

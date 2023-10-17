@@ -114,7 +114,8 @@ bool main()
 				const auto eye_angles = player->get_eye_angles().normalize();
 				const auto team = player->get_team();
 				const auto is_dead = player->is_dead();
-				const auto model_name = player->get_model_name();;
+				const auto model_name = player->get_model_name();
+				LOG_INFO("%s", model_name.data());
 
 				nlohmann::json player_data{};
 				player_data["data"]["m_idx"] = idx;
