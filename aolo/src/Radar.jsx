@@ -52,8 +52,24 @@ export const Player = (props) => {
              width: 1vw;
              height: 1vw;`}`
         }>
-             {/* <div className="player-angle"></div> */}
+            {/* <div className="player-angle"></div> */}
         </div>
+    )
+}
+
+export const Bomb = (props) => {
+    const { map_data, radar_img } = props;
+
+    const image_bounding = radar_img.getBoundingClientRect();
+    console.log(image_bounding)
+    var image_translation =
+    {
+        x: (image_bounding.width * position.x - player_bounding.width * 0.5),
+        y: (image_bounding.height * position.y - player_bounding.height * 0.5)
+    };
+
+    return (
+        <></>
     )
 }
 
@@ -88,6 +104,8 @@ export const Radar = (props) => {
             <For each={players()}>{(player) =>
                 <Player data={player.data} map_data={map_data} radar_img={radar_img} local_team={local_team()}></Player>
             }</For>
+
+            <Bomb map_data={map_data} radar_img={radar_img}></Bomb>
         </div >
     )
 }

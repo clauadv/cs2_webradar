@@ -34,7 +34,7 @@ bool main()
 	{
 		const auto now = std::chrono::system_clock::now();
 		const auto duration = now - start;
-		if (duration > std::chrono::milliseconds(16))
+		if (duration > std::chrono::milliseconds(100))
 		{
 			start = now;
 
@@ -122,7 +122,7 @@ bool main()
 				const auto is_dead = player->is_dead();
 
 				nlohmann::json player_data{};
-				player_data["m_idx"] = idx;
+				player_data["data"]["m_idx"] = idx;
 				player_data["data"]["m_name"] = name;
 				player_data["data"]["m_color"] = color;
 				player_data["data"]["m_health"] = health;
@@ -135,6 +135,8 @@ bool main()
 				player_data["data"]["m_eye_angle"] = eye_angles.y;
 				player_data["data"]["m_team"] = team;
 				player_data["data"]["m_is_dead"] = is_dead;
+
+				LOG_INFO("eye_angle -> %f", eye_angles.y);
 
 				[&]()
 				{

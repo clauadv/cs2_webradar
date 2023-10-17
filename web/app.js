@@ -185,7 +185,7 @@ const update_player = (idx, data) => {
     };
 
     const view_angle = 270 - data.m_eye_angle;
-    const rotation = calculate_rotation(view_angle, globals.m_players[idx]);
+    const rotation = calculate_rotation(view_angle, data);
 
     const angle_div = globals.m_players[idx].m_angle_html;
     angle_div.style.backgroundColor = (data.m_team == globals.local_player.m_team ? get_color(data.m_color) : "red");
@@ -262,9 +262,9 @@ const update_radar = async (data) => {
         return;
     }
 
-    globals.local_player.m_team = data.local_player[0].m_team;
+    globals.local_player.m_team = data.m_local_team;
 
-    data.players.forEach(player => update_player(player.m_idx, player.data));
+    data.players.forEach(player => update_player(player.data.m_idx, player.data));
 
     const current_time = new Date().getTime();
 

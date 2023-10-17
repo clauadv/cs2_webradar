@@ -242,8 +242,8 @@ li {
 
 .player
 {
-    width: 1vw;
-    height: 1vw;
+    width: 0.7vw;
+    height: 0.7vw;
     position: absolute;
     border-radius: 100%;
     transform-origin: center;
@@ -252,8 +252,8 @@ li {
 }
 
 .player__angle {
-    width: 1vw;
-    height: 1vw;
+    width: 0.7vw;
+    height: 0.7vw;
     border-radius: 50% 50% 50% 0%;
     transform: rotate(315deg);
 }
