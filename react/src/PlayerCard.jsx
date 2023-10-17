@@ -1,110 +1,65 @@
-export const PlayerCard = (props) => {
-    const { data } = props;
+import { MaskedIcon } from "./MaskedIcon";
+import { get_color } from "./Radar";
 
+export const PlayerCard = ({ playerData, right }) => {
     return (
-        <li className="player-card">
-            <div className="player-card-first-row">
-                <div className="player-card-name">{data.m_name}</div>
-                <div className="player-card-vitals">
-                    <div className="player-card-vital">
-                        <div className="icon">
-                            <img
-                                className="icon-image"
-                                src="./assets/icons/health.svg"
-                                alt=""
-                            />
-                        </div>
-                        {data.m_health}
-                    </div>
-                    <div className="player-card-vital">
-                        <div className="masked-icon" style={{ WebkitMask: `url('./assets/equipment/${data.m_has_helmet && `helmet` || `armor`}.png') no-repeat center / contain` }}>
-                            <img
-                                className="icon-image-for-mask"
-                                src={`./assets/equipment/${data.m_has_helmet && "helmet" || "armor"}.svg`}
-                                alt=""
-                            />
-                        </div>
-                        {data.m_armor}
-                    </div>
-                </div>
+        <li className={`flex ${right && `flex-row-reverse`}`}>
+            <div className="flex flex-col gap-[0.375rem] justify-center items-center">
+                <div>{playerData.m_name}</div>
+                <div className="triangle" style={{ borderColor: `${get_color(playerData.m_color)} transparent transparent transparent` }}></div>
+                <img className={`h-[128px] ${right && `scale-x-[-1]`}`} src={`./assets/characters/customplayer_${playerData.m_model_name}_varianta_png.png`}></img>
             </div>
-            <div className="player-card-first-row">
-                <div className="player-card-column">
-                    <div className="player-card-money">$<span>{data.m_money}</span></div>
-                    <div className="player-card-stats">
-                        <div className="player-card-stat">
-                            <div className="player-card-statname">K</div>
-                            <div className="player-card-statvalue">
-                                {
-                                    data.m_stats.kills < 10 &&
-                                    <span style={{ color: 'var(--text-secondary)' }}>0</span>
-                                }
-                                {`${data.m_stats.kills}`}
-                            </div>
-                        </div>
-                        <div className="player-card-stat">
-                            <div className="player-card-statname">D</div>
-                            <div className="player-card-statvalue">
-                                {
-                                    data.m_stats.deaths < 10 &&
-                                    <span style={{ color: 'var(--text-secondary)' }}>0</span>
-                                }
-                                {`${data.m_stats.deaths}`}
-                            </div>
-                        </div>
-                        <div className="player-card-stat">
-                            <div className="player-card-statname">A</div>
-                            <div className="player-card-statvalue">
-                                {
-                                    data.m_stats.assists < 10 &&
-                                    <span style={{ color: 'var(--text-secondary)' }}>0</span>
-                                }
-                                {`${data.m_stats.assists}`}
-                            </div>
-                        </div>
+
+            <div className={`flex flex-col ${right && `flex-row-reverse`} justify-center gap-2`}>
+                <span className={`${right && `flex justify-end`} text-radar-green`}>${playerData.m_money}</span>
+
+                <div className={`flex ${right && `flex-row-reverse`} gap-2`}>
+                    <div className="flex gap-[2px] items-center">
+                        <MaskedIcon path={`./assets/icons/health.svg`} height={16}></MaskedIcon>
+                        <span className="text-radar-primary">{playerData.m_health}</span>
+                    </div>
+
+                    <div className="flex gap-[2px] items-center">
+                        <MaskedIcon path={`./assets/equipment/armor.png`} height={16}></MaskedIcon>
+                        <span className="text-radar-primary">{playerData.m_armor}</span>
                     </div>
                 </div>
-                <div className="player-card-column player-card-column-right">
+
+                <div className={`flex ${right && `flex-row-reverse`} gap-3`}>
                     {
-                        data.m_weapons && data.m_weapons.primary &&
-                        <div className={`player-card-weapons-primary ${data.m_weapons.m_active == data.m_weapons.primary && "player-card-weapon-active"}`} style={{ WebkitMask: `url("./assets/equipment/${data.m_weapons.primary}.svg") no-repeat center / contain` }}>
-                            <img
-                                className="player-card-img-primary"
-                                src={`./assets/equipment/${data.m_weapons.primary}.svg`}
-                            />
-                        </div>
+                        playerData.m_weapons && playerData.m_weapons.primary &&
+                        <MaskedIcon path={`./assets/equipment/${playerData.m_weapons.primary}.svg`} height={28} color={`${playerData.m_weapons.m_active == playerData.m_weapons.primary && `primary` || `secondary`}`}></MaskedIcon>
                     }
 
                     {
-                        data.m_weapons && data.m_weapons.secondary &&
-                        <div className={`player-card-weapons-secondary ${data.m_weapons.m_active == data.m_weapons.secondary && "player-card-weapon-active"}`} style={{ WebkitMask: `url("./assets/equipment/${data.m_weapons.secondary}.svg") no-repeat center / contain` }}>
-                            <img
-                                className="player-card-img-secondary"
-                                src={`./assets/equipment/${data.m_weapons.secondary}.svg`}
-                            />
-                        </div>
+                        playerData.m_weapons && playerData.m_weapons.secondary &&
+                        <MaskedIcon path={`./assets/equipment/${playerData.m_weapons.secondary}.svg`} height={28} color={`${playerData.m_weapons.m_active == playerData.m_weapons.secondary && `primary` || `secondary`}`}></MaskedIcon>
                     }
 
-                    <div className="player-card-row-utilities">
+                    {
+                        playerData.m_weapons && playerData.m_weapons.knife &&
+                        <MaskedIcon path={`./assets/equipment/${playerData.m_weapons.knife}.svg`} height={28} color={`${playerData.m_weapons.m_active == playerData.m_weapons.knife && `primary` || `secondary`}`}></MaskedIcon>
+                    }
+                </div>
+
+                <div className={`flex flex-col relative`}>
+                    <div className={`flex ${right && `flex-row-reverse`} gap-9 mt-3 items-center`}>
                         {
-                            data.m_weapons && data.m_weapons.utility &&
-                            data.m_weapons.utility.map((utility) => {
-                                <div className={`player-card-weapons-utility ${data.m_weapons.m_active == utility && "player-card-weapon-active"}`} style={{ WebkitMask: `url("./assets/equipment/${utility}.svg") no-repeat center / contain` }}>
-                                    <img
-                                        className="player-card-img-utility"
-                                        src={`./assets/equipment/${utility}.svg`}
-                                    />
-                                </div>
-                            })
+                            playerData.m_weapons && playerData.m_weapons.utility &&
+                            playerData.m_weapons.utility.map((utility) =>
+                                <MaskedIcon key={utility} path={`./assets/equipment/${utility}.svg`} height={28} color={`${playerData.m_weapons.m_active == utility && `primary` || `secondary`}`}></MaskedIcon>
+                            )
                         }
+
                         {
-                            data.m_has_defuser &&
-                            <div className="player-card-weapons-utility" style={{ WebkitMask: `url("./assets/equipment/defuser.svg") no-repeat center / contain` }}>
-                                <img
-                                    className="player-card-img-utility"
-                                    src={`./assets/equipment/defuser.svg`}
-                                />
-                            </div>
+                            playerData.m_has_defuser &&
+                            <MaskedIcon path={`./assets/equipment/defuser.svg`} height={28}></MaskedIcon>
+                        }
+
+                        {
+                            [...Array(Math.max(4 - (playerData.m_weapons.utility && playerData.m_weapons.utility.length || 0), 0))].map((_, i) => (
+                                <div key={i} className="rounded-full w-[6px] h-[6px] bg-radar-primary"></div>
+                            ))
                         }
                     </div>
                 </div>

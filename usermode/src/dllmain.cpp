@@ -99,12 +99,6 @@ bool main()
 				if (!player)
 					continue;
 
-				[&]()
-				{
-					const auto model_name = player->get_model_name();
-					// LOG_INFO("model_name -> %s", model_name.data());
-				}();
-
 				const auto item_services = player->get_item_services();
 				if (!item_services)
 					continue;
@@ -120,6 +114,7 @@ bool main()
 				const auto eye_angles = player->get_eye_angles().normalize();
 				const auto team = player->get_team();
 				const auto is_dead = player->is_dead();
+				const auto model_name = player->get_model_name();;
 
 				nlohmann::json player_data{};
 				player_data["data"]["m_idx"] = idx;
@@ -135,8 +130,7 @@ bool main()
 				player_data["data"]["m_eye_angle"] = eye_angles.y;
 				player_data["data"]["m_team"] = team;
 				player_data["data"]["m_is_dead"] = is_dead;
-
-				LOG_INFO("eye_angle -> %f", eye_angles.y);
+				player_data["data"]["m_model_name"] = model_name;
 
 				[&]()
 				{
@@ -188,11 +182,6 @@ bool main()
 						auto weapon_name = weapon->get_name();
 						weapon_name.erase(weapon_name.begin(), weapon_name.begin() + 7);
 
-						if (weapon_name.find("taser") != std::string::npos)
-						{
-							player_data["data"]["m_weapons"]["utility"].push_back(weapon_name);
-						}
-
 						if (weapon_name.find("c4") != std::string::npos)
 						{
 							player_data["data"]["bomb_carrier"] = true;
@@ -200,6 +189,11 @@ bool main()
 						else
 						{
 							player_data["data"]["bomb_carrier"] = false;
+						}
+
+						if (weapon_name.contains("knife") && weapon_name.find("taser") == std::string::npos)
+						{
+							player_data["data"]["m_weapons"]["knife"] = weapon_name;
 						}
 
 						switch (weapon_type)

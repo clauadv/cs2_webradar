@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-const get_color = (color) => {
-    let new_color = "white";
+export const get_color = (color) => {
+    let new_color = "grey";
 
     switch (color) {
         case 0:

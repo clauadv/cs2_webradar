@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
   font-family: "TASAExplorer";
   src: url("./assets/typefaces/TASAExplorerVF.woff2");
@@ -44,7 +48,7 @@ li {
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   background: radial-gradient(50% 50% at 50% 50%, rgba(20, 40, 55, 0.95) 0%, rgba(7, 20, 30, 0.95) 100%);
   backdrop-filter: blur(7.5px);
 }
@@ -240,6 +244,10 @@ li {
 
 
 
-.new-player-card {
-  
+.triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12px 8px 12px 8px;
+  border-color: #007bff transparent transparent transparent;
 }

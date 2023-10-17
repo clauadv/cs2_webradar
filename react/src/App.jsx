@@ -45,10 +45,10 @@ const App = () => {
 
 	return (
 		<div className="ui-container">
-			<ul id="t" className="players-list players-left">
+			<ul id="t" className="flex flex-col gap-7">
 				{
 					players.filter((player) => player.data.m_team == 2).map((player) =>
-						<PlayerCard key={player.data.m_idx} data={player.data}></PlayerCard>
+						<PlayerCard right={false} key={player.data.m_idx} playerData={player.data}></PlayerCard>
 					)
 				}
 			</ul>
@@ -63,10 +63,10 @@ const App = () => {
 				)
 			}
 
-			<ul id="ct" className="players-list players-right">
+			<ul id="ct" className="flex flex-col gap-7">
 				{
 					players.filter((player) => player.data.m_team == 3).map((player) =>
-						<PlayerCard key={player.data.m_idx} data={player.data}></PlayerCard>
+						<PlayerCard right={true} key={player.data.m_idx} playerData={player.data}></PlayerCard>
 					)
 				}
 			</ul>
