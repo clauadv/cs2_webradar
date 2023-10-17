@@ -115,7 +115,8 @@ bool main()
 				const auto team = player->get_team();
 				const auto is_dead = player->is_dead();
 				const auto model_name = player->get_model_name();
-				LOG_INFO("%s", model_name.data());
+
+				const auto a1 = m_driver.read_t<std::uint64_t>(entity + 0x698);
 
 				nlohmann::json player_data{};
 				player_data["data"]["m_idx"] = idx;
@@ -132,6 +133,7 @@ bool main()
 				player_data["data"]["m_team"] = team;
 				player_data["data"]["m_is_dead"] = is_dead;
 				player_data["data"]["m_model_name"] = model_name;
+				player_data["data"]["m_steam_id"] = std::to_string(a1);
 
 				[&]()
 				{

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export const get_color = (color) => {
-    let new_color = "grey";
+    let new_color = "white";
 
     switch (color) {
         case 0:
@@ -25,17 +25,19 @@ export const get_color = (color) => {
 
     return new_color;
 }
-const calculate_rotation = (view_angle, rot) => {
-    rot = (rot || 0) % 360;
-    rot += (view_angle - rot + 540) % 360 - 180;
 
-    return rot;
+let rotations = [];
+export const calculate_rotation = (data) => {
+    const view_angle = 270 - data.m_eye_angle;
+    const idx = data.m_idx;
+
+    rotations[idx] = (rotations[idx] || 0) % 360;
+    rotations[idx] += (view_angle - rotations[idx] + 540) % 360 - 180;
+
+    return rotations[idx];
 }
-export const Player = (props) => {
-    const { data, map_data, radar_img, local_team } = props;
 
-    const {rot, setRot} = useState(0);
-
+export const Player = ({ data, map_data, radar_img, local_team }) => {
     const playerRef = useRef();
 
     const position = get_radar_position(map_data, data.m_position);
@@ -50,14 +52,12 @@ export const Player = (props) => {
         y: (image_bounding.height * position.y - player_bounding.height * 0.5)
     };
 
-    const view_angle = 270 - data.m_eye_angle;
-
-    setRot(calculate_rotation(view_angle, rot));
+    const rotation = calculate_rotation(data);
 
     return (
         <div className={`absolute origin-center transition-transform duration-[250ms] ease-linear rounded-[100%] left-0 top-0`} ref={playerRef} style={
             {
-                transform: `translate(${image_translation.x}px, ${image_translation.y}px) rotate(${data.m_is_dead && `0` || rot}deg)`,
+                transform: `translate(${image_translation.x}px, ${image_translation.y}px) rotate(${data.m_is_dead && `0` || rotation}deg)`,
                 backgroundColor: `${data.m_team == local_team && get_color(data.m_color) || `red`}`,
                 opacity: `${data.m_is_dead && `0.8` || invalid_position && `0` || `1`}`,
                 WebkitMask: `${data.m_is_dead && `url('./assets/icons/icon-enemy-death_png.png') no-repeat center / contain` || `none`}`,
