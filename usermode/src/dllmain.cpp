@@ -34,7 +34,7 @@ bool main()
 	{
 		const auto now = std::chrono::system_clock::now();
 		const auto duration = now - start;
-		if (duration > std::chrono::milliseconds(100))
+		if (duration >= std::chrono::milliseconds(100))
 		{
 			start = now;
 
@@ -185,13 +185,18 @@ bool main()
 						auto weapon_name = weapon->get_name();
 						weapon_name.erase(weapon_name.begin(), weapon_name.begin() + 7);
 
+						if (weapon_name.contains("c4"))
+						{
+							LOG_INFO("%s", weapon_name.data());
+						}
+
 						if (weapon_name.find("c4") != std::string::npos)
 						{
-							player_data["data"]["bomb_carrier"] = true;
+							player_data["data"]["m_has_bomb"] = true;
 						}
 						else
 						{
-							player_data["data"]["bomb_carrier"] = false;
+							player_data["data"]["m_has_bomb"] = false;
 						}
 
 						if (weapon_name.contains("knife") && weapon_name.find("taser") == std::string::npos)
@@ -213,7 +218,6 @@ bool main()
 								player_data["data"]["m_weapons"]["secondary"] = weapon_name;
 								break;
 
-							case cs2::e_weapon_type::c4:
 							case cs2::e_weapon_type::taser:
 							case cs2::e_weapon_type::grenade:
 								player_data["data"]["m_weapons"]["utility"].push_back(weapon_name);

@@ -37,7 +37,7 @@ export const calculate_rotation = (data) => {
     return rotations[idx];
 }
 
-export const Player = ({ data, map_data, radar_img, local_team }) => {
+export const Player = ({ data, map_data, radar_img, local_team, averageLatency }) => {
     const playerRef = useRef();
 
     const position = get_radar_position(map_data, data.m_position);
@@ -55,7 +55,7 @@ export const Player = ({ data, map_data, radar_img, local_team }) => {
     const rotation = calculate_rotation(data);
 
     return (
-        <div className={`absolute origin-center transition-transform duration-[250ms] ease-linear rounded-[100%] left-0 top-0`} ref={playerRef} style={
+        <div className={`absolute origin-center transition-transform duration-[${averageLatency}ms] ease-linear rounded-[100%] left-0 top-0`} ref={playerRef} style={
             {
                 transform: `translate(${image_translation.x}px, ${image_translation.y}px) rotate(${data.m_is_dead && `0` || rotation}deg)`,
                 backgroundColor: `${data.m_team == local_team && get_color(data.m_color) || `red`}`,
@@ -91,9 +91,7 @@ const get_radar_position = (map_data, coords) => {
     return position;
 }
 
-export const Radar = (props) => {
-    const { players, image, map_data, local_team } = props;
-
+export const Radar = ({ players, image, map_data, local_team, averageLatency }) => {
     let radarImage = useRef();
 
     return (
@@ -102,7 +100,7 @@ export const Radar = (props) => {
 
             {
                 players.map((player) =>
-                    <Player key={player.data.m_idx} data={player.data} map_data={map_data} radar_img={radarImage.current} local_team={local_team}></Player>
+                    <Player key={player.data.m_idx} data={player.data} map_data={map_data} radar_img={radarImage.current} local_team={local_team} averageLatency={averageLatency} />
                 )
             }
         </div >
