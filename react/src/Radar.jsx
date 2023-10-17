@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const get_color = (color) => {
     let new_color = "grey";
@@ -25,9 +25,16 @@ export const get_color = (color) => {
 
     return new_color;
 }
+const calculate_rotation = (view_angle, rot) => {
+    rot = (rot || 0) % 360;
+    rot += (view_angle - rot + 540) % 360 - 180;
 
+    return rot;
+}
 export const Player = (props) => {
     const { data, map_data, radar_img, local_team } = props;
+
+    const {rot, setRot} = useState(0);
 
     const playerRef = useRef();
 
@@ -45,10 +52,12 @@ export const Player = (props) => {
 
     const view_angle = 270 - data.m_eye_angle;
 
+    setRot(calculate_rotation(view_angle, rot));
+
     return (
         <div className={`absolute origin-center transition-transform duration-[250ms] ease-linear rounded-[100%] left-0 top-0`} ref={playerRef} style={
             {
-                transform: `translate(${image_translation.x}px, ${image_translation.y}px) rotate(${data.m_is_dead && `0` || view_angle}deg)`,
+                transform: `translate(${image_translation.x}px, ${image_translation.y}px) rotate(${data.m_is_dead && `0` || rot}deg)`,
                 backgroundColor: `${data.m_team == local_team && get_color(data.m_color) || `red`}`,
                 opacity: `${data.m_is_dead && `0.8` || invalid_position && `0` || `1`}`,
                 WebkitMask: `${data.m_is_dead && `url('./assets/icons/icon-enemy-death_png.png') no-repeat center / contain` || `none`}`,
