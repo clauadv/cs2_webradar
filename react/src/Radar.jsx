@@ -46,7 +46,7 @@ export const Player = (props) => {
     const view_angle = 270 - data.m_eye_angle;
 
     return (
-        <div className="player" ref={playerRef} style={
+        <div className={`absolute origin-center transition-transform duration-[250ms] ease-linear rounded-[100%] left-0 top-0`} ref={playerRef} style={
             {
                 transform: `translate(${image_translation.x}px, ${image_translation.y}px) rotate(${data.m_is_dead && `0` || view_angle}deg)`,
                 backgroundColor: `${data.m_team == local_team && get_color(data.m_color) || `red`}`,
@@ -57,11 +57,8 @@ export const Player = (props) => {
                 zIndex: `${data.m_is_dead && `0` || `1`}`
             }
         }>
-            <div className="player-angle" style={
-                {
-                    backgroundColor: `${data.m_team == local_team && get_color(data.m_color) || `red`}`,
-                }
-            }></div>
+
+            <div className={`w-[0.7vw] h-[0.7vw] rotate-[315deg] rounded-[50%_50%_50%_0%]`} style={{ backgroundColor: `${data.m_team == local_team && get_color(data.m_color) || `red`}` }}></div>
         </div>
     )
 }
@@ -91,8 +88,8 @@ export const Radar = (props) => {
     let radarImage = useRef();
 
     return (
-        <div id="radar" className="radar" >
-            <img ref={radarImage} className="radar-image" src={image} />
+        <div id="radar" className={`relative overflow-hidden origin-center`} >
+            <img ref={radarImage} className={`w-full h-auto`} src={image} />
 
             {
                 players.map((player) =>
