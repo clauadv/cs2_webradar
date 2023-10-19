@@ -10,7 +10,8 @@ export default {
         radar: {
           "primary": "#b1d0e7",
           "secondary": "#6492b4",
-          "green": "#50904c"
+          "green": "#50904c",
+          "red": "#c90b0be6"
         }
       },
     },

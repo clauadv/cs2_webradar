@@ -37,6 +37,35 @@ export const calculate_rotation = (data) => {
     return rotations[idx];
 }
 
+export const Bomb = ({ data, map_data, radar_img, averageLatency }) => {
+    const bombRef = useRef();
+
+    const position = get_radar_position(map_data, data);
+
+    const player_bounding = bombRef.current && bombRef.current.getBoundingClientRect() || { width: 0, height: 0 };
+
+    const image_bounding = radar_img != undefined && radar_img.getBoundingClientRect() || { width: 0, height: 0 };
+    var image_translation =
+    {
+        x: (image_bounding.width * position.x - player_bounding.width * 0.5),
+        y: (image_bounding.height * position.y - player_bounding.height * 0.5)
+    };
+
+    return (
+        <div className={`absolute origin-center transition-transform duration-[${averageLatency}ms] ease-linear rounded-[100%] left-0 top-0`} ref={bombRef} style={
+            {
+                transform: `translate(${image_translation.x}px, ${image_translation.y}px)`,
+                backgroundColor: `${data.m_is_defused && `#50904c` || `#c90b0be6`}`,
+                WebkitMask: `url('./assets/icons/c4_sml.png') no-repeat center / contain`,
+                width: `0.8vw`,
+                height: `0.8vw`,
+                opacity: `1`,
+                zIndex: `1`
+            }
+        }/>
+    )
+}
+
 export const Player = ({ data, map_data, radar_img, local_team, averageLatency }) => {
     const playerRef = useRef();
 
@@ -91,7 +120,7 @@ const get_radar_position = (map_data, coords) => {
     return position;
 }
 
-export const Radar = ({ players, image, map_data, local_team, averageLatency }) => {
+export const Radar = ({ players, image, map_data, local_team, averageLatency, bomb }) => {
     let radarImage = useRef();
 
     return (
@@ -100,8 +129,13 @@ export const Radar = ({ players, image, map_data, local_team, averageLatency }) 
 
             {
                 players.map((player) =>
-                    <Player key={player.data.m_idx} data={player.data} map_data={map_data} radar_img={radarImage.current} local_team={local_team} averageLatency={averageLatency} />
+                    <Player key={player.m_idx} data={player} map_data={map_data} radar_img={radarImage.current} local_team={local_team} averageLatency={averageLatency} />
                 )
+            }
+
+            {
+                bomb &&
+                <Bomb data={bomb} map_data={map_data} radar_img={radarImage.current} averageLatency={averageLatency} />
             }
         </div >
     )

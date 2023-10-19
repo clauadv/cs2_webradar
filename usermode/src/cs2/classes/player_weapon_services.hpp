@@ -15,8 +15,12 @@ namespace cs2
 			};
 		}
 
-		cs2::c_base_player_weapon* get_active_weapon(cs2::c_entity_list* entity_list)
+		cs2::c_base_player_weapon* get_active_weapon()
 		{
+			const auto entity_list = m_cs2.get_entity_list();
+			if (!entity_list)
+				return nullptr;
+
 			const auto handle = m_driver.read_t<int>(this + m_offsets.get_active_weapon());
 			if (handle == -1)
 				return nullptr;

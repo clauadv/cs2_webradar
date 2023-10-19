@@ -1,12 +1,18 @@
 #pragma once
 
+namespace cs2
+{
+	class c_base_player;
+	class c_planted_c4;
+}
+
 namespace usermode
 {
 	class c_cs2
 	{
 	private:
-		std::uint64_t m_client_dll{ 0 };
-		std::uint64_t m_engine2_dll{ 0 };
+		std::uintptr_t m_client_dll{ 0 };
+		std::uintptr_t m_engine2_dll{ 0 };
 
 	public:
 		c_cs2()
@@ -45,6 +51,9 @@ namespace usermode
 		#endif
 		}
 
+		std::uintptr_t get_client() { return this->m_client_dll;  }
+		std::uintptr_t get_engine2() { return this->m_engine2_dll; }
+
 		cs2::c_base_player* get_local_player()
 		{
 			return m_driver.read_t<cs2::c_base_player*>(this->m_client_dll + m_offsets.get_local_player_pawn());
@@ -62,11 +71,16 @@ namespace usermode
 
 		std::string get_game_build()
 		{
-			const auto engine_build_info = m_driver.read_t<std::uint64_t>(this->m_engine2_dll + m_offsets.get_game_build());
+			const auto engine_build_info = m_driver.read_t<std::uintptr_t>(this->m_engine2_dll + m_offsets.get_game_build());
 			if (!engine_build_info)
 				return "invalid";
 
 			return m_driver.read_t<std::string>(engine_build_info);
+		}
+
+		cs2::c_planted_c4* get_planted_c4()
+		{
+			return m_driver.read_t<cs2::c_planted_c4*>(m_driver.read_t<uintptr_t>(this->m_client_dll + m_offsets.get_planted_c4()));
 		}
 	};
 }

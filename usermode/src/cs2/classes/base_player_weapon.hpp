@@ -5,8 +5,12 @@ namespace cs2
 	class c_base_player_weapon : public cs2::c_base_entity
 	{
 	public:
-		cs2::c_base_player_weapon* get(cs2::c_entity_list* entity_list, const int idx)
+		cs2::c_base_player_weapon* get(const int idx)
 		{
+			const auto entity_list = m_cs2.get_entity_list();
+			if (!entity_list)
+				return nullptr;
+
 			const auto handle = m_driver.read_t<int>(this + idx * 0x4);
 			if (handle == -1)
 				return nullptr;
@@ -18,6 +22,14 @@ namespace cs2
 		{
 			// @NOTE: https://www.unknowncheats.me/forum/3878143-post6.html
 			return m_driver.read_t<cs2::c_weapon_base_data*>(this + m_offsets.get_subclass_id() + 0x08);
+		}
+
+		std::string get_cleaned_name()
+		{
+			auto weapon_name = this->get_name();
+			weapon_name.erase(weapon_name.begin(), weapon_name.begin() + 7);
+
+			return weapon_name;
 		}
 	};
 }

@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <chrono>
 #include <fstream>
+#include <set>
 
 // ext/includes
 #include "ext/nlohmann/json.hpp"
@@ -20,13 +21,14 @@
 #include "math/vector.hpp"
 #include "cs2/offsets/offsets.hpp"
 #include "cs2/classes/global_vars.hpp"
-#include "cs2/classes/action_tracking_services.hpp"
 #include "cs2/classes/item_services.hpp"
 #include "cs2/classes/in_game_money_services.hpp"
 #include "cs2/classes/base_entity.hpp"
 #include "cs2/classes/entity_list.hpp"
 #include "cs2/classes/weapon_base_data.hpp"
+#include "cs2/cs2.hpp"
 #include "cs2/classes/base_player_weapon.hpp"
 #include "cs2/classes/player_weapon_services.hpp"
 #include "cs2/classes/base_player.hpp"
-#include "cs2/cs2.hpp"
+#include "cs2/classes/planted_c4.hpp"
+#include "features/features.hpp"

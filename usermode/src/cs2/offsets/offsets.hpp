@@ -6,37 +6,39 @@ namespace cs2
 	{
 	private:
 		bool m_initialized{ false };
-		std::uint64_t m_entity_list{ 0 };
-		std::uint64_t m_global_vars{ 0 };
-		std::uint64_t m_local_player_pawn{ 0 };
-		std::uint64_t m_game_build{ 0 };
-		std::uint64_t m_player_pawn{ 0 };
-		std::uint64_t m_health{ 0 };
-		std::uint64_t m_armor{ 0 };
-		std::uint64_t m_team_num{ 0 };
-		std::uint64_t m_old_origin{ 0 };
-		std::uint64_t m_sanitized_player_name{ 0 };
-		std::uint64_t m_comp_teammate_color{ 0 };
-		std::uint64_t m_item_services{ 0 };
-		std::uint64_t m_has_defuser{ 0 };
-		std::uint64_t m_has_helmet{ 0 };
-		std::uint64_t m_ang_eye_angles{ 0 };
-		std::uint64_t m_weapon_services{ 0 };
-		std::uint64_t m_my_weapons{ 0 };
-		std::uint64_t m_active_weapon{ 0 };
-		std::uint64_t m_entity{ 0 };
-		std::uint64_t m_designer_name{ 0 };
-		std::uint64_t m_subclass_id{ 0 };
-		std::uint64_t m_weapon_type{ 0 };
-		std::uint64_t m_action_tracking_services{ 0 };
-		std::uint64_t m_match_stats{ 0 };
-		std::uint64_t m_kills{ 0 };
-		std::uint64_t m_deaths{ 0 };
-		std::uint64_t m_assists{ 0 };
-		std::uint64_t m_in_game_money_services{ 0 };
-		std::uint64_t m_game_scene_node{ 0 };
-		std::uint64_t m_model_state{ 0 };
-		std::uint64_t m_model_name{ 0 };
+		std::uintptr_t m_entity_list{ 0 };
+		std::uintptr_t m_global_vars{ 0 };
+		std::uintptr_t m_local_player_pawn{ 0 };
+		std::uintptr_t m_game_build{ 0 };
+		std::uintptr_t m_player_pawn{ 0 };
+		std::uintptr_t m_health{ 0 };
+		std::uintptr_t m_armor{ 0 };
+		std::uintptr_t m_team_num{ 0 };
+		std::uintptr_t m_old_origin{ 0 };
+		std::uintptr_t m_sanitized_player_name{ 0 };
+		std::uintptr_t m_comp_teammate_color{ 0 };
+		std::uintptr_t m_item_services{ 0 };
+		std::uintptr_t m_has_defuser{ 0 };
+		std::uintptr_t m_has_helmet{ 0 };
+		std::uintptr_t m_ang_eye_angles{ 0 };
+		std::uintptr_t m_weapon_services{ 0 };
+		std::uintptr_t m_my_weapons{ 0 };
+		std::uintptr_t m_active_weapon{ 0 };
+		std::uintptr_t m_entity{ 0 };
+		std::uintptr_t m_designer_name{ 0 };
+		std::uintptr_t m_subclass_id{ 0 };
+		std::uintptr_t m_weapon_type{ 0 };
+		std::uintptr_t m_in_game_money_services{ 0 };
+		std::uintptr_t m_game_scene_node{ 0 };
+		std::uintptr_t m_vec_origin{ 0 };
+		std::uintptr_t m_model_state{ 0 };
+		std::uintptr_t m_model_name{ 0 };
+		std::uintptr_t m_steam_id{ 0 };
+		std::uintptr_t m_planted_c4{ 0 };
+		std::uintptr_t m_c4_blow{ 0 };
+		std::uintptr_t m_being_defused{ 0 };
+		std::uintptr_t m_bomb_defused{ 0 };
+		std::uintptr_t m_defuse_countdown{ 0 };
 
 	public:
 		c_offsets()
@@ -56,13 +58,15 @@ namespace cs2
 			this->m_entity_list = data["client_dll"]["dwEntityList"];
 			this->m_global_vars = data["client_dll"]["dwGlobalVars"];
 			this->m_local_player_pawn = data["client_dll"]["dwLocalPlayerPawn"];
-			this->m_game_build = 0x53efd8; // 48 8b 1d ? ? ? ? 48 85 db 74 ? 80 3b
+			this->m_game_build = data["engine2_dll"]["dwBuildNumber"];
+			this->m_planted_c4 = data["client_dll"]["dwPlantedC4"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_entity_list -> 0x%llx", this->m_entity_list);
 			LOG_INFO("this->m_global_vars -> 0x%llx", this->m_global_vars);
 			LOG_INFO("this->m_local_player_pawn -> 0x%llx", this->m_local_player_pawn);
 			LOG_INFO("this->m_game_build -> 0x%llx", this->m_game_build);
+			LOG_INFO("this->m_planted_c4 -> 0x%llx \n", this->m_planted_c4);
 		#endif
 
 			data.clear();
@@ -95,15 +99,16 @@ namespace cs2
 			this->m_designer_name = data["CEntityIdentity"]["m_designerName"];
 			this->m_subclass_id = data["C_BaseEntity"]["m_nSubclassID"];
 			this->m_weapon_type = data["CCSWeaponBaseVData"]["m_WeaponType"];
-			this->m_action_tracking_services = data["CCSPlayerController"]["m_pActionTrackingServices"];
-			this->m_match_stats = data["CCSPlayerController_ActionTrackingServices"]["m_matchStats"];
-			this->m_kills = data["CSPerRoundStats_t"]["m_iKills"];
-			this->m_deaths = data["CSPerRoundStats_t"]["m_iDeaths"];
-			this->m_assists = data["CSPerRoundStats_t"]["m_iAssists"];
 			this->m_in_game_money_services = data["CCSPlayerController"]["m_pInGameMoneyServices"];
 			this->m_game_scene_node = data["C_BaseEntity"]["m_pGameSceneNode"];
+			this->m_vec_origin = data["CGameSceneNode"]["m_vecAbsOrigin"];
 			this->m_model_state = data["CSkeletonInstance"]["m_modelState"];
 			this->m_model_name = data["CModelState"]["m_ModelName"];
+			this->m_steam_id = data["CBasePlayerController"]["m_steamID"];
+			this->m_c4_blow = data["C_PlantedC4"]["m_flC4Blow"];
+			this->m_being_defused = data["C_PlantedC4"]["m_bBeingDefused"];
+			this->m_bomb_defused = data["C_PlantedC4"]["m_bBombDefused"];
+			this->m_defuse_countdown = data["C_PlantedC4"]["m_flDefuseCountDown"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_player_pawn -> 0x%llx", this->m_player_pawn);
@@ -124,15 +129,16 @@ namespace cs2
 			LOG_INFO("this->m_designer_name -> 0x%llx", this->m_designer_name);
 			LOG_INFO("this->m_subclass_id -> 0x%llx", this->m_subclass_id);
 			LOG_INFO("this->m_weapon_type -> 0x%llx", this->m_weapon_type);
-			LOG_INFO("this->m_action_tracking_services -> 0x%llx", this->m_action_tracking_services);
-			LOG_INFO("this->m_match_stats -> 0x%llx", this->m_match_stats);
-			LOG_INFO("this->m_kills -> 0x%llx", this->m_kills);
-			LOG_INFO("this->m_deaths -> 0x%llx", this->m_deaths);
-			LOG_INFO("this->m_assists -> 0x%llx", this->m_assists);
 			LOG_INFO("this->m_in_game_money_services -> 0x%llx", this->m_in_game_money_services);
 			LOG_INFO("this->m_game_scene_node -> 0x%llx", this->m_game_scene_node);
+			LOG_INFO("this->m_vec_origin -> 0x%llx", this->m_vec_origin);
 			LOG_INFO("this->m_model_state -> 0x%llx", this->m_model_state);
-			LOG_INFO("this->m_model_name -> 0x%llx \n", this->m_model_name);
+			LOG_INFO("this->m_model_name -> 0x%llx", this->m_model_name);
+			LOG_INFO("this->m_steam_id -> 0x%llx", this->m_steam_id);
+			LOG_INFO("this->m_c4_blow -> 0x%llx", this->m_c4_blow);
+			LOG_INFO("this->m_being_defused -> 0x%llx", this->m_being_defused);
+			LOG_INFO("this->m_bomb_defused -> 0x%llx", this->m_bomb_defused);
+			LOG_INFO("this->m_defuse_countdown -> 0x%llx \n", this->m_defuse_countdown);
 		#endif
 
 			this->m_initialized = true;
@@ -143,37 +149,39 @@ namespace cs2
 			return this->m_initialized;
 		}
 
-		std::uint64_t get_entity_list() { return this->m_entity_list; }
-		std::uint64_t get_global_vars() { return this->m_global_vars; }
-		std::uint64_t get_local_player_pawn() { return this->m_local_player_pawn; }
-		std::uint64_t get_game_build() { return this->m_game_build; }
-		std::uint64_t get_player_pawn() { return this->m_player_pawn; }
-		std::uint64_t get_health() { return this->m_health; }
-		std::uint64_t get_armor() { return this->m_armor; }
-		std::uint64_t get_team_num() { return this->m_team_num; }
-		std::uint64_t get_old_origin() { return this->m_old_origin; }
-		std::uint64_t get_sanitized_player_name() { return this->m_sanitized_player_name; }
-		std::uint64_t get_comp_teammate_color() { return this->m_comp_teammate_color; }
-		std::uint64_t get_item_services() { return this->m_item_services; }
-		std::uint64_t get_has_defuser() { return this->m_has_defuser; }
-		std::uint64_t get_has_helmet() { return this->m_has_helmet; }
-		std::uint64_t get_ang_eye_angles() { return this->m_ang_eye_angles; }
-		std::uint64_t get_weapon_services() { return this->m_weapon_services; }
-		std::uint64_t get_my_weapons() { return this->m_my_weapons; }
-		std::uint64_t get_active_weapon() { return this->m_active_weapon; }
-		std::uint64_t get_entity() { return this->m_entity; }
-		std::uint64_t get_designer_name() { return this->m_designer_name; }
-		std::uint64_t get_subclass_id() { return this->m_subclass_id; }
-		std::uint64_t get_weapon_type() { return this->m_weapon_type; }
-		std::uint64_t get_action_tracking_services() { return this->m_action_tracking_services; }
-		std::uint64_t get_math_stats() { return this->m_match_stats; }
-		std::uint64_t get_kills() { return this->m_kills; }
-		std::uint64_t get_deaths() { return this->m_deaths; }
-		std::uint64_t get_assists() { return this->m_assists; }
-		std::uint64_t get_in_game_money_services() { return this->m_in_game_money_services; }
-		std::uint64_t get_game_scene_node() { return this->m_game_scene_node; }
-		std::uint64_t get_model_state() { return this->m_model_state; }
-		std::uint64_t get_model_name() { return this->m_model_name; }
+		std::uintptr_t get_entity_list() { return this->m_entity_list; }
+		std::uintptr_t get_global_vars() { return this->m_global_vars; }
+		std::uintptr_t get_local_player_pawn() { return this->m_local_player_pawn; }
+		std::uintptr_t get_game_build() { return this->m_game_build; }
+		std::uintptr_t get_planted_c4() { return this->m_planted_c4; }
+		std::uintptr_t get_player_pawn() { return this->m_player_pawn; }
+		std::uintptr_t get_health() { return this->m_health; }
+		std::uintptr_t get_armor() { return this->m_armor; }
+		std::uintptr_t get_team_num() { return this->m_team_num; }
+		std::uintptr_t get_old_origin() { return this->m_old_origin; }
+		std::uintptr_t get_sanitized_player_name() { return this->m_sanitized_player_name; }
+		std::uintptr_t get_comp_teammate_color() { return this->m_comp_teammate_color; }
+		std::uintptr_t get_item_services() { return this->m_item_services; }
+		std::uintptr_t get_has_defuser() { return this->m_has_defuser; }
+		std::uintptr_t get_has_helmet() { return this->m_has_helmet; }
+		std::uintptr_t get_ang_eye_angles() { return this->m_ang_eye_angles; }
+		std::uintptr_t get_weapon_services() { return this->m_weapon_services; }
+		std::uintptr_t get_my_weapons() { return this->m_my_weapons; }
+		std::uintptr_t get_active_weapon() { return this->m_active_weapon; }
+		std::uintptr_t get_entity() { return this->m_entity; }
+		std::uintptr_t get_designer_name() { return this->m_designer_name; }
+		std::uintptr_t get_subclass_id() { return this->m_subclass_id; }
+		std::uintptr_t get_weapon_type() { return this->m_weapon_type; }
+		std::uintptr_t get_in_game_money_services() { return this->m_in_game_money_services; }
+		std::uintptr_t get_game_scene_node() { return this->m_game_scene_node; }
+		std::uintptr_t get_vec_origin() { return this->m_vec_origin; }
+		std::uintptr_t get_model_state() { return this->m_model_state; }
+		std::uintptr_t get_model_name() { return this->m_model_name; }
+		std::uintptr_t get_steam_id() { return this->m_steam_id; }
+		std::uintptr_t get_c4_blow() { return this->m_c4_blow; }
+		std::uintptr_t get_being_defused() { return this->m_being_defused; }
+		std::uintptr_t get_bomb_defused() { return this->m_bomb_defused; }
+		std::uintptr_t get_defuse_countdown() { return this->m_defuse_countdown; }
 	};
 }
 inline cs2::c_offsets m_offsets{};
