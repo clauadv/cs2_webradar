@@ -52,9 +52,10 @@ export const Bomb = ({ data, map_data, radar_img, averageLatency }) => {
     };
 
     return (
-        <div className={`absolute origin-center transition-transform duration-[${averageLatency}ms] ease-linear rounded-[100%] left-0 top-0`} ref={bombRef} style={
+        <div className={`absolute origin-center rounded-[100%] left-0 top-0`} ref={bombRef} style={
             {
                 transform: `translate(${image_translation.x}px, ${image_translation.y}px)`,
+                transition: `transform ${averageLatency}ms linear`,
                 backgroundColor: `${data.m_is_defused && `#50904c` || `#c90b0be6`}`,
                 WebkitMask: `url('./assets/icons/c4_sml.png') no-repeat center / contain`,
                 width: `0.8vw`,
@@ -84,9 +85,10 @@ export const Player = ({ data, map_data, radar_img, local_team, averageLatency }
     const rotation = calculate_rotation(data);
 
     return (
-        <div className={`absolute origin-center transition-transform duration-[${averageLatency}ms] ease-linear rounded-[100%] left-0 top-0`} ref={playerRef} style={
+        <div className={`absolute origin-center rounded-[100%] left-0 top-0`} ref={playerRef} style={
             {
                 transform: `translate(${image_translation.x}px, ${image_translation.y}px) rotate(${data.m_is_dead && `0` || rotation}deg)`,
+                transition: `transform ${averageLatency}ms linear`,
                 backgroundColor: `${data.m_team == local_team && get_color(data.m_color) || `red`}`,
                 opacity: `${data.m_is_dead && `0.8` || invalid_position && `0` || `1`}`,
                 WebkitMask: `${data.m_is_dead && `url('./assets/icons/icon-enemy-death_png.png') no-repeat center / contain` || `none`}`,
