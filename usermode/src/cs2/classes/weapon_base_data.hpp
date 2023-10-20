@@ -22,7 +22,7 @@ namespace cs2
 	public:
 		cs2::e_weapon_type get_id()
 		{
-			return m_driver.read_t<cs2::e_weapon_type>(this + m_offsets.get_weapon_type());
+			return m_memory.read_t<cs2::e_weapon_type>(this + m_offsets.get_weapon_type());
 		}
 	};
 }

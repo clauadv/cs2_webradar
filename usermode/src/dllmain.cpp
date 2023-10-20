@@ -3,9 +3,9 @@
 
 bool main()
 {
-	if (!m_driver.is_initialized())
+	if (!m_memory.is_initialized())
 	{
-		LOG_ERROR("failed to initialize driver communication");
+		LOG_ERROR("failed to initialize memory class");
 		std::this_thread::sleep_for(std::chrono::seconds(5));
 		return true;
 	}

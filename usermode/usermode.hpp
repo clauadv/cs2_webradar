@@ -18,11 +18,10 @@
 
 // src/includes
 #include "driver/driver.hpp"
+#include "memory/memory.hpp"
 #include "math/vector.hpp"
 #include "cs2/offsets/offsets.hpp"
 #include "cs2/classes/global_vars.hpp"
-#include "cs2/classes/item_services.hpp"
-#include "cs2/classes/in_game_money_services.hpp"
 #include "cs2/classes/base_entity.hpp"
 #include "cs2/classes/entity_list.hpp"
 #include "cs2/classes/weapon_base_data.hpp"

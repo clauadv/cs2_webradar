@@ -8,7 +8,7 @@ namespace cs2
 		template<typename T>
 		T get(const int idx)
 		{
-			const auto entry_list = m_driver.read_t<std::uintptr_t>(this + 8 * (idx >> 9) + 16);
+			const auto entry_list = m_memory.read_t<std::uintptr_t>(this + 8 * (idx >> 9) + 16);
 			if (!entry_list)
 				return nullptr;
 
@@ -16,7 +16,7 @@ namespace cs2
 			if (!controller)
 				return nullptr;
 
-			return m_driver.read_t<T>(controller);
+			return m_memory.read_t<T>(controller);
 		}
 	};
 }

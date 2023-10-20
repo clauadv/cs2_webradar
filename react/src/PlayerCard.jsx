@@ -7,7 +7,7 @@ export const PlayerCard = ({ playerData, right }) => {
             <div className={`flex flex-col gap-[0.375rem] justify-center items-center`}>
                 <div className={`hover:cursor-pointer`} onClick={() => window.open(`https://steamcommunity.com/profiles/${playerData.m_steam_id}`, '_blank', 'noopener,noreferrer')}>{playerData.m_name}</div>
                 <div className={`w-0 h-0 border-solid border-t-[12px] border-r-[8px] border-b-[12px] border-l-[8px]`} style={{ borderColor: `${get_color(playerData.m_color)} transparent transparent transparent` }}></div>
-                <img className={`h-[128px] ${right && `scale-x-[-1]`}`} src={`./assets/characters/${playerData.m_model_name}.png`}></img>
+                <img className={`h-[8rem] ${right && `scale-x-[-1]`}`} src={`./assets/characters/${playerData.m_model_name}.png`}></img>
             </div>
 
             <div className={`flex flex-col ${right && `flex-row-reverse`} justify-center gap-2`}>

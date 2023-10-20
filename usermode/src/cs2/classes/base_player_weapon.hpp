@@ -11,7 +11,7 @@ namespace cs2
 			if (!entity_list)
 				return nullptr;
 
-			const auto handle = m_driver.read_t<int>(this + idx * 0x4);
+			const auto handle = m_memory.read_t<int>(this + idx * 0x4);
 			if (handle == -1)
 				return nullptr;
 
@@ -21,7 +21,7 @@ namespace cs2
 		cs2::c_weapon_base_data* get_data()
 		{
 			// @NOTE: https://www.unknowncheats.me/forum/3878143-post6.html
-			return m_driver.read_t<cs2::c_weapon_base_data*>(this + m_offsets.get_subclass_id() + 0x08);
+			return m_memory.read_t<cs2::c_weapon_base_data*>(this + m_offsets.get_subclass_id() + 0x08);
 		}
 
 		std::string get_cleaned_name()

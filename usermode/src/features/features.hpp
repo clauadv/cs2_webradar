@@ -1,11 +1,5 @@
 #pragma once
 
-class C_PlantedC4
-{
-public:
-
-};
-
 namespace usermode
 {
 	class c_features
@@ -64,27 +58,9 @@ namespace usermode
 				this->m_player_data["m_is_dead"] = player->is_dead();
 				this->m_player_data["m_model_name"] = player->get_model_name();
 				this->m_player_data["m_steam_id"] = entity->get_steam_id();
-
-				/* get money */
-				[&]()
-				{
-					const auto in_game_money_services = entity->get_in_game_money_services();
-					if (!in_game_money_services)
-						return;
-
-					this->m_player_data["m_money"] = in_game_money_services->get_money();
-				}();
-
-				/* get defuser/helmet */
-				[&]()
-				{
-					const auto item_services = player->get_item_services();
-					if (!item_services)
-						return;
-
-					this->m_player_data["m_has_helmet"] = item_services->has_helmet();
-					this->m_player_data["m_has_defuser"] = item_services->has_defuser();
-				}();
+				this->m_player_data["m_money"] = entity->get_money();
+				this->m_player_data["m_has_helmet"] = player->has_helmet();
+				this->m_player_data["m_has_defuser"] = player->has_defuser();
 				
 				/* get active weapon */
 				[&]()
