@@ -19,7 +19,7 @@ namespace usermode
 		}
 
 		bool is_initialized() { return this->m_initialized; }
-		int get_process_id() { return this->m_process_id; }
+		std::int64_t get_process_id() { return this->m_process_id; }
 
 		bool set_process(const std::string& name)
 		{
