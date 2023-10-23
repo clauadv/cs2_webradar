@@ -61,6 +61,7 @@ namespace usermode
 				this->m_player_data["m_money"] = entity->get_money();
 				this->m_player_data["m_has_helmet"] = player->has_helmet();
 				this->m_player_data["m_has_defuser"] = player->has_defuser();
+				this->m_player_data["m_weapons"] = nlohmann::json{};
 
 				/* get active weapon */ [&]()
 				{
@@ -140,6 +141,8 @@ namespace usermode
 
 		void get_bomb_info()
 		{
+			this->m_data["m_bomb"] = nlohmann::json{};
+			
 			/* get dropped/carried bomb */ [&]()
 			{
 				cs2::c_base_entity::iterate("weapon_c4", [&](cs2::c_base_entity* entity)
