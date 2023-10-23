@@ -20,7 +20,7 @@ bool main()
 		return true;
 	}
 
-	static auto web_socket = easywsclient::WebSocket::from_url("ws://188.24.175.93:22006/cs2_webradar");
+	static auto web_socket = easywsclient::WebSocket::from_url("ws://localhost:22006/cs2_webradar");
 	if (!web_socket)
 	{
 		LOG_ERROR("failed to connect to the web socket");

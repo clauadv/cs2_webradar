@@ -19,7 +19,7 @@ const App = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			if (!web_socket) {
-				web_socket = new WebSocket("ws://188.24.175.93:22006/cs2_webradar");
+				web_socket = new WebSocket("ws://localhost:22006/cs2_webradar");
 			}
 
 			web_socket.onopen = async () => {
