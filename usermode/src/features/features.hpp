@@ -61,9 +61,8 @@ namespace usermode
 				this->m_player_data["m_money"] = entity->get_money();
 				this->m_player_data["m_has_helmet"] = player->has_helmet();
 				this->m_player_data["m_has_defuser"] = player->has_defuser();
-				
-				/* get active weapon */
-				[&]()
+
+				/* get active weapon */ [&]()
 				{
 					const auto weapon_services = player->get_weapon_services();
 					if (!weapon_services)
@@ -78,8 +77,7 @@ namespace usermode
 					this->m_player_data["m_weapons"]["m_active"] = weapon_name;
 				}();
 
-				/* get all player weapons */
-				[&]()
+				/* get all player weapons */ [&]()
 				{
 					const auto weapon_services = player->get_weapon_services();
 					if (!weapon_services)
@@ -142,34 +140,20 @@ namespace usermode
 
 		void get_bomb_info()
 		{
-			/* get dropped/carried bomb */
-			[&]()
+			/* get dropped/carried bomb */ [&]()
 			{
-				const auto entity_list = m_cs2.get_entity_list();
-				if (!entity_list)
-					return;
-
-				for (std::size_t idx{ 0 }; idx < 1024; idx++)
+				cs2::c_base_entity::iterate("weapon_c4", [&](cs2::c_base_entity* entity)
 				{
-					const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
-					if (!entity)
-						continue;
-
-					const auto name = entity->get_name();
-					if (name.find("weapon_c4") == std::string::npos)
-						continue;
-
 					const auto vec_origin = entity->get_vec_origin();
 					if (vec_origin.zero())
-						continue;
+						return;
 
 					this->m_data["m_bomb"]["x"] = entity->get_vec_origin().x;
 					this->m_data["m_bomb"]["y"] = entity->get_vec_origin().y;
-				}
+				});
 			}();
 
-			/* get planted bomb */
-			[&]()
+			/* get planted bomb */ [&]()
 			{
 				const auto planted_c4 = m_cs2.get_planted_c4();
 				if (!planted_c4)
@@ -197,8 +181,6 @@ namespace usermode
 				this->m_data["m_bomb"]["m_is_defused"] = is_defused;
 				this->m_data["m_bomb"]["m_is_defusing"] = is_defusing;
 				this->m_data["m_bomb"]["m_defuse_time"] = defuse_time;
-
-				LOG_INFO("is_defused -> %d", is_defused);
 			}();
 		}
 	};
