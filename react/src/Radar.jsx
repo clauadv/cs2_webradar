@@ -37,7 +37,7 @@ export const calculate_rotation = (data) => {
     return rotations[idx];
 }
 
-export const Bomb = ({ data, map_data, radar_img, averageLatency }) => {
+export const Bomb = ({ data, map_data, radar_img, localTeam, averageLatency }) => {
     const bombRef = useRef();
 
     const position = get_radar_position(map_data, data);
@@ -56,7 +56,7 @@ export const Bomb = ({ data, map_data, radar_img, averageLatency }) => {
             {
                 transform: `translate(${image_translation.x}px, ${image_translation.y}px)`,
                 transition: `transform ${averageLatency}ms linear`,
-                backgroundColor: `${data.m_is_defused && `#50904c` || `#c90b0be6`}`,
+                backgroundColor: `${data.m_is_defused && `#50904c` || (localTeam == 3) && `#6492b4` || `#c90b0b`}`,
                 WebkitMask: `url('./assets/icons/c4_sml.png') no-repeat center / contain`,
                 width: `0.8vw`,
                 height: `0.8vw`,
@@ -137,7 +137,7 @@ export const Radar = ({ players, image, map_data, local_team, averageLatency, bo
 
             {
                 bomb &&
-                <Bomb data={bomb} map_data={map_data} radar_img={radarImage.current} averageLatency={averageLatency} />
+                <Bomb data={bomb} map_data={map_data} radar_img={radarImage.current} localTeam={local_team} averageLatency={averageLatency} />
             }
         </div >
     )
