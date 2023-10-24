@@ -85,5 +85,10 @@ namespace cs2
 
 			return m_memory.read_t<math::fvector3>(game_scene_node + m_offsets.get_vec_origin());
 		}
+
+		cs2::c_base_entity* get_owner()
+		{
+			return m_memory.read_t<cs2::c_base_entity*>(this + m_offsets.get_owner_entity());
+		}
 	};
 }

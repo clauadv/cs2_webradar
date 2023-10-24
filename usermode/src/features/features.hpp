@@ -4,9 +4,10 @@ namespace usermode
 {
 	class c_features
 	{
-	public:
+	private:
 		nlohmann::json m_data{};
 		nlohmann::json m_player_data{};
+		std::size_t m_bomb_idx{ 0 };
 
 	public:
 		nlohmann::json get_data() { return this->m_data; }
@@ -62,6 +63,7 @@ namespace usermode
 				this->m_player_data["m_has_helmet"] = player->has_helmet();
 				this->m_player_data["m_has_defuser"] = player->has_defuser();
 				this->m_player_data["m_weapons"] = nlohmann::json{};
+				this->m_player_data["m_has_bomb"] = this->m_bomb_idx == (entity->get_pawn() & 0xffff);
 
 				/* get active weapon */ [&]()
 				{
@@ -128,8 +130,6 @@ namespace usermode
 						{
 							this->m_player_data["m_weapons"]["m_melee"] = weapon_name;
 						}
-
-						this->m_player_data["m_has_bomb"] = weapon_name.find("c4") != std::string::npos;
 					}
 
 					this->m_player_data["m_weapons"]["m_utilities"] = std::vector<std::string>(utilities_set.begin(), utilities_set.end());
@@ -147,6 +147,8 @@ namespace usermode
 			{
 				cs2::c_base_entity::iterate("weapon_c4", [&](cs2::c_base_entity* entity)
 				{
+					this->m_bomb_idx = reinterpret_cast<std::uintptr_t>(entity->get_owner()) & 0xffff;
+
 					const auto vec_origin = entity->get_vec_origin();
 					if (vec_origin.zero())
 						return;

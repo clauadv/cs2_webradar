@@ -40,6 +40,7 @@ namespace cs2
 		std::uintptr_t m_being_defused{ 0 };
 		std::uintptr_t m_bomb_defused{ 0 };
 		std::uintptr_t m_defuse_countdown{ 0 };
+		std::uintptr_t m_owner_entity{ 0 };
 
 	public:
 		c_offsets()
@@ -111,6 +112,7 @@ namespace cs2
 			this->m_being_defused = data["C_PlantedC4"]["m_bBeingDefused"];
 			this->m_bomb_defused = data["C_PlantedC4"]["m_bBombDefused"];
 			this->m_defuse_countdown = data["C_PlantedC4"]["m_flDefuseCountDown"];
+			this->m_owner_entity = data["C_BaseEntity"]["m_hOwnerEntity"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_player_pawn -> 0x%llx", this->m_player_pawn);
@@ -141,7 +143,8 @@ namespace cs2
 			LOG_INFO("this->m_c4_blow -> 0x%llx", this->m_c4_blow);
 			LOG_INFO("this->m_being_defused -> 0x%llx", this->m_being_defused);
 			LOG_INFO("this->m_bomb_defused -> 0x%llx", this->m_bomb_defused);
-			LOG_INFO("this->m_defuse_countdown -> 0x%llx \n", this->m_defuse_countdown);
+			LOG_INFO("this->m_defuse_countdown -> 0x%llx", this->m_defuse_countdown);
+			LOG_INFO("this->m_owner_entity -> 0x%llx \n", this->m_owner_entity);
 		#endif
 
 			this->m_initialized = true;
@@ -186,6 +189,7 @@ namespace cs2
 		std::uintptr_t get_being_defused() { return this->m_being_defused; }
 		std::uintptr_t get_bomb_defused() { return this->m_bomb_defused; }
 		std::uintptr_t get_defuse_countdown() { return this->m_defuse_countdown; }
+		std::uintptr_t get_owner_entity() { return this->m_owner_entity; }
 	};
 }
 inline cs2::c_offsets m_offsets{};
