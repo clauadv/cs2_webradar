@@ -62,7 +62,7 @@ export const PlayerCard = ({ playerData, right }) => {
                             <MaskedIcon path={`./assets/icons/defuser.svg`} height={28} color={`bg-radar-secondary`} />
                             ||
                             (playerData.m_team == 2 && playerData.m_has_bomb) &&
-                            <MaskedIcon path={`./assets/icons/c4.svg`} height={28} color={playerData.m_weapons.m_active == `c4` && `bg-radar-primary` || `bg-radar-secondary`} />
+                            <MaskedIcon path={`./assets/icons/c4.svg`} height={28} color={(playerData.m_weapons && playerData.m_weapons.m_active) == `c4` && `bg-radar-primary` || `bg-radar-secondary`} />
                         }
                     </div>
                 </div>
