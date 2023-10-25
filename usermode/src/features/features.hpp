@@ -75,7 +75,11 @@ namespace usermode
 					if (!active_weapon)
 						return;
 
-					const auto weapon_name = active_weapon->get_cleaned_name();
+					const auto weapon_data = active_weapon->get_data();
+					if (!weapon_data)
+						return;
+
+					const auto weapon_name = weapon_data->get_name();
 
 					this->m_player_data["m_weapons"]["m_active"] = weapon_name;
 				}();
@@ -102,7 +106,7 @@ namespace usermode
 						if (!weapon_data)
 							continue;
 
-						const auto weapon_name = weapon->get_cleaned_name();
+						const auto weapon_name = weapon_data->get_name();
 
 						const auto weapon_type = weapon_data->get_id();
 						switch (weapon_type)

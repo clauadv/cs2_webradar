@@ -28,6 +28,7 @@ namespace cs2
 		std::uintptr_t m_designer_name{ 0 };
 		std::uintptr_t m_subclass_id{ 0 };
 		std::uintptr_t m_weapon_type{ 0 };
+		std::uintptr_t m_name{ 0 };
 		std::uintptr_t m_in_game_money_services{ 0 };
 		std::uintptr_t m_account{ 0 };
 		std::uintptr_t m_game_scene_node{ 0 };
@@ -101,6 +102,7 @@ namespace cs2
 			this->m_designer_name = data["CEntityIdentity"]["m_designerName"];
 			this->m_subclass_id = data["C_BaseEntity"]["m_nSubclassID"];
 			this->m_weapon_type = data["CCSWeaponBaseVData"]["m_WeaponType"];
+			this->m_name = data["CCSWeaponBaseVData"]["m_szName"];
 			this->m_in_game_money_services = data["CCSPlayerController"]["m_pInGameMoneyServices"];
 			this->m_account = data["CCSPlayerController_InGameMoneyServices"]["m_iAccount"];
 			this->m_game_scene_node = data["C_BaseEntity"]["m_pGameSceneNode"];
@@ -133,6 +135,7 @@ namespace cs2
 			LOG_INFO("this->m_designer_name -> 0x%llx", this->m_designer_name);
 			LOG_INFO("this->m_subclass_id -> 0x%llx", this->m_subclass_id);
 			LOG_INFO("this->m_weapon_type -> 0x%llx", this->m_weapon_type);
+			LOG_INFO("this->m_name -> 0x%llx", this->m_name);
 			LOG_INFO("this->m_in_game_money_services -> 0x%llx", this->m_in_game_money_services);
 			LOG_INFO("this->m_account -> 0x%llx", this->m_account);
 			LOG_INFO("this->m_game_scene_node -> 0x%llx", this->m_game_scene_node);
@@ -178,6 +181,7 @@ namespace cs2
 		std::uintptr_t get_designer_name() { return this->m_designer_name; }
 		std::uintptr_t get_subclass_id() { return this->m_subclass_id; }
 		std::uintptr_t get_weapon_type() { return this->m_weapon_type; }
+		std::uintptr_t get_name() { return this->m_name; }
 		std::uintptr_t get_in_game_money_services() { return this->m_in_game_money_services; }
 		std::uintptr_t get_account() { return this->m_account; }
 		std::uintptr_t get_game_scene_node() { return this->m_game_scene_node; }

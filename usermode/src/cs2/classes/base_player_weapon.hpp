@@ -23,13 +23,5 @@ namespace cs2
 			// @NOTE: https://www.unknowncheats.me/forum/3878143-post6.html
 			return m_memory.read_t<cs2::c_weapon_base_data*>(this + m_offsets.get_subclass_id() + 0x08);
 		}
-
-		std::string get_cleaned_name()
-		{
-			auto weapon_name = this->get_name();
-			weapon_name.erase(weapon_name.begin(), weapon_name.begin() + 7);
-
-			return weapon_name;
-		}
 	};
 }
