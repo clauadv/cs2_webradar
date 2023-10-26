@@ -95,6 +95,7 @@ namespace usermode
 						return;
 
 					std::set<std::string> utilities_set{};
+					std::set<std::string> melee_set{};
 
 					for (std::size_t idx{ 0 }; idx < my_weapons.first; idx++)
 					{
@@ -123,19 +124,17 @@ namespace usermode
 								this->m_player_data["m_weapons"]["m_secondary"] = weapon_name;
 								break;
 
-							case cs2::e_weapon_type::taser:
+							case cs2::e_weapon_type::knife:
+								melee_set.insert(weapon_name);
+								break;
+
 							case cs2::e_weapon_type::grenade:
 								utilities_set.insert(weapon_name);
 								break;
 						}
-
-						// @NOTE: unorthodox ways
-						if (weapon_name.contains("knife") && weapon_name.find("taser") == std::string::npos)
-						{
-							this->m_player_data["m_weapons"]["m_melee"] = weapon_name;
-						}
 					}
 
+					this->m_player_data["m_weapons"]["m_melee"] = std::vector<std::string>(melee_set.begin(), melee_set.end());
 					this->m_player_data["m_weapons"]["m_utilities"] = std::vector<std::string>(utilities_set.begin(), utilities_set.end());
 				}();
 

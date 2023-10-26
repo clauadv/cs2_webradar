@@ -38,7 +38,9 @@ export const PlayerCard = ({ playerData, right }) => {
 
                     {
                         playerData.m_weapons && playerData.m_weapons.m_melee &&
-                        <MaskedIcon path={`./assets/icons/${playerData.m_weapons.m_melee}.svg`} height={28} color={`${(playerData.m_weapons.m_active == playerData.m_weapons.m_melee || playerData.m_weapons.m_active == playerData.m_weapons.m_melee) && `bg-radar-primary` || `bg-radar-secondary`}`} />
+                        playerData.m_weapons.m_melee.map((melee) =>
+                            <MaskedIcon key={melee} path={`./assets/icons/${melee}.svg`} height={28} color={`${(playerData.m_weapons.m_active == melee || playerData.m_weapons.m_active == melee) && `bg-radar-primary` || `bg-radar-secondary`}`} />
+                        )
                     }
                 </div>
 
