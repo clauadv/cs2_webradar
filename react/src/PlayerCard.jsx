@@ -28,18 +28,18 @@ export const PlayerCard = ({ playerData, right }) => {
                 <div className={`flex ${right && `flex-row-reverse`} gap-3`}>
                     {
                         playerData.m_weapons && playerData.m_weapons.m_primary &&
-                        <MaskedIcon path={`./assets/icons/${playerData.m_weapons.m_primary}.svg`} height={28} color={`${(playerData.m_weapons.m_active == playerData.m_weapons.m_primary || playerData.m_weapons.m_active == playerData.m_weapons.m_primary) && `bg-radar-primary` || `bg-radar-secondary`}`} />
+                        <MaskedIcon path={`./assets/icons/${playerData.m_weapons.m_primary}.svg`} height={28} color={`${playerData.m_weapons.m_active == playerData.m_weapons.m_primary && `bg-radar-primary` || `bg-radar-secondary`}`} />
                     }
 
                     {
                         playerData.m_weapons && playerData.m_weapons.m_secondary &&
-                        <MaskedIcon path={`./assets/icons/${playerData.m_weapons.m_secondary}.svg`} height={28} color={`${(playerData.m_weapons.m_active == playerData.m_weapons.m_secondary || playerData.m_weapons.m_active == playerData.m_weapons.m_secondary) && `bg-radar-primary` || `bg-radar-secondary`}`} />
+                        <MaskedIcon path={`./assets/icons/${playerData.m_weapons.m_secondary}.svg`} height={28} color={`${playerData.m_weapons.m_active == playerData.m_weapons.m_secondary && `bg-radar-primary` || `bg-radar-secondary`}`} />
                     }
 
                     {
                         playerData.m_weapons && playerData.m_weapons.m_melee &&
                         playerData.m_weapons.m_melee.map((melee) =>
-                            <MaskedIcon key={melee} path={`./assets/icons/${melee}.svg`} height={28} color={`${(playerData.m_weapons.m_active == melee || playerData.m_weapons.m_active == melee) && `bg-radar-primary` || `bg-radar-secondary`}`} />
+                            <MaskedIcon key={melee} path={`./assets/icons/${melee}.svg`} height={28} color={`${playerData.m_weapons.m_active == melee && `bg-radar-primary` || `bg-radar-secondary`}`} />
                         )
                     }
                 </div>
@@ -49,7 +49,7 @@ export const PlayerCard = ({ playerData, right }) => {
                         {
                             playerData.m_weapons && playerData.m_weapons.m_utilities &&
                             playerData.m_weapons.m_utilities.map((utility) =>
-                                <MaskedIcon key={utility} path={`./assets/icons/${utility}.svg`} height={28} color={`${(playerData.m_weapons.m_active == utility || playerData.m_weapons.m_active == utility) && `bg-radar-primary` || `bg-radar-secondary`}`} />
+                                <MaskedIcon key={utility} path={`./assets/icons/${utility}.svg`} height={28} color={`${playerData.m_weapons.m_active == utility && `bg-radar-primary` || `bg-radar-secondary`}`} />
                             )
                         }
 
