@@ -58,11 +58,11 @@ namespace cs2
 
 			offsets_json >> data;
 
-			this->m_entity_list = data["client_dll"]["dwEntityList"];
-			this->m_global_vars = data["client_dll"]["dwGlobalVars"];
-			this->m_local_player_pawn = data["client_dll"]["dwLocalPlayerPawn"];
-			this->m_game_build = data["engine2_dll"]["dwBuildNumber"];
-			this->m_planted_c4 = data["client_dll"]["dwPlantedC4"];
+			this->m_entity_list = data["client_dll"]["data"]["dwEntityList"]["value"];
+			this->m_global_vars = data["client_dll"]["data"]["dwGlobalVars"]["value"];
+			this->m_local_player_pawn = data["client_dll"]["data"]["dwLocalPlayerPawn"]["value"];
+			this->m_game_build = data["engine2_dll"]["data"]["dwBuildNumber"]["value"];
+			this->m_planted_c4 = data["client_dll"]["data"]["dwPlantedC4"]["value"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_entity_list -> 0x%llx", this->m_entity_list);
@@ -84,37 +84,37 @@ namespace cs2
 
 			client_dll_json >> data;
 
-			this->m_player_pawn = data["CCSPlayerController"]["m_hPlayerPawn"];
-			this->m_health = data["C_BaseEntity"]["m_iHealth"];
-			this->m_armor = data["C_CSPlayerPawnBase"]["m_ArmorValue"];
-			this->m_team_num = data["C_BaseEntity"]["m_iTeamNum"];
-			this->m_old_origin = data["C_BasePlayerPawn"]["m_vOldOrigin"];
-			this->m_sanitized_player_name = data["CCSPlayerController"]["m_sSanitizedPlayerName"];
-			this->m_comp_teammate_color = data["CCSPlayerController"]["m_iCompTeammateColor"];
-			this->m_item_services = data["C_BasePlayerPawn"]["m_pItemServices"];
-			this->m_has_defuser = data["CCSPlayer_ItemServices"]["m_bHasDefuser"];
-			this->m_has_helmet = data["CCSPlayer_ItemServices"]["m_bHasHelmet"];
-			this->m_ang_eye_angles = data["C_CSPlayerPawnBase"]["m_angEyeAngles"];
-			this->m_weapon_services = data["C_BasePlayerPawn"]["m_pWeaponServices"];
-			this->m_my_weapons = data["CPlayer_WeaponServices"]["m_hMyWeapons"];
-			this->m_active_weapon = data["CPlayer_WeaponServices"]["m_hActiveWeapon"];
-			this->m_entity = data["CEntityInstance"]["m_pEntity"];
-			this->m_designer_name = data["CEntityIdentity"]["m_designerName"];
-			this->m_subclass_id = data["C_BaseEntity"]["m_nSubclassID"];
-			this->m_weapon_type = data["CCSWeaponBaseVData"]["m_WeaponType"];
-			this->m_name = data["CCSWeaponBaseVData"]["m_szName"];
-			this->m_in_game_money_services = data["CCSPlayerController"]["m_pInGameMoneyServices"];
-			this->m_account = data["CCSPlayerController_InGameMoneyServices"]["m_iAccount"];
-			this->m_game_scene_node = data["C_BaseEntity"]["m_pGameSceneNode"];
-			this->m_vec_origin = data["CGameSceneNode"]["m_vecAbsOrigin"];
-			this->m_model_state = data["CSkeletonInstance"]["m_modelState"];
-			this->m_model_name = data["CModelState"]["m_ModelName"];
-			this->m_steam_id = data["CBasePlayerController"]["m_steamID"];
-			this->m_c4_blow = data["C_PlantedC4"]["m_flC4Blow"];
-			this->m_being_defused = data["C_PlantedC4"]["m_bBeingDefused"];
-			this->m_bomb_defused = data["C_PlantedC4"]["m_bBombDefused"];
-			this->m_defuse_countdown = data["C_PlantedC4"]["m_flDefuseCountDown"];
-			this->m_owner_entity = data["C_BaseEntity"]["m_hOwnerEntity"];
+			this->m_player_pawn = data["CCSPlayerController"]["data"]["m_hPlayerPawn"]["value"];
+			this->m_health = data["C_BaseEntity"]["data"]["m_iHealth"]["value"];
+			this->m_armor = data["C_CSPlayerPawnBase"]["data"]["m_ArmorValue"]["value"];
+			this->m_team_num = data["C_BaseEntity"]["data"]["m_iTeamNum"]["value"];
+			this->m_old_origin = data["C_BasePlayerPawn"]["data"]["m_vOldOrigin"]["value"];
+			this->m_sanitized_player_name = data["CCSPlayerController"]["data"]["m_sSanitizedPlayerName"]["value"];
+			this->m_comp_teammate_color = data["CCSPlayerController"]["data"]["m_iCompTeammateColor"]["value"];
+			this->m_item_services = data["C_BasePlayerPawn"]["data"]["m_pItemServices"]["value"];
+			this->m_has_defuser = data["CCSPlayer_ItemServices"]["data"]["m_bHasDefuser"]["value"];
+			this->m_has_helmet = data["CCSPlayer_ItemServices"]["data"]["m_bHasHelmet"]["value"];
+			this->m_ang_eye_angles = data["C_CSPlayerPawnBase"]["data"]["m_angEyeAngles"]["value"];
+			this->m_weapon_services = data["C_BasePlayerPawn"]["data"]["m_pWeaponServices"]["value"];
+			this->m_my_weapons = data["CPlayer_WeaponServices"]["data"]["m_hMyWeapons"]["value"];
+			this->m_active_weapon = data["CPlayer_WeaponServices"]["data"]["m_hActiveWeapon"]["value"];
+			this->m_entity = data["CEntityInstance"]["data"]["m_pEntity"]["value"];
+			this->m_designer_name = data["CEntityIdentity"]["data"]["m_designerName"]["value"];
+			this->m_subclass_id = data["C_BaseEntity"]["data"]["m_nSubclassID"]["value"];
+			this->m_weapon_type = data["CCSWeaponBaseVData"]["data"]["m_WeaponType"]["value"];
+			this->m_name = data["CCSWeaponBaseVData"]["data"]["m_szName"]["value"];
+			this->m_in_game_money_services = data["CCSPlayerController"]["data"]["m_pInGameMoneyServices"]["value"];
+			this->m_account = data["CCSPlayerController_InGameMoneyServices"]["data"]["m_iAccount"]["value"];
+			this->m_game_scene_node = data["C_BaseEntity"]["data"]["m_pGameSceneNode"]["value"];
+			this->m_vec_origin = data["CGameSceneNode"]["data"]["m_vecAbsOrigin"]["value"];
+			this->m_model_state = data["CSkeletonInstance"]["data"]["m_modelState"]["value"];
+			this->m_model_name = data["CModelState"]["data"]["m_ModelName"]["value"];
+			this->m_steam_id = data["CBasePlayerController"]["data"]["m_steamID"]["value"];
+			this->m_c4_blow = data["C_PlantedC4"]["data"]["m_flC4Blow"]["value"];
+			this->m_being_defused = data["C_PlantedC4"]["data"]["m_bBeingDefused"]["value"];
+			this->m_bomb_defused = data["C_PlantedC4"]["data"]["m_bBombDefused"]["value"];
+			this->m_defuse_countdown = data["C_PlantedC4"]["data"]["m_flDefuseCountDown"]["value"];
+			this->m_owner_entity = data["C_BaseEntity"]["data"]["m_hOwnerEntity"]["value"];
 
 		#ifdef DEVELOPER
 			LOG_INFO("this->m_player_pawn -> 0x%llx", this->m_player_pawn);
