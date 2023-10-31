@@ -1,45 +1,46 @@
 import ReactDOM from 'react-dom/client'
 import { useEffect, useState } from 'react'
 import './App.css'
-import { PlayerCard } from "./PlayerCard";
-import { Player, Radar } from "./Radar";
-import { GetLatency, LatencyContainer } from './LatencyContainer';
-import { MaskedIcon } from './MaskedIcon';
+import { PlayerCard } from "./PlayerCard/PlayerCard";
+import { Radar } from "./Radar/Radar";
+import { getLatency, Latency } from './Latency/Latency';
+import { MaskedIcon } from './MaskedIcon/MaskedIcon';
 
 
 const App = () => {
-	const [players, setPlayers] = useState([]);
+	const [averageLatency, setAverageLatency] = useState(0);
+	const [playerArray, setPlayerArray] = useState([]);
 	const [mapData, setMapData] = useState();
 	const [localTeam, setLocalTeam] = useState();
-	const [averageLatency, setAverageLatency] = useState(0);
-	const [bomb, setBomb] = useState();
+	const [bombData, setBombData] = useState();
 
-	let web_socket = null;
+	let webSocket = null;
 
 	useEffect(() => {
 		const fetchData = async () => {
-			if (!web_socket) {
-				web_socket = new WebSocket("ws://localhost:22006/cs2_webradar");
+			if (!webSocket) {
+				webSocket = new WebSocket("ws://localhost:22006/cs2_webradar");
 			}
 
-			web_socket.onopen = async () => {
+			webSocket.onopen = async () => {
 				console.info("connected to the web socket");
 			}
 
-			web_socket.onclose = async () => {
+			webSocket.onclose = async () => {
 				console.error("disconnected from the web socket");
 			}
 
-			web_socket.onerror = async (error) => {
+			webSocket.onerror = async (error) => {
 				console.error(error);
 			}
 
-			web_socket.onmessage = async (event) => {
+			webSocket.onmessage = async (event) => {
+				setAverageLatency(getLatency());
+
 				const parsed_data = JSON.parse(await event.data.text());
-				setPlayers(parsed_data.m_players);
+				setPlayerArray(parsed_data.m_players);
 				setLocalTeam(parsed_data.m_local_team);
-				setAverageLatency(GetLatency());
-				setBomb(parsed_data.m_bomb);
+				setBombData(parsed_data.m_bomb);
 
 				const map = parsed_data.m_map;
 				if (map !== "invalid") {
@@ -54,32 +55,31 @@ const App = () => {
 
 	return (
 		<div className={`w-screen h-screen flex flex-col justify-center backdrop-blur-[7.5px]`} style={{ background: `radial-gradient(50% 50% at 50% 50%, rgba(20, 40, 55, 0.95) 0%, rgba(7, 20, 30, 0.95) 100%)`, backdropFilter: `blur(7.5px)` }}>
-
 			{
-				(bomb && bomb.m_blow_time > 0 && !bomb.m_is_defused) && (
+				(bombData && bombData.m_blow_time > 0 && !bombData.m_is_defused) && (
 					<div className={`flex flex-col items-center gap-1`}>
 						<div className={`flex justify-center items-center gap-1`}>
-							<MaskedIcon path={`./assets/icons/c4_sml.png`} height={32} color={bomb.m_is_defusing && `bg-radar-green` || `bg-radar-secondary`} />
-							<span>{`${bomb.m_blow_time.toFixed(1)}s ${bomb.m_is_defusing && `(${bomb.m_defuse_time.toFixed(1)}s)` || ''}`}</span>
+							<MaskedIcon path={`./assets/icons/c4_sml.png`} height={32} color={bombData.m_is_defusing && `bg-radar-green` || `bg-radar-secondary`} />
+							<span>{`${bombData.m_blow_time.toFixed(1)}s ${bombData.m_is_defusing && `(${bombData.m_defuse_time.toFixed(1)}s)` || ''}`}</span>
 						</div>
 					</div>
 				)
 			}
 
 			<div className={`flex items-center justify-evenly`}>
-				<LatencyContainer value={averageLatency} />
+				<Latency value={averageLatency} />
 
-				<ul id="t" className="flex flex-col gap-7 m-0 p-0">
+				<ul id="terrorist" className="flex flex-col gap-7 m-0 p-0">
 					{
-						players.filter((player) => player.m_team == 2).map((player) =>
+						playerArray.filter((player) => player.m_team == 2).map((player) =>
 							<PlayerCard right={false} key={player.m_idx} playerData={player} />
 						)
 					}
 				</ul>
 
 				{
-					players.length > 0 && mapData && (
-						<Radar players={players} image={`./data/${mapData.name}/radar.png`} map_data={mapData} local_team={localTeam} averageLatency={averageLatency} bomb={bomb} />
+					playerArray.length > 0 && mapData && (
+						<Radar playerArray={playerArray} radarImage={`./data/${mapData.name}/radar.png`} mapData={mapData} localTeam={localTeam} averageLatency={averageLatency} bombData={bombData} />
 					) || (
 						<div id="radar" className={`relative overflow-hidden origin-center`}>
 							<h1>Waiting for data</h1>
@@ -87,9 +87,9 @@ const App = () => {
 					)
 				}
 
-				<ul id="ct" className="flex flex-col gap-7 m-0 p-0">
+				<ul id="counterTerrorist" className="flex flex-col gap-7 m-0 p-0">
 					{
-						players.filter((player) => player.m_team == 3).map((player) =>
+						playerArray.filter((player) => player.m_team == 3).map((player) =>
 							<PlayerCard right={true} key={player.m_idx} playerData={player} />
 						)
 					}

@@ -8,7 +8,8 @@ namespace cs2
 		green,
 		yellow,
 		orange,
-		purple
+		purple,
+		white
 	};
 
 	class c_base_entity
@@ -60,6 +61,12 @@ namespace cs2
 
 		cs2::e_color get_color()
 		{
+			const auto color = m_memory.read_t<cs2::e_color>(this + m_offsets.get_comp_teammate_color());
+			if (color == static_cast<cs2::e_color>(-1))
+			{
+				return cs2::e_color::white;
+			}
+
 			return m_memory.read_t<cs2::e_color>(this + m_offsets.get_comp_teammate_color());
 		}
 

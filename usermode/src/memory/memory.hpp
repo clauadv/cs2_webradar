@@ -43,7 +43,7 @@ namespace usermode
 
 			if (this->m_process_id != 0)
 			{
-				this->m_handle = OpenProcess(PROCESS_ALL_ACCESS, false, this->m_process_id);
+				this->m_handle = OpenProcess(PROCESS_VM_READ | PROCESS_VM_OPERATION, false, this->m_process_id);
 				if (!this->m_handle)
 					return false;
 

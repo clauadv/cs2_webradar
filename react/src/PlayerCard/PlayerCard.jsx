@@ -1,19 +1,19 @@
-import { MaskedIcon } from "./MaskedIcon";
-import { get_color } from "./Radar";
+import { MaskedIcon } from "../MaskedIcon/MaskedIcon";
+import { playerColors, teamEnum } from "../Utils/Utils";
 
-export const PlayerCard = ({ playerData, right }) => {
+export const PlayerCard = ({ playerData, isOnRightSide }) => {
     return (
-        <li style={{ opacity: `${playerData.m_is_dead && `0.5` || `1`}` }} className={`flex ${right && `flex-row-reverse`}`}>
+        <li style={{ opacity: `${playerData.m_is_dead && `0.5` || `1`}` }} className={`flex ${isOnRightSide && `flex-row-reverse`}`}>
             <div className={`flex flex-col gap-[0.375rem] justify-center items-center`}>
                 <div className={`hover:cursor-pointer`} onClick={() => window.open(`https://steamcommunity.com/profiles/${playerData.m_steam_id}`, '_blank', 'noopener,noreferrer')}>{playerData.m_name}</div>
-                <div className={`w-0 h-0 border-solid border-t-[12px] border-r-[8px] border-b-[12px] border-l-[8px]`} style={{ borderColor: `${get_color(playerData.m_color)} transparent transparent transparent` }}></div>
-                <img className={`h-[8rem] ${right && `scale-x-[-1]`}`} src={`./assets/characters/${playerData.m_model_name}.png`}></img>
+                <div className={`w-0 h-0 border-solid border-t-[12px] border-r-[8px] border-b-[12px] border-l-[8px]`} style={{ borderColor: `${playerColors[playerData.m_color]} transparent transparent transparent` }}></div>
+                <img className={`h-[8rem] ${isOnRightSide && `scale-x-[-1]`}`} src={`./assets/characters/${playerData.m_model_name}.png`}></img>
             </div>
 
-            <div className={`flex flex-col ${right && `flex-row-reverse`} justify-center gap-2`}>
-                <span className={`${right && `flex justify-end`} text-radar-green`}>${playerData.m_money}</span>
+            <div className={`flex flex-col ${isOnRightSide && `flex-row-reverse`} justify-center gap-2`}>
+                <span className={`${isOnRightSide && `flex justify-end`} text-radar-green`}>${playerData.m_money}</span>
 
-                <div className={`flex ${right && `flex-row-reverse`} gap-2`}>
+                <div className={`flex ${isOnRightSide && `flex-row-reverse`} gap-2`}>
                     <div className="flex gap-[4px] items-center">
                         <MaskedIcon path={`./assets/icons/health.svg`} height={16} color={`bg-radar-secondary`} />
                         <span className="text-radar-primary">{playerData.m_health}</span>
@@ -25,7 +25,7 @@ export const PlayerCard = ({ playerData, right }) => {
                     </div>
                 </div>
 
-                <div className={`flex ${right && `flex-row-reverse`} gap-3`}>
+                <div className={`flex ${isOnRightSide && `flex-row-reverse`} gap-3`}>
                     {
                         playerData.m_weapons && playerData.m_weapons.m_primary &&
                         <MaskedIcon path={`./assets/icons/${playerData.m_weapons.m_primary}.svg`} height={28} color={`${playerData.m_weapons.m_active == playerData.m_weapons.m_primary && `bg-radar-primary` || `bg-radar-secondary`}`} />
@@ -45,7 +45,7 @@ export const PlayerCard = ({ playerData, right }) => {
                 </div>
 
                 <div className={`flex flex-col relative`}>
-                    <div className={`flex ${right && `flex-row-reverse`} gap-9 mt-3 items-center`}>
+                    <div className={`flex ${isOnRightSide && `flex-row-reverse`} gap-9 mt-3 items-center`}>
                         {
                             playerData.m_weapons && playerData.m_weapons.m_utilities &&
                             playerData.m_weapons.m_utilities.map((utility) =>
@@ -60,10 +60,10 @@ export const PlayerCard = ({ playerData, right }) => {
                         }
 
                         {
-                            (playerData.m_team == 3 && playerData.m_has_defuser) &&
+                            (playerData.m_team == teamEnum.counterTerrorist && playerData.m_has_defuser) &&
                             <MaskedIcon path={`./assets/icons/defuser.svg`} height={28} color={`bg-radar-secondary`} />
                             ||
-                            (playerData.m_team == 2 && playerData.m_has_bomb) &&
+                            (playerData.m_team == teamEnum.terrorist && playerData.m_has_bomb) &&
                             <MaskedIcon path={`./assets/icons/c4.svg`} height={28} color={(playerData.m_weapons && playerData.m_weapons.m_active) == `c4` && `bg-radar-primary` || `bg-radar-secondary`} />
                         }
                     </div>
