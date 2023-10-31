@@ -1,10 +1,14 @@
-# cs2_webradar (work in progress)
-webradar pt cs2 facut cu dragoste in react ca ne vede dumnezeu daca folosim angular
+# cs2_webradar
+counter strike 2 browser based radar cheat **(work in progress)** <br>
+<br>
+if you have any issues or questions, feel free to ask on my [discord server](https://discord.gg/wVzuHN8uXd)
 
-## how to run bratan???
-- open start.bat (make sure to have nodejs installed)
-- compile usermode app and run it
-- go to localhost:5173
+## usage
+- in the `react` folder, type `npm install` to install the required dependencies
+- in the root folder, run `start.bat` which will start both web server and react development server
+- compile `usermode` project
+- navigate to [a2x's offset dumper](https://github.com/a2x/cs2-dumper/tree/main/generated), download `client.dll.json` and `offsets.json` and place them in the same folder with `usermode.exe`
+- run `usermode.exe` and, in your browser navigate to `localhost:5173`
 
 ## showcase
-![](https://i.imgur.com/pSqzc8S.png)
+https://github.com/clauadv/cs2_webradar/assets/26169415/718d5969-004b-4300-b152-2051a75d490d
