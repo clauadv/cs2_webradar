@@ -28,20 +28,18 @@ export const Player = ({ playerData, mapData, radarImage, localTeam, averageLate
     };
 
     return (
-        <div className={`absolute origin-center rounded-[100%] left-0 top-0`} ref={playerRef} style={
+        <div className={`absolute origin-center rounded-[100%] left-0 top-0 w-[1.6vw] h-[1.6vw] lg:w-[0.7vw] lg:h-[0.7vw]`} ref={playerRef} style={
             {
                 transform: `translate(${radarImageTranslation.x}px, ${radarImageTranslation.y}px) rotate(${playerData.m_is_dead && `0` || playerRotation}deg)`,
                 transition: `transform ${averageLatency}ms linear`,
                 backgroundColor: `${playerData.m_team == localTeam && playerColors[playerData.m_color] || `red`}`,
                 opacity: `${playerData.m_is_dead && `0.8` || invalidPosition && `0` || `1`}`,
                 WebkitMask: `${playerData.m_is_dead && `url('./assets/icons/icon-enemy-death_png.png') no-repeat center / contain` || `none`}`,
-                width: `${playerData.m_is_dead && `1vw` || `0.7vw`}`,
-                height: `${playerData.m_is_dead && `1vw` || `0.7vw`}`,
                 zIndex: `${playerData.m_is_dead && `0` || `1`}`
             }
         }>
 
-            <div className={`w-[0.7vw] h-[0.7vw] rotate-[315deg] rounded-[50%_50%_50%_0%]`} style={
+            <div className={`w-[1.8vw] h-[1.8vw] lg:w-[0.7vw] lg:h-[0.7vw] rotate-[315deg] rounded-[50%_50%_50%_0%]`} style={
                 {
                     backgroundColor: `${playerData.m_team == localTeam && playerColors[playerData.m_color] || `red`}`
                 }

@@ -15,14 +15,12 @@ export const Bomb = ({ bombData, mapData, radarImage, localTeam, averageLatency 
     };
 
     return (
-        <div className={`absolute origin-center rounded-[100%] left-0 top-0`} ref={bombRef} style={
+        <div className={`absolute origin-center rounded-[100%] left-0 top-0 w-[1.5vw] h-[1.5vw] lg:w-[0.8vw] lg:h-[0.8vw]`} ref={bombRef} style={
             {
                 transform: `translate(${radarImageTranslation.x}px, ${radarImageTranslation.y}px)`,
                 transition: `transform ${averageLatency}ms linear`,
                 backgroundColor: `${bombData.m_is_defused && `#50904c` || (localTeam == teamEnum.counterTerrorist) && `#6492b4` || `#c90b0b`}`,
                 WebkitMask: `url('./assets/icons/c4_sml.png') no-repeat center / contain`,
-                width: `0.8vw`,
-                height: `0.8vw`,
                 opacity: `1`,
                 zIndex: `1`
             }

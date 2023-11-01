@@ -6,7 +6,6 @@ import { Radar } from "./Radar/Radar";
 import { getLatency, Latency } from './Latency/Latency';
 import { MaskedIcon } from './MaskedIcon/MaskedIcon';
 
-
 const App = () => {
 	const [averageLatency, setAverageLatency] = useState(0);
 	const [playerArray, setPlayerArray] = useState([]);
@@ -37,12 +36,12 @@ const App = () => {
 			webSocket.onmessage = async (event) => {
 				setAverageLatency(getLatency());
 
-				const parsed_data = JSON.parse(await event.data.text());
-				setPlayerArray(parsed_data.m_players);
-				setLocalTeam(parsed_data.m_local_team);
-				setBombData(parsed_data.m_bomb);
+				const parsedData = JSON.parse(await event.data.text());
+				setPlayerArray(parsedData.m_players);
+				setLocalTeam(parsedData.m_local_team);
+				setBombData(parsedData.m_bomb);
 
-				const map = parsed_data.m_map;
+				const map = parsedData.m_map;
 				if (map !== "invalid") {
 					setMapData({ ...(await (await fetch(`data/${map}/data.json`)).json()), name: map });
 					document.body.style.backgroundImage = `url(./data/${map}/background.png)`;
@@ -69,7 +68,7 @@ const App = () => {
 			<div className={`flex items-center justify-evenly`}>
 				<Latency value={averageLatency} />
 
-				<ul id="terrorist" className="flex flex-col gap-7 m-0 p-0">
+				<ul id="terrorist" className="lg:flex hidden flex-col gap-7 m-0 p-0">
 					{
 						playerArray.filter((player) => player.m_team == 2).map((player) =>
 							<PlayerCard right={false} key={player.m_idx} playerData={player} />
@@ -87,7 +86,7 @@ const App = () => {
 					)
 				}
 
-				<ul id="counterTerrorist" className="flex flex-col gap-7 m-0 p-0">
+				<ul id="counterTerrorist" className="lg:flex hidden flex-col gap-7 m-0 p-0">
 					{
 						playerArray.filter((player) => player.m_team == 3).map((player) =>
 							<PlayerCard right={true} key={player.m_idx} playerData={player} />
