@@ -7,6 +7,10 @@
 #include <chrono>
 #include <fstream>
 #include <set>
+#include <regex>
+
+// defines
+#define USE_LOCALHOST 1
 
 // ext/includes
 #include "ext/nlohmann/json.hpp"
@@ -31,3 +35,4 @@
 #include "cs2/classes/base_player.hpp"
 #include "cs2/classes/planted_c4.hpp"
 #include "features/features.hpp"
+#include "utils/utils.hpp"

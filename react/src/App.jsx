@@ -6,6 +6,9 @@ import { Radar } from "./Radar/Radar";
 import { getLatency, Latency } from './Latency/Latency';
 import { MaskedIcon } from './MaskedIcon/MaskedIcon';
 
+// defines
+const USE_LOCALHOST = 1;
+
 const App = () => {
 	const [averageLatency, setAverageLatency] = useState(0);
 	const [playerArray, setPlayerArray] = useState([]);
@@ -13,12 +16,31 @@ const App = () => {
 	const [localTeam, setLocalTeam] = useState();
 	const [bombData, setBombData] = useState();
 
-	let webSocket = null;
-
 	useEffect(() => {
+		const getPublicIP = async () => {
+			try {
+				const response = await fetch('https://api.ipify.org?format=json');
+				const data = await response.json();
+				return `ws://${data.ip}:22006/cs2_webradar`;
+			} catch (error) {
+				document.getElementsByClassName("radar_message")[0].textContent = "Failed to fetch IP Address. Check your console";
+				console.error(`failed to fetch ip address (${error})`);
+				return null;
+			}
+		};
+
 		const fetchData = async () => {
+			let webSocket = null;
+			let webSocketURL = null;
 			if (!webSocket) {
-				webSocket = new WebSocket("ws://localhost:22006/cs2_webradar");
+				if (USE_LOCALHOST) {
+					webSocketURL = "ws://localhost:22006/cs2_webradar";
+				} else {
+					webSocketURL = await getPublicIP();
+				}
+
+				if (!webSocketURL) return;
+				webSocket = new WebSocket(webSocketURL);
 			}
 
 			webSocket.onopen = async () => {
@@ -81,7 +103,7 @@ const App = () => {
 						<Radar playerArray={playerArray} radarImage={`./data/${mapData.name}/radar.png`} mapData={mapData} localTeam={localTeam} averageLatency={averageLatency} bombData={bombData} />
 					) || (
 						<div id="radar" className={`relative overflow-hidden origin-center`}>
-							<h1>Waiting for data</h1>
+							<h1 className="radar_message">Waiting for data</h1>
 						</div>
 					)
 				}
