@@ -8,6 +8,7 @@ import { MaskedIcon } from './MaskedIcon/MaskedIcon';
 
 // defines
 const USE_LOCALHOST = 1;
+const PUBLIC_IP = "your ip goes here";
 
 const App = () => {
 	const [averageLatency, setAverageLatency] = useState(0);
@@ -17,26 +18,15 @@ const App = () => {
 	const [bombData, setBombData] = useState();
 
 	useEffect(() => {
-		const getPublicIP = async () => {
-			try {
-				const response = await fetch('https://api.ipify.org?format=json');
-				const data = await response.json();
-				return `ws://${data.ip}:22006/cs2_webradar`;
-			} catch (error) {
-				document.getElementsByClassName("radar_message")[0].textContent = "Failed to fetch IP Address. Check your console";
-				console.error(`failed to fetch ip address (${error})`);
-				return null;
-			}
-		};
-
 		const fetchData = async () => {
 			let webSocket = null;
 			let webSocketURL = null;
+
 			if (!webSocket) {
 				if (USE_LOCALHOST) {
 					webSocketURL = "ws://localhost:22006/cs2_webradar";
 				} else {
-					webSocketURL = await getPublicIP();
+					webSocketURL = `ws://${PUBLIC_IP}:22006/cs2_webradar`;
 				}
 
 				if (!webSocketURL) return;

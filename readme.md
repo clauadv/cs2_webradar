@@ -14,6 +14,7 @@ if you have any issues or questions, feel free to ask on my [discord server](htt
 ## sharing
 - in `usermode` project, `usermode.hpp` line 13, change `#define USE_LOCALHOST 1` to `#define USE_LOCALHOST 0`
 - in `react` project, `App.jsx` line 10, change `const USE_LOCALHOST = 1;` to `#const USE_LOCALHOST = 0;`
+- in `react` project, `App.jsx` line 11, change `const PUBLIC_IP = "your ip goes here";` with your ip address
 
 ## showcase
 https://github.com/clauadv/cs2_webradar/assets/26169415/718d5969-004b-4300-b152-2051a75d490d
