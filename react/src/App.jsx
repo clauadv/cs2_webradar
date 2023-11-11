@@ -6,9 +6,11 @@ import { Radar } from "./Radar/Radar";
 import { getLatency, Latency } from './Latency/Latency';
 import { MaskedIcon } from './MaskedIcon/MaskedIcon';
 
-// defines
+// if you want to share the radar, set this to '0', otherwise let it be '1'.
 const USE_LOCALHOST = 1;
+
 const PUBLIC_IP = "your ip goes here";
+const PORT = 22006;
 
 const App = () => {
 	const [averageLatency, setAverageLatency] = useState(0);
@@ -24,9 +26,9 @@ const App = () => {
 
 			if (!webSocket) {
 				if (USE_LOCALHOST) {
-					webSocketURL = "ws://localhost:22006/cs2_webradar";
+					webSocketURL = `ws://localhost:${PORT}/cs2_webradar`;
 				} else {
-					webSocketURL = `ws://${PUBLIC_IP}:22006/cs2_webradar`;
+					webSocketURL = `ws://${PUBLIC_IP}:${PORT}/cs2_webradar`;
 				}
 
 				if (!webSocketURL) return;
@@ -42,6 +44,7 @@ const App = () => {
 			}
 
 			webSocket.onerror = async (error) => {
+				document.getElementsByClassName("radar_message")[0].textContent = `WebSocket connection to '${webSocketURL}/cs2_webradar' failed`;
 				console.error(error);
 			}
 
