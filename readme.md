@@ -5,7 +5,7 @@ if you have any issues or questions, feel free to ask on my [discord server](htt
 
 ## usage
 - install [nodejs](https://nodejs.org/en/download/current)
-- in `react` and `web_server` folders, type `npm install` to install the required dependencies
+- in `react` and `web_server` folders, in `cmd`, type `npm install` to install the required dependencies
 - in the root folder, run `start.bat` which will start both web server and react development server
 - compile `usermode` project
 - navigate to [a2x's offset dumper](https://github.com/a2x/cs2-dumper/tree/main/generated), download `client.dll.json` and `offsets.json` and place them in the same folder with `usermode.exe`
