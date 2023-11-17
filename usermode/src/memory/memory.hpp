@@ -1,123 +1,131 @@
 #pragma once
 
-namespace usermode
+namespace src
 {
 	class c_memory
 	{
-	private:
-		bool m_initialized{ false };
-		HANDLE m_handle{ nullptr };
-		std::int64_t m_process_id{ 0 };
-
 	public:
 		~c_memory()
 		{
 			if (this->m_handle != nullptr)
-			{
 				CloseHandle(this->m_handle);
-			}
 		}
 
-		bool is_initialized() { return this->m_initialized; }
-		std::int64_t get_process_id() { return this->m_process_id; }
+		uint32_t get_id()
+		{
+			return this->m_id;
+		}
 
-		bool set_process(const std::string& name)
+		HANDLE get_handle()
+		{
+			return this->m_handle;
+		}
+
+		optional<uint32_t> get_process_id(const string_view& process_name)
 		{
 			const auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 			if (snapshot == INVALID_HANDLE_VALUE)
+				return {};
+
+			PROCESSENTRY32 process_entry = { 0 };
+			process_entry.dwSize = sizeof(process_entry);
+
+			for (Process32First(snapshot, &process_entry); Process32Next(snapshot, &process_entry);)
+			{
+				if (string_view(process_entry.szExeFile) == process_name)
+					return process_entry.th32ProcessID;
+			}
+
+			CloseHandle(snapshot);
+			return {};
+		}
+
+		bool attach(const string_view& process_name)
+		{
+			const auto process_id = get_process_id(process_name);
+			if (!process_id.has_value())
 				return false;
 
-			PROCESSENTRY32 entry = { 0 };
-			entry.dwSize = sizeof(entry);
+			this->m_id = process_id.value();
+			this->m_handle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, this->m_id);
 
-			while (Process32Next(snapshot, &entry) == true)
-			{
-				if (_stricmp(entry.szExeFile, name.data()) == 0)
-				{
-					this->m_process_id = entry.th32ProcessID;
-					break;
-				}
-			}
-
-			CloseHandle(snapshot);
-
-			if (this->m_process_id != 0)
-			{
-				this->m_handle = OpenProcess(PROCESS_VM_READ | PROCESS_VM_OPERATION, false, this->m_process_id);
-				if (!this->m_handle)
-					return false;
-
-				this->m_initialized = true;
-			}
-
-			return this->m_initialized;
+			return this->m_handle != nullptr;
 		}
 
-		std::uintptr_t get_base(const std::string& name)
+		optional<uintptr_t> get_module(const string_view& module_name)
 		{
-			std::uintptr_t base{ 0 };
-
-			if (!this->m_process_id)
-				return 0;
-
-			const auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->m_process_id);
+			const auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->m_id);
 			if (snapshot == INVALID_HANDLE_VALUE)
-				return 0;
+				return {};
 
-			MODULEENTRY32 entry = { 0 };
-			entry.dwSize = sizeof(entry);
+			MODULEENTRY32 module_entry = { 0 };
+			module_entry.dwSize = sizeof(module_entry);
 
-			while (Module32Next(snapshot, &entry) == true)
+			for (Module32First(snapshot, &module_entry); Module32Next(snapshot, &module_entry);)
 			{
-				if (_stricmp(entry.szModule, name.data()) == 0)
+				auto equals_ignore_case = [](const string_view str_1, const string_view str_2)
 				{
-					base = reinterpret_cast<std::uintptr_t>(entry.modBaseAddr);
-					break;
-				}
+					return (str_1.size() == str_2.size()) && equal(str_1.begin(), str_1.end(), str_2.begin(), [](const char a, const char b)
+					{
+						return tolower(a) == tolower(b);
+					});
+				};
+
+				if (equals_ignore_case(module_entry.szModule, module_name))
+					return reinterpret_cast<uintptr_t>(module_entry.modBaseAddr);
 			}
 
-			CloseHandle(snapshot);
-			return base;
+			return {};
 		}
 
-		void read(void* address, void* buffer, std::size_t size)
+		bool read_t(const uintptr_t address, void* buffer, uintptr_t size)
 		{
-			ReadProcessMemory(m_handle, address, buffer, size, nullptr);
+			this->read_memory(reinterpret_cast<void*>(address), buffer, size);
+			return true;
 		}
 
 		template <typename t>
 		t read_t(void* address)
 		{
 			t value{ 0 };
-			this->read(address, &value, sizeof(t));
+			this->read_memory(address, &value, sizeof(t));
 
 			return value;
 		}
 
-		template <typename t>
-		t read_t(const std::uintptr_t& address)
+		template<typename T>
+		T read_t(const uintptr_t address) noexcept
 		{
-			t value{ 0 };
-			this->read(reinterpret_cast<void*>(address), &value, sizeof(t));
-
-			return value;
+			T buffer{};
+			this->read_memory(reinterpret_cast<void*>(address), &buffer, sizeof(T));
+			return buffer;
 		}
 
 		template <>
-		std::string read_t<std::string>(const std::uintptr_t& address)
+		string read_t<string>(const uintptr_t address)
 		{
 			static const int length = 64;
-			std::vector<char> buffer(length);
+			vector<char> buffer(length);
 
-			this->read(reinterpret_cast<void*>(address), buffer.data(), length);
+			this->read_memory(reinterpret_cast<void*>(address), buffer.data(), length);
 
-			const auto& it = std::find(buffer.begin(), buffer.end(), '\0');
+			const auto& it = find(buffer.begin(), buffer.end(), '\0');
 
 			if (it != buffer.end())
-				buffer.resize(std::distance(buffer.begin(), it));
+				buffer.resize(distance(buffer.begin(), it));
 
-			return std::string(buffer.begin(), buffer.end());
+			return string(buffer.begin(), buffer.end());
+		}
+
+	private:
+		bool m_initialized{ false };
+		HANDLE m_handle{ nullptr };
+		int64_t m_id{ 0 };
+
+		bool read_memory(void* address, void* buffer, const size_t size)
+		{
+			return ReadProcessMemory(this->m_handle, reinterpret_cast<void*>(address), buffer, size, nullptr);
 		}
 	};
 }
-inline usermode::c_memory m_memory{};
+inline src::c_memory m_memory{};

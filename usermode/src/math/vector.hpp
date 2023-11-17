@@ -54,6 +54,5 @@ namespace math
 			return (this->x == 0.f && this->y == 0.f && this->z == 0.f);
 		}
 	};
-
-	typedef vector3<float> fvector3;
 }
+typedef math::vector3<float> fvector3;

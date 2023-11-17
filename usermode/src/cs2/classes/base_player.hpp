@@ -10,10 +10,10 @@ namespace cs2
 		counter_terrorist
 	};
 
-	class c_base_player : public cs2::c_base_entity
+	class c_base_player : public c_base_entity
 	{
 	public:
-		static void iterate(const std::function<void(cs2::c_base_player*, cs2::c_base_entity*, std::size_t)>& function)
+		static void iterate(const function<void(c_base_player*, c_base_entity*, size_t)>& function)
 		{
 			const auto global_vars = m_cs2.get_global_vars();
 			if (!global_vars)
@@ -25,9 +25,9 @@ namespace cs2
 
 			const auto map_name = global_vars->get_map_name();
 
-			for (std::size_t idx{ 0 }; idx < 64 && map_name.find("invalid") == std::string::npos; idx++)
+			for (size_t idx{ 0 }; idx < 64 && map_name.find("invalid") == string::npos; idx++)
 			{
-				const auto entity = entity_list->get<cs2::c_base_entity*>(idx);
+				const auto entity = entity_list->get<c_base_entity*>(idx);
 				if (!entity)
 					continue;
 
@@ -35,7 +35,7 @@ namespace cs2
 				if (!entity_pawn)
 					continue;
 
-				const auto player = entity_list->get<cs2::c_base_player*>(entity_pawn & 0x7fff);
+				const auto player = entity_list->get<c_base_player*>(entity_pawn & 0x7fff);
 				if (!player)
 					continue;
 
@@ -43,13 +43,13 @@ namespace cs2
 			}
 		}
 
-		std::string get_name()
+		string get_name()
 		{
-			const auto sanitized_player_name = m_memory.read_t<std::uintptr_t>(this + m_offsets.get_sanitized_player_name());
+			const auto sanitized_player_name = m_memory.read_t<uintptr_t>(this + m_offsets.get_sanitized_player_name());
 			if (!sanitized_player_name)
 				return "invalid";
 
-			auto player_name = m_memory.read_t<std::string>(sanitized_player_name);
+			auto player_name = m_memory.read_t<string>(sanitized_player_name);
 			if (player_name.empty())
 				return "invalid";
 
@@ -66,14 +66,14 @@ namespace cs2
 			return m_memory.read_t<int>(this + m_offsets.get_armor());
 		}
 
-		cs2::e_team get_team()
+		e_team get_team()
 		{
-			return m_memory.read_t<cs2::e_team>(this + m_offsets.get_team_num());
+			return m_memory.read_t<e_team>(this + m_offsets.get_team_num());
 		}
 
-		math::fvector3 get_position()
+		fvector3 get_position()
 		{
-			return m_memory.read_t<math::fvector3>(this + m_offsets.get_old_origin());
+			return m_memory.read_t<fvector3>(this + m_offsets.get_old_origin());
 		}
 
 		bool is_dead()
@@ -81,14 +81,14 @@ namespace cs2
 			return this->get_health() <= 0;
 		}
 
-		math::fvector3 get_eye_angles()
+		fvector3 get_eye_angles()
 		{
-			return m_memory.read_t<math::fvector3>(this + m_offsets.get_ang_eye_angles());
+			return m_memory.read_t<fvector3>(this + m_offsets.get_ang_eye_angles());
 		}
 
 		bool has_helmet()
 		{
-			const auto item_services = m_memory.read_t<std::uintptr_t>(this + m_offsets.get_item_services());
+			const auto item_services = m_memory.read_t<uintptr_t>(this + m_offsets.get_item_services());
 			if (!item_services)
 				return false;
 
@@ -97,25 +97,25 @@ namespace cs2
 
 		bool has_defuser()
 		{
-			const auto item_services = m_memory.read_t<std::uintptr_t>(this + m_offsets.get_item_services());
+			const auto item_services = m_memory.read_t<uintptr_t>(this + m_offsets.get_item_services());
 			if (!item_services)
 				return false;
 
 			return m_memory.read_t<bool>(item_services + m_offsets.get_has_defuser());
 		}
 
-		cs2::c_player_weapon_services* get_weapon_services()
+		c_player_weapon_services* get_weapon_services()
 		{
-			return m_memory.read_t<cs2::c_player_weapon_services*>(this + m_offsets.get_weapon_services());
+			return m_memory.read_t<c_player_weapon_services*>(this + m_offsets.get_weapon_services());
 		}
 
-		std::string get_model_name()
+		string get_model_name()
 		{
-			const auto model_name_ptr = m_memory.read_t<std::uintptr_t>(m_memory.read_t<std::uintptr_t>(this + m_offsets.get_game_scene_node()) + m_offsets.get_model_state() + m_offsets.get_model_name());
+			const auto model_name_ptr = m_memory.read_t<uintptr_t>(m_memory.read_t<uintptr_t>(this + m_offsets.get_game_scene_node()) + m_offsets.get_model_state() + m_offsets.get_model_name());
 			if (!model_name_ptr)
 				return "invalid";
 
-			const auto model_path = m_memory.read_t<std::string>(model_name_ptr);
+			const auto model_path = m_memory.read_t<string>(model_name_ptr);
 			if (model_path.empty())
 				return "invalid";
 

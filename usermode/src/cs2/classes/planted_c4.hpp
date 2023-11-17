@@ -2,7 +2,7 @@
 
 namespace cs2
 {
-	class c_planted_c4 : public cs2::c_base_entity
+	class c_planted_c4 : public c_base_entity
 	{
 	public:
 		bool get_state()

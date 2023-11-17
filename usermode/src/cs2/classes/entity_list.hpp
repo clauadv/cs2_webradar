@@ -8,7 +8,7 @@ namespace cs2
 		template<typename T>
 		T get(const int idx)
 		{
-			const auto entry_list = m_memory.read_t<std::uintptr_t>(this + 8 * (idx >> 9) + 16);
+			const auto entry_list = m_memory.read_t<uintptr_t>(this + 8 * (idx >> 9) + 16);
 			if (!entry_list)
 				return nullptr;
 

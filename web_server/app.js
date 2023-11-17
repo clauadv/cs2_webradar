@@ -1,6 +1,8 @@
 import { WebSocketServer } from "ws";
 import http from "http";
 
+console.log("web_server started")
+
 const port = 22006;
 const server = http.createServer();
 const web_socket_server = new WebSocketServer(
@@ -28,4 +30,4 @@ web_socket_server.on("connection", (web_socket, request) => {
 });
 
 server.listen(port);
-console.info(`listening on port ${port}`);
+console.info(`listening on port '${port}'`);

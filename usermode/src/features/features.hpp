@@ -1,13 +1,13 @@
 #pragma once
 
-namespace usermode
+namespace src
 {
 	class c_features
 	{
 	private:
 		nlohmann::json m_data{};
 		nlohmann::json m_player_data{};
-		std::size_t m_bomb_idx{ 0 };
+		size_t m_bomb_idx{ 0 };
 
 	public:
 		nlohmann::json get_data() { return this->m_data; }
@@ -45,7 +45,7 @@ namespace usermode
 		{
 			this->m_data["m_players"] = nlohmann::json::array();
 
-			cs2::c_base_player::iterate([&](cs2::c_base_player* player, cs2::c_base_entity* entity, std::size_t idx)
+			cs2::c_base_player::iterate([&](cs2::c_base_player* player, cs2::c_base_entity* entity, size_t idx)
 			{
 				this->m_player_data["m_idx"] = idx;
 				this->m_player_data["m_name"] = reinterpret_cast<cs2::c_base_player*>(entity)->get_name();
@@ -94,10 +94,10 @@ namespace usermode
 					if (!my_weapons.first)
 						return;
 
-					std::set<std::string> utilities_set{};
-					std::set<std::string> melee_set{};
+					set<string> utilities_set{};
+					set<string> melee_set{};
 
-					for (std::size_t idx{ 0 }; idx < my_weapons.first; idx++)
+					for (size_t idx{ 0 }; idx < my_weapons.first; idx++)
 					{
 						const auto weapon = my_weapons.second->get(idx);
 						if (!weapon)
@@ -134,8 +134,8 @@ namespace usermode
 						}
 					}
 
-					this->m_player_data["m_weapons"]["m_melee"] = std::vector<std::string>(melee_set.begin(), melee_set.end());
-					this->m_player_data["m_weapons"]["m_utilities"] = std::vector<std::string>(utilities_set.begin(), utilities_set.end());
+					this->m_player_data["m_weapons"]["m_melee"] = vector<string>(melee_set.begin(), melee_set.end());
+					this->m_player_data["m_weapons"]["m_utilities"] = vector<string>(utilities_set.begin(), utilities_set.end());
 				}();
 
 				this->m_data["m_players"].push_back(this->m_player_data);
@@ -150,7 +150,7 @@ namespace usermode
 			{
 				cs2::c_base_entity::iterate("weapon_c4", [&](cs2::c_base_entity* entity)
 				{
-					this->m_bomb_idx = reinterpret_cast<std::uintptr_t>(entity->get_owner()) & 0xffff;
+					this->m_bomb_idx = reinterpret_cast<uintptr_t>(entity->get_owner()) & 0xffff;
 
 					const auto vec_origin = entity->get_vec_origin();
 					if (vec_origin.zero())
@@ -193,4 +193,4 @@ namespace usermode
 		}
 	};
 }
-inline usermode::c_features m_features{};
+inline src::c_features m_features{};

@@ -3,54 +3,64 @@
 
 bool main()
 {
-	if (!m_memory.is_initialized())
-	{
-		LOG_ERROR("failed to initialize memory class");
-		std::this_thread::sleep_for(std::chrono::seconds(5));
-		return true;
-	}
+    LOG("usermode started \n");
 
-	// @easywsclient
-	WSADATA wsa_data{};
-	const auto wsa_startup = WSAStartup(MAKEWORD(2, 2), &wsa_data);
-	if (wsa_startup != 0)
-	{
-		LOG_ERROR("failed to initialize winsock");
-		std::this_thread::sleep_for(std::chrono::seconds(5));
-		return true;
-	}
+    if (!m_cs2.setup())
+    {
+        LOG_ERROR("failed to setup cs2");
+        this_thread::sleep_for(chrono::seconds(5));
+        return true;
+    }
 
-	const auto formatted_address = std::format("ws://{}:22006/cs2_webradar", utils::get_ipv4_address());
-	static auto web_socket = easywsclient::WebSocket::from_url(formatted_address);
-	if (!web_socket)
-	{
-		LOG_ERROR("failed to connect to the web socket ('%s')", formatted_address.data());
-		std::this_thread::sleep_for(std::chrono::seconds(5));
-		return true;
-	}
+    // @easywsclient
+    WSADATA wsa_data{};
+    const auto wsa_startup = WSAStartup(MAKEWORD(2, 2), &wsa_data);
+    if (wsa_startup != 0)
+    {
+        LOG_ERROR("failed to initialize winsock");
+        this_thread::sleep_for(chrono::seconds(5));
+        return true;
+    }
 
-	LOG_INFO("connected to the web socket ('%s')", formatted_address.data());
+    const auto ipv4_address = utils::get_ipv4_address();
+    if (ipv4_address.empty())
+    {
+        LOG_ERROR("failed to get your ipv4 address, set it manually");
+        this_thread::sleep_for(chrono::seconds(5));
+        return true;
+    }
 
-	auto start = std::chrono::system_clock::now();
+    const auto formatted_address = format("ws://{}:22006/cs2_webradar", utils::get_ipv4_address());
+    static auto web_socket = easywsclient::WebSocket::from_url(formatted_address);
+    if (!web_socket)
+    {
+        LOG_ERROR("failed to connect to the web socket ('%s')", formatted_address.data());
+        this_thread::sleep_for(chrono::seconds(5));
+        return true;
+    }
 
-	for (;;)
-	{
-		const auto now = std::chrono::system_clock::now();
-		const auto duration = now - start;
-		if (duration >= std::chrono::milliseconds(100))
-		{
-			start = now;
+    LOG("connected to the web socket ('%s')", formatted_address.data());
 
-			m_features.run();
+    auto start = chrono::system_clock::now();
 
-			// LOG_INFO("%s", m_features.get_data().dump().data());
-			web_socket->send(m_features.get_data().dump());
-		}
+    for (;;)
+    {
+        const auto now = chrono::system_clock::now();
+        const auto duration = now - start;
+        if (duration >= chrono::milliseconds(100))
+        {
+            start = now;
 
-		web_socket->poll();
-	}
+            m_features.run();
 
-	system("pause");
+            // LOG("%s", m_features.get_data().dump().data());
+            web_socket->send(m_features.get_data().dump());
+        }
 
-	return true;
+        web_socket->poll();
+    }
+
+    system("pause");
+
+    return true;
 }
