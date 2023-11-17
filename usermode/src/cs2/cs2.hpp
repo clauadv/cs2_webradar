@@ -25,23 +25,31 @@ namespace src
 				return false;
 			}
 
-			if (utils::get_version() != GAME_VERSION)
+			m_base_player = m_memory.find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_PAWN)->rip().add(0x138).as<cs2::c_base_player*>();
+			if (!m_base_player)
 			{
-				LOG_ERROR("game has been updated, update the offsets");
+				LOG_ERROR("failed to get an address for m_base_player");
 				return false;
 			}
 
-			this->m_client_dll = m_memory.get_module_base("client.dll");
-			if (!this->m_client_dll)
+			m_entity_list = m_memory.find_pattern(CLIENT_DLL, GET_ENTITY_LIST)->rip().as<cs2::c_entity_list*>();
+			if (!m_entity_list)
 			{
-				LOG_ERROR("failed to get an address for client.dll");
+				LOG_ERROR("failed to get an address for m_entity_list");
 				return false;
 			}
 
-			this->m_engine2_dll = m_memory.get_module_base("engine2.dll");
-			if (!this->m_engine2_dll)
+			m_global_vars = m_memory.find_pattern(CLIENT_DLL, GET_GLOBAL_VARS)->rip().as<cs2::c_global_vars*>();
+			if (!m_global_vars)
 			{
-				LOG_ERROR("failed to get an address for engine2.dll");
+				LOG_ERROR("failed to get an address for m_global_vars");
+				return false;
+			}
+
+			m_planted_c4 = m_memory.find_pattern(CLIENT_DLL, GET_PLANTED_C4)->rip().as<cs2::c_planted_c4*>();
+			if (!m_planted_c4)
+			{
+				LOG_ERROR("failed to get an address for m_planted_c4");
 				return false;
 			}
 
@@ -51,52 +59,14 @@ namespace src
 				return false;
 			}
 
-			if (!m_offsets.setup())
-			{
-				LOG_ERROR("failed to setup offsets");
-				return false;
-			}
-
 			LOG("m_process_id -> %d", m_memory.get_id());
-			LOG("m_client_dll -> 0x%llx", this->get_client());
-			LOG("m_engine2_dll -> 0x%llx \n", this->get_engine2());
+			LOG("m_base_player -> 0x%llx", m_base_player->get());
+			LOG("m_entity_list -> 0x%llx", m_entity_list->get());
+			LOG("m_global_vars -> 0x%llx", m_global_vars->get());
+			LOG("m_planted_c4 -> 0x%llx \n", m_planted_c4->get());
 
 			return true;
 		}
-
-		uintptr_t get_client()
-		{
-			return this->m_client_dll.value();
-		}
-
-		uintptr_t get_engine2()
-		{
-			return this->m_engine2_dll.value();
-		}
-
-		cs2::c_base_player* get_local_player()
-		{
-			return m_memory.read_t<cs2::c_base_player*>(this->get_client() + m_offsets.get_local_player_pawn());
-		}
-
-		cs2::c_global_vars* get_global_vars()
-		{
-			return m_memory.read_t<cs2::c_global_vars*>(this->get_client() + m_offsets.get_global_vars());
-		}
-
-		cs2::c_entity_list* get_entity_list()
-		{
-			return m_memory.read_t<cs2::c_entity_list*>(this->get_client() + m_offsets.get_entity_list());
-		}
-
-		cs2::c_planted_c4* get_planted_c4()
-		{
-			return m_memory.read_t<cs2::c_planted_c4*>(m_memory.read_t<uintptr_t>(this->get_client() + m_offsets.get_planted_c4()));
-		}
-
-	private:
-		optional<uintptr_t> m_client_dll{ 0 };
-		optional<uintptr_t> m_engine2_dll{ 0 };
 	};
 }
 inline src::c_cs2 m_cs2{};

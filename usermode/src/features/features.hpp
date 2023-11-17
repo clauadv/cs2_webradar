@@ -14,7 +14,7 @@ namespace src
 
 		void run()
 		{
-			const auto local_player = m_cs2.get_local_player();
+			const auto local_player = cs2::c_base_player::get();
 			if (!local_player)
 				return;
 
@@ -34,7 +34,7 @@ namespace src
 
 		void get_map()
 		{
-			const auto global_vars = m_cs2.get_global_vars();
+			const auto global_vars = m_global_vars->get();
 			if (!global_vars)
 				return;
 
@@ -163,7 +163,7 @@ namespace src
 
 			/* get planted bomb */ [&]()
 			{
-				const auto planted_c4 = m_cs2.get_planted_c4();
+				const auto planted_c4 = m_planted_c4->get();
 				if (!planted_c4)
 					return;
 

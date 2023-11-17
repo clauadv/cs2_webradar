@@ -5,14 +5,13 @@ namespace src::cs2
 	class c_planted_c4 : public c_base_entity
 	{
 	public:
-		bool get_state()
-		{
-			return m_memory.read_t<bool>(m_cs2.get_client() + m_offsets.get_planted_c4() - 0x8);
-		}
+		static c_planted_c4* get();
+
+		bool get_state();
 
 		float get_blow_time()
 		{
-			const auto global_vars = m_cs2.get_global_vars();
+			const auto global_vars = m_global_vars->get();
 			if (!global_vars)
 				return 0.f;
 
@@ -35,7 +34,7 @@ namespace src::cs2
 
 		float get_defuse_time()
 		{
-			const auto global_vars = m_cs2.get_global_vars();
+			const auto global_vars = m_global_vars->get();
 			if (!global_vars)
 				return 0.f;
 
@@ -47,3 +46,4 @@ namespace src::cs2
 		}
 	};
 }
+inline src::cs2::c_planted_c4* m_planted_c4{};

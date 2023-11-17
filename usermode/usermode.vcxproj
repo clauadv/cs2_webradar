@@ -14,7 +14,7 @@
     <ClInclude Include="src\cs2\classes\planted_c4.hpp" />
     <ClInclude Include="src\cs2\classes\weapon_base_data.hpp" />
     <ClInclude Include="src\cs2\classes\player_weapon_services.hpp" />
-    <ClInclude Include="src\cs2\schema\schema_system.hpp" />
+    <ClInclude Include="src\cs2\schema\schema.hpp" />
     <ClInclude Include="src\cs2\utils\utl_ts_hash.hpp" />
     <ClInclude Include="src\driver\driver.hpp" />
     <ClInclude Include="src\cs2\classes\base_entity.hpp" />
@@ -22,7 +22,6 @@
     <ClInclude Include="src\cs2\classes\entity_list.hpp" />
     <ClInclude Include="src\cs2\cs2.hpp" />
     <ClInclude Include="src\cs2\classes\global_vars.hpp" />
-    <ClInclude Include="src\cs2\offsets\offsets.hpp" />
     <ClInclude Include="src\features\features.hpp" />
     <ClInclude Include="src\math\vector.hpp" />
     <ClInclude Include="src\memory\address\address.hpp" />
@@ -37,6 +36,10 @@
     <ClCompile Include="ext\easywsclient\easywsclient.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\cs2\classes\base_player.cpp" />
+    <ClCompile Include="src\cs2\classes\entity_list.cpp" />
+    <ClCompile Include="src\cs2\classes\global_vars.cpp" />
+    <ClCompile Include="src\cs2\classes\planted_c4.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\memory\address\address.cpp" />
     <ClCompile Include="src\pch.cpp">

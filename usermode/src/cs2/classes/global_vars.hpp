@@ -5,6 +5,8 @@ namespace src::cs2
 	class c_global_vars
 	{
 	public:
+		static c_global_vars* get();
+
 		string get_map_name()
 		{
 			// @note: https://www.unknowncheats.me/forum/3870682-post1183.
@@ -26,3 +28,4 @@ namespace src::cs2
 		}
 	};
 }
+inline src::cs2::c_global_vars* m_global_vars{};

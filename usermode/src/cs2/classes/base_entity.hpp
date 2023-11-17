@@ -17,11 +17,11 @@ namespace src::cs2
 	public:
 		static void iterate(const string& class_name, const function<void(c_base_entity*)>& function)
 		{
-			const auto global_vars = m_cs2.get_global_vars();
+			const auto global_vars = m_global_vars->get();
 			if (!global_vars)
 				return;
 
-			const auto entity_list = m_cs2.get_entity_list();
+			const auto entity_list = cs2::c_entity_list::get();
 			if (!entity_list)
 				return;
 

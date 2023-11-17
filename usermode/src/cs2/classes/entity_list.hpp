@@ -5,6 +5,8 @@ namespace src::cs2
 	class c_entity_list
 	{
 	public:
+		static c_entity_list* get();
+
 		template<typename T>
 		T get(const int idx)
 		{
@@ -20,3 +22,4 @@ namespace src::cs2
 		}
 	};
 }
+inline src::cs2::c_entity_list* m_entity_list{};

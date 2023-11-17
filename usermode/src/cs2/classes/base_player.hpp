@@ -13,13 +13,15 @@ namespace src::cs2
 	class c_base_player : public c_base_entity
 	{
 	public:
+		static c_base_player* get();
+
 		static void iterate(const function<void(c_base_player*, c_base_entity*, size_t)>& function)
 		{
-			const auto global_vars = m_cs2.get_global_vars();
+			const auto global_vars = m_global_vars->get();
 			if (!global_vars)
 				return;
 
-			const auto entity_list = m_cs2.get_entity_list();
+			const auto entity_list = c_entity_list::get();
 			if (!entity_list)
 				return;
 
@@ -123,3 +125,4 @@ namespace src::cs2
 		}
 	};
 }
+inline src::cs2::c_base_player* m_base_player{};

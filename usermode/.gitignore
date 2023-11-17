@@ -2,6 +2,8 @@
 .vs
 
 # others
-release/intermediates
-release/usermode.exe
-release/usermode.pdb
+release
+
+# for debug
+client.dll.json
+offsets.json

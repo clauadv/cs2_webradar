@@ -17,7 +17,7 @@ namespace src::cs2
 
 		c_base_player_weapon* get_active_weapon()
 		{
-			const auto entity_list = m_cs2.get_entity_list();
+			const auto entity_list = c_entity_list::get();
 			if (!entity_list)
 				return nullptr;
 

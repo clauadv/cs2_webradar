@@ -99,7 +99,7 @@ namespace src::cs2
 	public:
 		static c_schema_system* get()
 		{
-			const auto schema_system = m_memory.find_pattern(SCHEMASYSTEM_DLL, SCHEMA_SYSTEM);
+			const auto schema_system = m_memory.find_pattern(SCHEMASYSTEM_DLL, GET_SCHEMA_SYSTEM);
 			if (!schema_system.has_value())
 				return nullptr;
 
