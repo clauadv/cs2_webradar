@@ -45,7 +45,7 @@ namespace src::cs2
 
 		string get_name()
 		{
-			const auto sanitized_player_name = m_memory.read_t<uintptr_t>(this + m_offsets.get_sanitized_player_name());
+			const auto sanitized_player_name = m_memory.read_t<uintptr_t>(this + GET_SCHEMA("ccsplayercontroller->m_ssanitizedplayername"));
 			if (!sanitized_player_name)
 				return "invalid";
 
@@ -58,22 +58,22 @@ namespace src::cs2
 
 		int get_health()
 		{
-			return m_memory.read_t<int>(this + m_offsets.get_health());
+			return m_memory.read_t<int>(this + GET_SCHEMA("c_baseentity->m_ihealth"));
 		}
 
 		int get_armor()
 		{
-			return m_memory.read_t<int>(this + m_offsets.get_armor());
+			return m_memory.read_t<int>(this + GET_SCHEMA("c_csplayerpawnbase->m_armorvalue"));
 		}
 
 		e_team get_team()
 		{
-			return m_memory.read_t<e_team>(this + m_offsets.get_team_num());
+			return m_memory.read_t<e_team>(this + GET_SCHEMA("c_baseentity->m_iteamnum"));
 		}
 
 		fvector3 get_position()
 		{
-			return m_memory.read_t<fvector3>(this + m_offsets.get_old_origin());
+			return m_memory.read_t<fvector3>(this + GET_SCHEMA("c_baseplayerpawn->m_voldorigin"));
 		}
 
 		bool is_dead()
@@ -83,35 +83,35 @@ namespace src::cs2
 
 		fvector3 get_eye_angles()
 		{
-			return m_memory.read_t<fvector3>(this + m_offsets.get_ang_eye_angles());
+			return m_memory.read_t<fvector3>(this + GET_SCHEMA("c_csplayerpawnbase->m_angeyeangles"));
 		}
 
 		bool has_helmet()
 		{
-			const auto item_services = m_memory.read_t<uintptr_t>(this + m_offsets.get_item_services());
+			const auto item_services = m_memory.read_t<uintptr_t>(this + GET_SCHEMA("c_baseplayerpawn->m_pitemservices"));
 			if (!item_services)
 				return false;
 
-			return m_memory.read_t<bool>(item_services + m_offsets.get_has_helmet());
+			return m_memory.read_t<bool>(item_services + GET_SCHEMA("ccsplayer_itemservices->m_bhashelmet"));
 		}
 
 		bool has_defuser()
 		{
-			const auto item_services = m_memory.read_t<uintptr_t>(this + m_offsets.get_item_services());
+			const auto item_services = m_memory.read_t<uintptr_t>(this + GET_SCHEMA("c_baseplayerpawn->m_pitemservices"));
 			if (!item_services)
 				return false;
 
-			return m_memory.read_t<bool>(item_services + m_offsets.get_has_defuser());
+			return m_memory.read_t<bool>(item_services + GET_SCHEMA("ccsplayer_itemservices->m_bhasdefuser"));
 		}
 
 		c_player_weapon_services* get_weapon_services()
 		{
-			return m_memory.read_t<c_player_weapon_services*>(this + m_offsets.get_weapon_services());
+			return m_memory.read_t<c_player_weapon_services*>(this + GET_SCHEMA("c_baseplayerpawn->m_pweaponservices"));
 		}
 
 		string get_model_name()
 		{
-			const auto model_name_ptr = m_memory.read_t<uintptr_t>(m_memory.read_t<uintptr_t>(this + m_offsets.get_game_scene_node()) + m_offsets.get_model_state() + m_offsets.get_model_name());
+			const auto model_name_ptr = m_memory.read_t<uintptr_t>(m_memory.read_t<uintptr_t>(this + GET_SCHEMA("c_baseentity->m_pgamescenenode")) + GET_SCHEMA("cskeletoninstance->m_modelstate") + GET_SCHEMA("cmodelstate->m_modelname"));
 			if (!model_name_ptr)
 				return "invalid";
 

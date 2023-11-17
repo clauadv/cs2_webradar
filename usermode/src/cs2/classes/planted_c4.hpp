@@ -16,7 +16,7 @@ namespace src::cs2
 			if (!global_vars)
 				return 0.f;
 
-			const auto c4_blow = m_memory.read_t<float>(this + m_offsets.get_c4_blow());
+			const auto c4_blow = m_memory.read_t<float>(this + GET_SCHEMA("c_plantedc4->m_flc4blow"));
 			if (!c4_blow)
 				return 0.f;
 
@@ -25,12 +25,12 @@ namespace src::cs2
 
 		bool get_defused()
 		{
-			return m_memory.read_t<bool>(this + m_offsets.get_bomb_defused());
+			return m_memory.read_t<bool>(this + GET_SCHEMA("c_plantedc4->m_bbombdefused"));
 		}
 
 		bool get_being_defused()
 		{
-			return m_memory.read_t<bool>(this + m_offsets.get_being_defused());
+			return m_memory.read_t<bool>(this + GET_SCHEMA("c_plantedc4->m_bbeingdefused"));
 		}
 
 		float get_defuse_time()
@@ -39,7 +39,7 @@ namespace src::cs2
 			if (!global_vars)
 				return 0.f;
 
-			const auto defuse_countdown = m_memory.read_t<float>(this + m_offsets.get_defuse_countdown());
+			const auto defuse_countdown = m_memory.read_t<float>(this + GET_SCHEMA("c_plantedc4->m_fldefusecountdown"));
 			if (!defuse_countdown)
 				return 0.f;
 

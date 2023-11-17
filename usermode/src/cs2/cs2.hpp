@@ -54,14 +54,12 @@ namespace src
 			if (!m_offsets.setup())
 			{
 				LOG_ERROR("failed to setup offsets");
-				// return false;
+				return false;
 			}
 
 			LOG("m_process_id -> %d", m_memory.get_id());
 			LOG("m_client_dll -> 0x%llx", this->get_client());
 			LOG("m_engine2_dll -> 0x%llx \n", this->get_engine2());
-
-			LOG("m_player_pawn -> 0x%llx", GET_SCHEMA("ccsplayercontroller->m_hplayerpawn"));
 
 			return true;
 		}

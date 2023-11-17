@@ -43,7 +43,7 @@ namespace src::cs2
 
 		string get_name()
 		{
-			const auto designer_name = m_memory.read_t<uintptr_t>(m_memory.read_t<uintptr_t>(this + m_offsets.get_entity()) + m_offsets.get_designer_name());
+			const auto designer_name = m_memory.read_t<uintptr_t>(m_memory.read_t<uintptr_t>(this + GET_SCHEMA("centityinstance->m_pentity")) + GET_SCHEMA("centityidentity->m_designername"));
 			if (!designer_name)
 				return "invalid";
 
@@ -56,46 +56,46 @@ namespace src::cs2
 
 		uintptr_t get_pawn()
 		{
-			return m_memory.read_t<uintptr_t>(this + m_offsets.get_player_pawn());
+			return m_memory.read_t<uintptr_t>(this + GET_SCHEMA("ccsplayercontroller->m_hplayerpawn"));
 		}
 
 		e_color get_color()
 		{
-			const auto color = m_memory.read_t<e_color>(this + m_offsets.get_comp_teammate_color());
+			const auto color = m_memory.read_t<e_color>(this + GET_SCHEMA("ccsplayercontroller->m_icompteammatecolor"));
 			if (color == static_cast<e_color>(-1))
 			{
 				return e_color::white;
 			}
 
-			return m_memory.read_t<e_color>(this + m_offsets.get_comp_teammate_color());
+			return color;
 		}
 
 		int get_money()
 		{
-			const auto in_game_money_services = m_memory.read_t<uintptr_t>(this + m_offsets.get_in_game_money_services());
+			const auto in_game_money_services = m_memory.read_t<uintptr_t>(this + GET_SCHEMA("ccsplayercontroller->m_pingamemoneyservices"));
 			if (!in_game_money_services)
 				return 0;
 
-			return m_memory.read_t<int>(in_game_money_services + m_offsets.get_account());
+			return m_memory.read_t<int>(in_game_money_services + GET_SCHEMA("ccsplayercontroller_ingamemoneyservices->m_iaccount"));
 		}
 
 		string get_steam_id()
 		{
-			return to_string(m_memory.read_t<uintptr_t>(this + m_offsets.get_steam_id()));
+			return to_string(m_memory.read_t<uintptr_t>(this + GET_SCHEMA("cbaseplayercontroller->m_steamid")));
 		}
 
 		fvector3 get_vec_origin()
 		{
-			const auto game_scene_node = m_memory.read_t<uintptr_t>(this + m_offsets.get_game_scene_node());
+			const auto game_scene_node = m_memory.read_t<uintptr_t>(this + GET_SCHEMA("c_baseentity->m_pgamescenenode"));
 			if (!game_scene_node)
 				return fvector3{};
 
-			return m_memory.read_t<fvector3>(game_scene_node + m_offsets.get_vec_origin());
+			return m_memory.read_t<fvector3>(game_scene_node + GET_SCHEMA("cgamescenenode->m_vecabsorigin"));
 		}
 
 		c_base_entity* get_owner()
 		{
-			return m_memory.read_t<c_base_entity*>(this + m_offsets.get_owner_entity());
+			return m_memory.read_t<c_base_entity*>(this + GET_SCHEMA("c_baseentity->m_hownerentity"));
 		}
 	};
 }

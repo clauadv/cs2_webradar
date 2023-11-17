@@ -21,7 +21,7 @@ namespace src::cs2
 		c_weapon_base_data* get_data()
 		{
 			// @note: https://www.unknowncheats.me/forum/3878143-post6.html
-			return m_memory.read_t<c_weapon_base_data*>(this + m_offsets.get_subclass_id() + 0x08);
+			return m_memory.read_t<c_weapon_base_data*>(this + GET_SCHEMA("c_baseentity->m_nsubclassid") + 0x08);
 		}
 	};
 }

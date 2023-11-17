@@ -22,12 +22,12 @@ namespace src::cs2
 	public:
 		e_weapon_type get_id()
 		{
-			return m_memory.read_t<e_weapon_type>(this + m_offsets.get_weapon_type());
+			return m_memory.read_t<e_weapon_type>(this + GET_SCHEMA("ccsweaponbasevdata->m_weapontype"));
 		}
 
 		string get_name()
 		{
-			const auto name_ptr = m_memory.read_t<uint64_t>(this + m_offsets.get_name());
+			const auto name_ptr = m_memory.read_t<uint64_t>(this + GET_SCHEMA("ccsweaponbasevdata->m_szname"));
 			if (!name_ptr)
 				return "invalid";
 
