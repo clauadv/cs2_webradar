@@ -15,7 +15,7 @@ namespace src::cs2
 	class c_schema_field_data
 	{
 	public:
-		string get_name() const noexcept
+		string get_name() const
 		{
 			const auto ptr = m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this));
 			if (!ptr)
@@ -30,7 +30,7 @@ namespace src::cs2
 			return name;
 		}
 
-		uint16_t get_offset() const noexcept
+		uint16_t get_offset() const
 		{
 			return m_memory.read_t<uint16_t>(reinterpret_cast<uintptr_t>(this) + 0x10);
 		}
@@ -39,7 +39,7 @@ namespace src::cs2
 	class c_schema_class_info
 	{
 	public:
-		uint16_t get_fields_size() const noexcept
+		uint16_t get_fields_size() const
 		{
 			return m_memory.read_t<uint16_t>(reinterpret_cast<uintptr_t>(this) + 0x1c);
 		}
@@ -48,7 +48,7 @@ namespace src::cs2
 	class c_schema_type_declared_class
 	{
 	public:
-		string get_binary_name() const noexcept
+		string get_binary_name() const
 		{
 			const auto ptr = m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x08);
 			if (!ptr)
@@ -63,7 +63,7 @@ namespace src::cs2
 			return name;
 		}
 
-		string get_module_name() const noexcept
+		string get_module_name() const
 		{
 			const auto ptr = m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x10);
 			if (!ptr)
@@ -82,7 +82,7 @@ namespace src::cs2
 	class c_schema_system_type_scope
 	{
 	public:
-		string get_module_name() const noexcept
+		string get_module_name() const
 		{
 			auto name = m_memory.read_t<string>(reinterpret_cast<uintptr_t>(this) + 0x08);
 			if (name.empty())
@@ -97,7 +97,7 @@ namespace src::cs2
 	class c_schema_system
 	{
 	public:
-		static c_schema_system* get() noexcept
+		static c_schema_system* get()
 		{
 			const auto schema_system = m_memory.find_pattern(SCHEMASYSTEM_DLL, SCHEMA_SYSTEM);
 			if (!schema_system.has_value())
@@ -106,7 +106,7 @@ namespace src::cs2
 			return schema_system->rip().as<c_schema_system*>();
 		}
 
-		static uint32_t get_offset(const std::string& field_name) noexcept
+		static uint32_t get_offset(const std::string& field_name)
 		{
 			const auto hashed_field_name = fnv1a::hash(field_name);
 			auto last_offset{ 0 };
@@ -123,7 +123,7 @@ namespace src::cs2
 			return last_offset;
 		}
 
-		vector<c_schema_system_type_scope*> get_type_scopes() const noexcept
+		vector<c_schema_system_type_scope*> get_type_scopes() const
 		{
 			const auto count = m_memory.read_t<uint32_t>(reinterpret_cast<uintptr_t>(this) + 0x190);
 			if (!count)
