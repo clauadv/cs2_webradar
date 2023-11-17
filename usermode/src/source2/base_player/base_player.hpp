@@ -1,6 +1,6 @@
 #pragma once
 
-namespace src::cs2
+namespace src::source2
 {
 	enum class e_team : int
 	{
@@ -125,4 +125,4 @@ namespace src::cs2
 		}
 	};
 }
-inline src::cs2::c_base_player* m_base_player{};
+inline src::source2::c_base_player* m_base_player{};

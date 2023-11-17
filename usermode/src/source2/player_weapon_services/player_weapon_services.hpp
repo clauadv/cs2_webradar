@@ -1,6 +1,6 @@
 #pragma once
 
-namespace src::cs2
+namespace src::source2
 {
 	class c_player_weapon_services
 	{

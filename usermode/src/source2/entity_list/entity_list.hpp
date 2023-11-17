@@ -1,6 +1,6 @@
 #pragma once
 
-namespace src::cs2
+namespace src::source2
 {
 	class c_entity_list
 	{
@@ -22,4 +22,4 @@ namespace src::cs2
 		}
 	};
 }
-inline src::cs2::c_entity_list* m_entity_list{};
+inline src::source2::c_entity_list* m_entity_list{};

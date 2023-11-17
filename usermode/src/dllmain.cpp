@@ -5,7 +5,7 @@ bool main()
 {
     LOG("usermode started \n");
 
-    if (!m_cs2.setup())
+    if (!src::source2::c_base_sdk::setup())
     {
         LOG_ERROR("failed to setup cs2");
         this_thread::sleep_for(chrono::seconds(5));

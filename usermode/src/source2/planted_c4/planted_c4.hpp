@@ -1,6 +1,6 @@
 #pragma once
 
-namespace src::cs2
+namespace src::source2
 {
 	class c_planted_c4 : public c_base_entity
 	{
@@ -46,4 +46,4 @@ namespace src::cs2
 		}
 	};
 }
-inline src::cs2::c_planted_c4* m_planted_c4{};
+inline src::source2::c_planted_c4* m_planted_c4{};

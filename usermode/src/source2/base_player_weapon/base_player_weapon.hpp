@@ -1,6 +1,6 @@
 #pragma once
 
-namespace src::cs2
+namespace src::source2
 {
 	class c_base_player_weapon : public c_base_entity
 	{

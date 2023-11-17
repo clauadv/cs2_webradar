@@ -1,19 +1,19 @@
 #pragma once
 
-namespace src::cs2
+namespace src::source2
 {
     template <class T, typename K>
     class c_hash_bucket_data_internal
     {
     public:
-        c_hash_bucket_data_internal<T, K>* next() const noexcept
+        c_hash_bucket_data_internal<T, K>* next() const
         {
             return m_memory.read_t<c_hash_bucket_data_internal<T, K>*>(reinterpret_cast<uintptr_t>(this) + 0x08);
         }
 
     public:
         T m_data; // 0x00
-        uint8_t m_pad_0[0x8]; // 0x08
+        uint8_t m_pad_0[0x08]; // 0x08
         K m_ui_key; // 0x10
     };
 
@@ -21,21 +21,21 @@ namespace src::cs2
     class c_hash_fixed_data_internal
     {
     public:
-        c_hash_fixed_data_internal<T, K>* next() const noexcept
+        c_hash_fixed_data_internal<T, K>* next() const
         {
             return m_memory.read_t<c_hash_fixed_data_internal<T, K>*>(reinterpret_cast<uintptr_t>(this) + 0x08);
         }
 
     public:
         K m_ui_key; // 0x00
-        uint8_t m_pad_0[0x8]; // 0x08
+        uint8_t m_pad_0[0x08]; // 0x08
         T m_data; // 0x10
     };
 
     template <class T, typename K>
     struct hash_allocated_data_t
     {
-        array<c_hash_fixed_data_internal<T, K>, 128> list() const noexcept
+        array<c_hash_fixed_data_internal<T, K>, 128> list() const
         {
             return m_memory.read_t<array<c_hash_fixed_data_internal<T, K>, 128>>(reinterpret_cast<uintptr_t>(this) + 0x18);
         }
@@ -45,17 +45,17 @@ namespace src::cs2
     class c_hash_unallocated_data
     {
     public:
-        c_hash_unallocated_data<T, K>* next() const noexcept
+        c_hash_unallocated_data<T, K>* next() const
         {
             return m_memory.read_t<c_hash_unallocated_data<T, K>*>(reinterpret_cast<uintptr_t>(this));
         }
 
-        K ui_key() const noexcept
+        K ui_key() const
         {
             return m_memory.read_t<K>(reinterpret_cast<uintptr_t>(this) + 0x10);
         }
 
-        array<c_hash_bucket_data_internal<T, K>, 256> block_list() const noexcept
+        array<c_hash_bucket_data_internal<T, K>, 256> block_list() const
         {
             return m_memory.read_t<array<c_hash_bucket_data_internal<T, K>, 256>>(reinterpret_cast<uintptr_t>(this) + 0x20);
         }
@@ -72,12 +72,12 @@ namespace src::cs2
     class c_utl_memory_pool
     {
     public:
-        int32_t block_size() const noexcept
+        int32_t block_size() const
         {
             return this->m_blocks_per_blob;
         }
 
-        int32_t size() const noexcept
+        int32_t size() const
         {
             return this->m_block_allocated_size;
         }
@@ -95,17 +95,17 @@ namespace src::cs2
     class c_utl_ts_hash
     {
     public:
-        int32_t block_size() const noexcept
+        int32_t block_size() const
         {
             return this->m_entry_memory.block_size();
         }
 
-        int32_t size() const noexcept
+        int32_t size() const
         {
             return this->m_entry_memory.size();
         }
 
-        vector<T> elements() const noexcept
+        vector<T> elements() const
         {
             vector<T> list;
             const auto& unallocated_data = this->m_buckets.m_unallocated_data;

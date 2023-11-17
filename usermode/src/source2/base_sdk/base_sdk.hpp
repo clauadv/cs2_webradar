@@ -1,17 +1,17 @@
 #pragma once
 
-namespace src::cs2
+namespace src::source2
 {
 	class c_base_player;
 	class c_planted_c4;
 }
 
-namespace src
+namespace src::source2
 {
-	class c_cs2
+	class c_base_sdk
 	{
 	public:
-		bool setup()
+		static bool setup()
 		{
 			if (!m_memory.attach("cs2.exe"))
 			{
@@ -21,39 +21,39 @@ namespace src
 
 			if (!m_memory.get_id())
 			{
-				LOG_ERROR("failed to get an address for cs2.exe");
+				LOG_ERROR("failed to get a process id for cs2.exe");
 				return false;
 			}
 
-			m_base_player = m_memory.find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_PAWN)->rip().add(0x138).as<cs2::c_base_player*>();
+			m_base_player = m_memory.find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_PAWN)->rip().add(0x138).as<source2::c_base_player*>();
 			if (!m_base_player)
 			{
 				LOG_ERROR("failed to get an address for m_base_player");
 				return false;
 			}
 
-			m_entity_list = m_memory.find_pattern(CLIENT_DLL, GET_ENTITY_LIST)->rip().as<cs2::c_entity_list*>();
+			m_entity_list = m_memory.find_pattern(CLIENT_DLL, GET_ENTITY_LIST)->rip().as<source2::c_entity_list*>();
 			if (!m_entity_list)
 			{
 				LOG_ERROR("failed to get an address for m_entity_list");
 				return false;
 			}
 
-			m_global_vars = m_memory.find_pattern(CLIENT_DLL, GET_GLOBAL_VARS)->rip().as<cs2::c_global_vars*>();
+			m_global_vars = m_memory.find_pattern(CLIENT_DLL, GET_GLOBAL_VARS)->rip().as<source2::c_global_vars*>();
 			if (!m_global_vars)
 			{
 				LOG_ERROR("failed to get an address for m_global_vars");
 				return false;
 			}
 
-			m_planted_c4 = m_memory.find_pattern(CLIENT_DLL, GET_PLANTED_C4)->rip().as<cs2::c_planted_c4*>();
+			m_planted_c4 = m_memory.find_pattern(CLIENT_DLL, GET_PLANTED_C4)->rip().as<source2::c_planted_c4*>();
 			if (!m_planted_c4)
 			{
 				LOG_ERROR("failed to get an address for m_planted_c4");
 				return false;
 			}
 
-			if (!cs2::c_schema_system::setup())
+			if (!source2::c_schema_system::setup())
 			{
 				LOG_ERROR("failed to setup schema system");
 				return false;
@@ -69,4 +69,3 @@ namespace src
 		}
 	};
 }
-inline src::c_cs2 m_cs2{};

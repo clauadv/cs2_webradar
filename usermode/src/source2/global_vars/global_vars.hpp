@@ -1,6 +1,6 @@
 #pragma once
 
-namespace src::cs2
+namespace src::source2
 {
 	class c_global_vars
 	{
@@ -28,4 +28,4 @@ namespace src::cs2
 		}
 	};
 }
-inline src::cs2::c_global_vars* m_global_vars{};
+inline src::source2::c_global_vars* m_global_vars{};

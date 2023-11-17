@@ -14,12 +14,12 @@ namespace src
 
 		void run()
 		{
-			const auto local_player = cs2::c_base_player::get();
+			const auto local_player = source2::c_base_player::get();
 			if (!local_player)
 				return;
 
 			const auto local_team = local_player->get_team();
-			if (local_team == cs2::e_team::none || local_team == cs2::e_team::spectator)
+			if (local_team == source2::e_team::none || local_team == source2::e_team::spectator)
 				return;
 
 			this->m_data = nlohmann::json{};
@@ -45,10 +45,10 @@ namespace src
 		{
 			this->m_data["m_players"] = nlohmann::json::array();
 
-			cs2::c_base_player::iterate([&](cs2::c_base_player* player, cs2::c_base_entity* entity, size_t idx)
+			source2::c_base_player::iterate([&](source2::c_base_player* player, source2::c_base_entity* entity, size_t idx)
 			{
 				this->m_player_data["m_idx"] = idx;
-				this->m_player_data["m_name"] = reinterpret_cast<cs2::c_base_player*>(entity)->get_name();
+				this->m_player_data["m_name"] = reinterpret_cast<source2::c_base_player*>(entity)->get_name();
 				this->m_player_data["m_color"] = entity->get_color();
 				this->m_player_data["m_team"] = player->get_team();
 				this->m_player_data["m_health"] = player->get_health();
@@ -112,23 +112,23 @@ namespace src
 						const auto weapon_type = weapon_data->get_id();
 						switch (weapon_type)
 						{
-							case cs2::e_weapon_type::submachine_gun:
-							case cs2::e_weapon_type::rifle:
-							case cs2::e_weapon_type::shotgun:
-							case cs2::e_weapon_type::sniper_rifle:
-							case cs2::e_weapon_type::machine_gun:
+							case source2::e_weapon_type::submachine_gun:
+							case source2::e_weapon_type::rifle:
+							case source2::e_weapon_type::shotgun:
+							case source2::e_weapon_type::sniper_rifle:
+							case source2::e_weapon_type::machine_gun:
 								this->m_player_data["m_weapons"]["m_primary"] = weapon_name;
 								break;
 
-							case cs2::e_weapon_type::pistol:
+							case source2::e_weapon_type::pistol:
 								this->m_player_data["m_weapons"]["m_secondary"] = weapon_name;
 								break;
 
-							case cs2::e_weapon_type::knife:
+							case source2::e_weapon_type::knife:
 								melee_set.insert(weapon_name);
 								break;
 
-							case cs2::e_weapon_type::grenade:
+							case source2::e_weapon_type::grenade:
 								utilities_set.insert(weapon_name);
 								break;
 						}
@@ -148,7 +148,7 @@ namespace src
 			
 			/* get dropped/carried bomb */ [&]()
 			{
-				cs2::c_base_entity::iterate("weapon_c4", [&](cs2::c_base_entity* entity)
+				source2::c_base_entity::iterate("weapon_c4", [&](source2::c_base_entity* entity)
 				{
 					this->m_bomb_idx = reinterpret_cast<uintptr_t>(entity->get_owner()) & 0xffff;
 

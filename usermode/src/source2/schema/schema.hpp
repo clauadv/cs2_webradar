@@ -1,9 +1,9 @@
 #pragma once
 
 #define GET_SCHEMA(name) \
-	cs2::c_schema_system::get_offset(name)
+	source2::c_schema_system::get_offset(name)
 
-namespace src::cs2
+namespace src::source2
 {
 	struct schema_data_t
 	{
