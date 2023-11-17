@@ -90,29 +90,16 @@ namespace src
 				return bytes;
 			};
 
-			const auto module_base = this->get_module_base(module_name);
-			if (!module_base.has_value())
+			const auto [module_base, module_size] = this->get_module_base(module_name);
+			if (!module_base.has_value() || !module_size.has_value())
 				return {};
 
-			const auto headers = make_unique<uint8_t[]>(0x1000);
-			if (!this->read_t(module_base.value(), headers.get(), 0x1000))
-				return {};
-
-			const auto dos_header = reinterpret_cast<PIMAGE_DOS_HEADER>(headers.get());
-			if (dos_header->e_magic != IMAGE_DOS_SIGNATURE)
-				return {};
-
-			const auto nt_headers = reinterpret_cast<PIMAGE_NT_HEADERS>(headers.get() + dos_header->e_lfanew);
-			if (nt_headers->Signature != IMAGE_NT_SIGNATURE)
-				return {};
-
-			const auto module_size = nt_headers->OptionalHeader.SizeOfImage;
-			const auto module_data = make_unique<uint8_t[]>(module_size);
-			if (!this->read_t(module_base.value(), module_data.get(), module_size))
+			const auto module_data = make_unique<uint8_t[]>(module_size.value());
+			if (!this->read_t(module_base.value(), module_data.get(), module_size.value()))
 				return {};
 
 			const auto pattern_bytes = pattern_to_bytes(pattern);
-			for (auto i{ 0 }; i < module_size - pattern.size(); ++i)
+			for (auto i{ 0 }; i < module_size.value() - pattern.size(); ++i)
 			{
 				auto found{ true };
 
@@ -132,7 +119,7 @@ namespace src
 			return {};
 		}
 
-		optional<uintptr_t> get_module_base(const string_view& module_name)
+		pair<optional<uintptr_t>, optional<uintptr_t>> get_module_base(const string_view& module_name)
 		{
 			const auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->m_id);
 			if (snapshot == INVALID_HANDLE_VALUE)
@@ -152,7 +139,7 @@ namespace src
 				};
 
 				if (equals_ignore_case(module_entry.szModule, module_name))
-					return reinterpret_cast<uintptr_t>(module_entry.modBaseAddr);
+					return make_pair(reinterpret_cast<uintptr_t>(module_entry.modBaseAddr), static_cast<uintptr_t>(module_entry.modBaseSize));
 			}
 
 			return {};
