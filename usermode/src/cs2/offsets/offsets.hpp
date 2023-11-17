@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cs2
+namespace src::cs2
 {
 	class c_offsets
 	{
@@ -143,4 +143,4 @@ namespace cs2
 		uintptr_t get_owner_entity() { return this->m_owner_entity; }
 	};
 }
-inline cs2::c_offsets m_offsets{};
+inline src::cs2::c_offsets m_offsets{};

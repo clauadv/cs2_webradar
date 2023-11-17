@@ -52,7 +52,87 @@ namespace src
 			return this->m_handle != nullptr;
 		}
 
-		optional<uintptr_t> get_module(const string_view& module_name)
+		optional<c_address> find_pattern(const string_view& module_name, const string_view& pattern)
+		{
+			constexpr auto pattern_to_bytes = [](const string_view& pattern)
+			{
+				vector<int32_t> bytes;
+
+				for (auto i{ 0 }; i < pattern.size(); ++i)
+				{
+					switch (pattern[i])
+					{
+						case '?':
+							bytes.push_back(-1);
+							break;
+
+						case ' ':
+							break;
+
+						default:
+						{
+							if (i + 1 < pattern.size())
+							{
+								auto value{ 0 };
+
+								if (const auto [ptr, ec] = from_chars(pattern.data() + i, pattern.data() + i + 2, value, 16); ec == errc())
+								{
+									bytes.push_back(value);
+									++i;
+								}
+							}
+
+							break;
+						}
+					}
+				}
+
+				return bytes;
+			};
+
+			const auto module_base = this->get_module_base(module_name);
+			if (!module_base.has_value())
+				return {};
+
+			const auto headers = make_unique<uint8_t[]>(0x1000);
+			if (!this->read_t(module_base.value(), headers.get(), 0x1000))
+				return {};
+
+			const auto dos_header = reinterpret_cast<PIMAGE_DOS_HEADER>(headers.get());
+			if (dos_header->e_magic != IMAGE_DOS_SIGNATURE)
+				return {};
+
+			const auto nt_headers = reinterpret_cast<PIMAGE_NT_HEADERS>(headers.get() + dos_header->e_lfanew);
+			if (nt_headers->Signature != IMAGE_NT_SIGNATURE)
+				return {};
+
+			const auto module_size = nt_headers->OptionalHeader.SizeOfImage;
+			const auto module_data = make_unique<uint8_t[]>(module_size);
+			if (!this->read_t(module_base.value(), module_data.get(), module_size))
+				return {};
+
+			const auto pattern_bytes = pattern_to_bytes(pattern);
+			for (auto i{ 0 }; i < module_size - pattern.size(); ++i)
+			{
+				auto found{ true };
+
+				for (auto j{ 0 }; j < pattern_bytes.size(); ++j)
+				{
+					if (module_data[i + j] != pattern_bytes[j] && pattern_bytes[j] != -1)
+					{
+						found = false;
+						break;
+					}
+				}
+
+				if (found)
+					return c_address(module_base.value() + i);
+			}
+
+			return {};
+		}
+
+		optional<uintptr_t> get_module_base(const string_view& module_name)
 		{
 			const auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->m_id);
 			if (snapshot == INVALID_HANDLE_VALUE)

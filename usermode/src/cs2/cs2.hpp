@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cs2
+namespace src::cs2
 {
 	class c_base_player;
 	class c_planted_c4;
@@ -31,29 +31,37 @@ namespace src
 				return false;
 			}
 
-			this->m_client_dll = m_memory.get_module("client.dll");
+			this->m_client_dll = m_memory.get_module_base("client.dll");
 			if (!this->m_client_dll)
 			{
 				LOG_ERROR("failed to get an address for client.dll");
 				return false;
 			}
 
-			this->m_engine2_dll = m_memory.get_module("engine2.dll");
+			this->m_engine2_dll = m_memory.get_module_base("engine2.dll");
 			if (!this->m_engine2_dll)
 			{
 				LOG_ERROR("failed to get an address for engine2.dll");
 				return false;
 			}
 
+			if (!cs2::c_schema_system::setup())
+			{
+				LOG_ERROR("failed to setup schema system");
+				return false;
+			}
+
 			if (!m_offsets.setup())
 			{
 				LOG_ERROR("failed to setup offsets");
-				return false;
+				// return false;
 			}
 
 			LOG("m_process_id -> %d", m_memory.get_id());
 			LOG("m_client_dll -> 0x%llx", this->get_client());
 			LOG("m_engine2_dll -> 0x%llx \n", this->get_engine2());
+
+			LOG("m_player_pawn -> 0x%llx", GET_SCHEMA("ccsplayercontroller->m_hplayerpawn"));
 
 			return true;
 		}

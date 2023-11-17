@@ -8,11 +8,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ext\easywsclient\easywsclient.hpp" />
+    <ClInclude Include="ext\fnv1a\fnv1a.hpp" />
     <ClInclude Include="ext\nlohmann\json.hpp" />
     <ClInclude Include="src\cs2\classes\base_player_weapon.hpp" />
     <ClInclude Include="src\cs2\classes\planted_c4.hpp" />
     <ClInclude Include="src\cs2\classes\weapon_base_data.hpp" />
     <ClInclude Include="src\cs2\classes\player_weapon_services.hpp" />
+    <ClInclude Include="src\cs2\schema\schema_system.hpp" />
+    <ClInclude Include="src\cs2\utils\utl_ts_hash.hpp" />
     <ClInclude Include="src\driver\driver.hpp" />
     <ClInclude Include="src\cs2\classes\base_entity.hpp" />
     <ClInclude Include="src\cs2\classes\base_player.hpp" />
@@ -22,6 +25,7 @@
     <ClInclude Include="src\cs2\offsets\offsets.hpp" />
     <ClInclude Include="src\features\features.hpp" />
     <ClInclude Include="src\math\vector.hpp" />
+    <ClInclude Include="src\memory\address\address.hpp" />
     <ClInclude Include="src\memory\memory.hpp" />
     <ClInclude Include="src\utils\utils.hpp" />
     <ClInclude Include="usermode.hpp" />
@@ -34,6 +38,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\memory\address\address.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">Create</PrecompiledHeader>
     </ClCompile>

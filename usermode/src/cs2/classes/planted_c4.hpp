@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cs2
+namespace src::cs2
 {
 	class c_planted_c4 : public c_base_entity
 	{
