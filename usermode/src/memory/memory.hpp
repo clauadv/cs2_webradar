@@ -90,7 +90,7 @@ namespace src
 				return bytes;
 			};
 
-			const auto [module_base, module_size] = this->get_module_base(module_name);
+			const auto [module_base, module_size] = this->get_module_info(module_name);
 			if (!module_base.has_value() || !module_size.has_value())
 				return {};
 
@@ -119,7 +119,7 @@ namespace src
 			return {};
 		}
 
-		pair<optional<uintptr_t>, optional<uintptr_t>> get_module_base(const string_view& module_name)
+		pair<optional<uintptr_t>, optional<uintptr_t>> get_module_info(const string_view& module_name)
 		{
 			const auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->m_id);
 			if (snapshot == INVALID_HANDLE_VALUE)
