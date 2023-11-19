@@ -9,6 +9,7 @@
 #include <fstream>
 #include <set>
 #include <regex>
+#include <thread>
 
 // ext/includes
 #include "ext/nlohmann/json.hpp"
