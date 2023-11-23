@@ -21,7 +21,7 @@ namespace src::source2
 			if (!global_vars)
 				return;
 
-			const auto entity_list = c_entity_list::get();
+			const auto entity_list = m_entity_list->get();
 			if (!entity_list)
 				return;
 

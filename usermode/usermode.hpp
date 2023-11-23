@@ -10,6 +10,7 @@
 #include <set>
 #include <regex>
 #include <thread>
+#include <winternl.h>
 
 // ext/includes
 #include "ext/nlohmann/json.hpp"
@@ -36,13 +37,12 @@ using namespace std;
     }
 
 // src/includes
-// #include "driver/driver.hpp"
-
-#include "memory/address/address.hpp"
-#include "memory/memory.hpp"
-
 #include "utils/utils.hpp"
 #include "math/vector.hpp"
+
+#include "memory/address/address.hpp"
+// #include "driver/driver.hpp"
+#include "memory/memory.hpp"
 
 #include "source2/source2.hpp"
 #include "source2/utils/utl_ts_hash.hpp"

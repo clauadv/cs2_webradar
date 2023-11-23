@@ -14,7 +14,7 @@ namespace src
 
 		void run()
 		{
-			const auto local_player = source2::c_base_player::get();
+			const auto local_player = m_base_player->get();
 			if (!local_player)
 				return;
 
