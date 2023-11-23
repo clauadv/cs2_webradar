@@ -16,11 +16,6 @@ namespace src
 			return this->m_id;
 		}
 
-		HANDLE get_handle()
-		{
-			return this->m_handle;
-		}
-
 		optional<uint32_t> get_process_id(const string_view& process_name)
 		{
 			const auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -283,8 +278,8 @@ namespace src
 
 	private:
 		bool m_initialized{ false };
-		HANDLE m_handle{ nullptr };
-		int64_t m_id{ 0 };
+		void* m_handle{ nullptr };
+		uint32_t m_id{ 0 };
 
 		bool read_memory(void* address, void* buffer, const size_t size)
 		{

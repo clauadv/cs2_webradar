@@ -1,7 +1,7 @@
 # cs2_webradar
 counter strike 2 browser based radar cheat **(work in progress)** <br>
 <br>
-if you have any issues or questions, feel free to ask on my [discord server](https://discord.gg/wVzuHN8uXd)
+if you have any suggestions, issues or questions, feel free to send them on my [discord server](https://discord.gg/wVzuHN8uXd)
 
 ## usage
 - install [nodejs](https://nodejs.org/en/download/current)
@@ -11,9 +11,12 @@ if you have any issues or questions, feel free to ask on my [discord server](htt
 - run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
 
 ## sharing
-- in `usermode` project, `usermode.hpp` line 13, change `#define USE_LOCALHOST 1` to `#define USE_LOCALHOST 0`
+- in `usermode` project, `usermode.hpp` line 24, change `#define USE_LOCALHOST 1` to `#define USE_LOCALHOST 0`
 - in `react` project, `App.jsx` line 10, change `const USE_LOCALHOST = 1;` to `const USE_LOCALHOST = 0;`
 - in `react` project, `App.jsx` line 11, change `const PUBLIC_IP = "your ip";` with your ip address
+- in `cmd`, type `ipconfig`, find `Default Gateway` and navigate to it in your browser
+- in your router configuration, find `Port Forwarding` tab and forward port `22006/tcp` and `5173/tcp`
+- now your friends can see the radar by navigating to `your public ip:5173`
 
 ## showcase
 https://github.com/clauadv/cs2_webradar/assets/26169415/718d5969-004b-4300-b152-2051a75d490d

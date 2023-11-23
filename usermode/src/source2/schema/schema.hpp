@@ -174,7 +174,7 @@ namespace src::source2
 				}
 			}
 
-			LOG("successfully cached '%d' schema classes in %dms", m_schema_data.size(), chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start).count());
+			LOG("successfully cached '%d' schemas in %dms", m_schema_data.size(), chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start).count());
 			return true;
 		}
 	};
