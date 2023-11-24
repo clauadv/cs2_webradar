@@ -15,7 +15,7 @@ namespace src::source2
 				return "invalid";
 
 			const auto map_name = m_memory.read_t<string>(current_map_name);
-			if (map_name.empty() || map_name.contains("<empty>"))
+			if (map_name.empty() || map_name.find("<empty>") != string::npos)
 				return "invalid";
 
 			return map_name;
