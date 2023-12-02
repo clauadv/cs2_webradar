@@ -127,17 +127,23 @@ namespace src
 			return {};
 		}
 
-		bool attach(const string_view& process_name)
+		bool attach()
 		{
-			const auto process_id = this->get_process_id(process_name);
+			const auto process_id = this->get_process_id(GAME_NAME);
 			if (!process_id.has_value())
+			{
+				LOG_ERROR("failed to get process id for %s", GAME_NAME);
 				return false;
+			}
 
 			this->m_id = process_id.value();
 
 			const auto handle = this->hijack_handle();
 			if (!handle.has_value())
+			{
+				LOG_ERROR("failed to hijack a handle for %s", GAME_NAME);
 				return false;
+			}
 
 			this->m_handle = handle.value();
 

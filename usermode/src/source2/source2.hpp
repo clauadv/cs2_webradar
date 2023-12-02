@@ -1,5 +1,7 @@
 #pragma once
 
+#define GAME_NAME "cs2.exe"
+
 // modules
 #define CLIENT_DLL "client.dll"
 #define SCHEMASYSTEM_DLL "schemasystem.dll"

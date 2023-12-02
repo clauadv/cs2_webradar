@@ -13,15 +13,15 @@ namespace src::source2
 	public:
 		static bool setup()
 		{
-			if (!m_memory.attach("cs2.exe"))
+			if (!m_memory.attach())
 			{
-				LOG_ERROR("failed to attach to cs2.exe");
+				LOG_ERROR("failed to attach to %s", GAME_NAME);
 				return false;
 			}
 
 			if (!m_memory.get_id())
 			{
-				LOG_ERROR("failed to get a process id for cs2.exe");
+				LOG_ERROR("failed to get a process id for %s", GAME_NAME);
 				return false;
 			}
 
