@@ -30,8 +30,6 @@
     <ClInclude Include="src\utils\utils.hpp" />
     <ClInclude Include="usermode.hpp" />
     <ClInclude Include="src\pch.hpp" />
-    <ClInclude Include="src\io\io.hpp" />
-    <ClInclude Include="src\pch\pch.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ext\easywsclient\easywsclient.cpp">

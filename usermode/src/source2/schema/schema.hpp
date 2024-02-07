@@ -125,18 +125,21 @@ namespace src::source2
 
 		vector<c_schema_system_type_scope*> get_type_scopes() const
 		{
-			const auto count = m_memory.read_t<uint32_t>(reinterpret_cast<uintptr_t>(this) + 0x190);
-			if (!count)
+			const auto size = m_memory.read_t<uint32_t>(reinterpret_cast<uintptr_t>(this) + 0x190);
+			if (!size)
+			{
+				LOG_ERROR("type scopes are empty");
 				return {};
+			}
 
 			const auto data = m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x198);
 			if (!data)
 				return {};
 
 			vector<c_schema_system_type_scope*> type_scopes{};
-			type_scopes.resize(count);
+			type_scopes.resize(size);
 
-			if (!m_memory.read_t(data, type_scopes.data(), count * sizeof(uintptr_t)))
+			if (!m_memory.read_t(data, type_scopes.data(), size * sizeof(uintptr_t)))
 				return {};
 
 			return type_scopes;
@@ -156,7 +159,9 @@ namespace src::source2
 				if (module_name.empty())
 					continue;
 
-				const auto classes = m_memory.read_t<c_utl_ts_hash<c_schema_type_declared_class*>>(reinterpret_cast<uintptr_t>(type_scope) + 0x588);
+				const auto classes = m_memory.read_t<c_utl_ts_hash<c_schema_type_declared_class*>>(
+					reinterpret_cast<uintptr_t>(type_scope) + 0x5b8);
+				
 				for (const auto& _class : classes.elements())
 				{
 					const auto& class_name = _class->get_binary_name();
