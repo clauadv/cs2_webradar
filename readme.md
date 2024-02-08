@@ -1,16 +1,13 @@
 # cs2_webradar
-counter strike 2 browser based radar cheat **(work in progress)** <br>
+undetected counter strike 2 browser based radar cheat **(work in progress)** <br>
 <br>
 if you have any suggestions, issues or questions, feel free to send them on my [discord server](https://discord.gg/wVzuHN8uXd)
 
-## requirements
-- [visual studio](https://visualstudio.microsoft.com/vs/community/)
-- [nodejs](https://nodejs.org/en/download/current/)
-
 ## usage
-- in `react` and `web_server` folders, run `install.bat`
-- in the root folder, run `start.bat` which will start both web server and react development server
-- compile `usermode` project
+- download and install [nodejs](https://nodejs.org/en/download/current/)
+- in the root folder, run `install.bat` to install dependencies
+- in the root folder, run `start.bat` to start both web server and react development server
+- compile `usermode` project using [visual studio](https://visualstudio.microsoft.com/vs/community/)
 - run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
 
 ## sharing
