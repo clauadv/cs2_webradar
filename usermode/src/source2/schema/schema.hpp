@@ -12,7 +12,7 @@ namespace src::source2
 	};
 	inline vector<schema_data_t> m_schema_data;
 
-	class c_schema_field_data
+	class c_schema_field
 	{
 	public:
 		string get_name() const
@@ -36,19 +36,10 @@ namespace src::source2
 		}
 	};
 
-	class c_schema_class_info
+	class c_schema_class_binding
 	{
 	public:
-		uint16_t get_fields_size() const
-		{
-			return m_memory.read_t<uint16_t>(reinterpret_cast<uintptr_t>(this) + 0x1c);
-		}
-	};
-
-	class c_schema_type_declared_class
-	{
-	public:
-		string get_binary_name() const
+		string get_name() const
 		{
 			const auto ptr = m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x08);
 			if (!ptr)
@@ -63,25 +54,24 @@ namespace src::source2
 			return name;
 		}
 
-		string get_module_name() const
+		pair<uint16_t, c_schema_field*> get_fields() const
 		{
-			const auto ptr = m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x10);
-			if (!ptr)
-				return string{};
-
-			auto name = m_memory.read_t<string>(ptr);
-			if (name.empty())
-				return string{};
-
-			ranges::transform(name, name.begin(), ::tolower);
-
-			return name;
+			return
+			{
+				m_memory.read_t<uint16_t>(reinterpret_cast<uintptr_t>(this) + 0x1c),
+				m_memory.read_t<c_schema_field*>(reinterpret_cast<uintptr_t>(this) + 0x28)
+			};
 		}
 	};
 
 	class c_schema_system_type_scope
 	{
 	public:
+		c_utl_ts_hash<c_schema_class_binding*, 256, uint32_t> get_bindings_table() const
+		{
+			return m_memory.read_t<c_utl_ts_hash<c_schema_class_binding*, 256, uint32_t>>(reinterpret_cast<uintptr_t>(this) + 0x5c0);
+		}
+
 		string get_module_name() const
 		{
 			auto name = m_memory.read_t<string>(reinterpret_cast<uintptr_t>(this) + 0x08);
@@ -106,7 +96,7 @@ namespace src::source2
 			return schema_system->rip().as<c_schema_system*>();
 		}
 
-		static uint32_t get_offset(const std::string& field_name)
+		static uint32_t get_offset(const string& field_name)
 		{
 			const auto hashed_field_name = fnv1a::hash(field_name);
 			auto last_offset{ 0 };
@@ -156,28 +146,40 @@ namespace src::source2
 			for (const auto& type_scope : schema_system->get_type_scopes())
 			{
 				const auto module_name = type_scope->get_module_name();
-				if (module_name.empty())
+				if (module_name.find("client.dll") == string::npos)
 					continue;
 
-				const auto classes = m_memory.read_t<c_utl_ts_hash<c_schema_type_declared_class*>>(
-					reinterpret_cast<uintptr_t>(type_scope) + 0x5b8);
-				
-				for (const auto& _class : classes.elements())
-				{
-					const auto& class_name = _class->get_binary_name();
+				auto bindings_table = type_scope->get_bindings_table();
 
-					const auto class_info = reinterpret_cast<c_schema_class_info*>(_class);
-					for (auto idx{ 0 }; idx < class_info->get_fields_size(); ++idx)
+				unique_ptr<uintptr_t[]> elements = make_unique_for_overwrite<uintptr_t[] >(bindings_table.size());
+				const auto elements_size = bindings_table.get_elements(0, bindings_table.size(), elements.get());
+
+				for (auto elements_idx{ 0 }; elements_idx < elements_size; elements_idx++)
+				{
+					const auto element = elements[elements_idx];
+					if (!element)
+						continue;
+
+					const auto class_binding = bindings_table.get_element(element);
+					if (!class_binding)
+						continue;
+
+					auto [schema_field_size, schema_field] = class_binding->get_fields();
+					for (auto field_idx{ 0 }; field_idx < schema_field_size; field_idx++)
 					{
-						const auto field = reinterpret_cast<c_schema_field_data*>(m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(class_info) + 0x28) + (idx * 0x20));
-						if (!field)
+						if (!schema_field)
 							continue;
 
-						auto name = format("{}->{}", class_name, field->get_name());
-						m_schema_data.emplace_back(fnv1a::hash(name), field->get_offset());
+						auto name = format("{}->{}", class_binding->get_name(), schema_field->get_name());
+						m_schema_data.emplace_back(fnv1a::hash(name), schema_field->get_offset());
+
+						schema_field = reinterpret_cast<c_schema_field*>(reinterpret_cast<uintptr_t>(schema_field) + 0x20);
 					}
 				}
 			}
+
+			if (!m_schema_data.size())
+				return false;
 
 			LOG("successfully cached '%d' schemas in %dms", m_schema_data.size(), chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start).count());
 			return true;

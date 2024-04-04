@@ -2,135 +2,80 @@
 
 namespace src::source2
 {
-    template <class T, typename K>
-    class c_hash_bucket_data_internal
-    {
-    public:
-        c_hash_bucket_data_internal<T, K>* next() const
-        {
-            return m_memory.read_t<c_hash_bucket_data_internal<T, K>*>(reinterpret_cast<uintptr_t>(this) + 0x08);
-        }
-
-    public:
-        T m_data; // 0x00
-        uint8_t m_pad_0[0x08]; // 0x08
-        K m_ui_key; // 0x10
-    };
-
-    template <class T, typename K>
-    class c_hash_fixed_data_internal
-    {
-    public:
-        c_hash_fixed_data_internal<T, K>* next() const
-        {
-            return m_memory.read_t<c_hash_fixed_data_internal<T, K>*>(reinterpret_cast<uintptr_t>(this) + 0x08);
-        }
-
-    public:
-        K m_ui_key; // 0x00
-        uint8_t m_pad_0[0x08]; // 0x08
-        T m_data; // 0x10
-    };
-
-    template <class T, typename K>
-    struct hash_allocated_data_t
-    {
-        array<c_hash_fixed_data_internal<T, K>, 128> list() const
-        {
-            return m_memory.read_t<array<c_hash_fixed_data_internal<T, K>, 128>>(reinterpret_cast<uintptr_t>(this) + 0x18);
-        }
-    };
-
-    template <class T, typename K>
-    class c_hash_unallocated_data
-    {
-    public:
-        c_hash_unallocated_data<T, K>* next() const
-        {
-            return m_memory.read_t<c_hash_unallocated_data<T, K>*>(reinterpret_cast<uintptr_t>(this));
-        }
-
-        K ui_key() const
-        {
-            return m_memory.read_t<K>(reinterpret_cast<uintptr_t>(this) + 0x10);
-        }
-
-        array<c_hash_bucket_data_internal<T, K>, 256> block_list() const
-        {
-            return m_memory.read_t<array<c_hash_bucket_data_internal<T, K>, 256>>(reinterpret_cast<uintptr_t>(this) + 0x20);
-        }
-    };
-
-    template <class T, typename K>
-    struct hash_bucket_t
-    {
-        uint8_t pad_0[0x10]; // 0x00
-        hash_allocated_data_t<T, K>* m_allocated_data; // 0x10
-        c_hash_unallocated_data<T, K>* m_unallocated_data; // 0x18
-    };
-
     class c_utl_memory_pool
     {
     public:
-        int32_t block_size() const
-        {
-            return this->m_blocks_per_blob;
-        }
-
         int32_t size() const
         {
-            return this->m_block_allocated_size;
+            return this->m_blocks_allocated;
         }
 
     private:
-        int32_t m_block_size; // 0x00
-        int32_t m_blocks_per_blob; // 0x04
-        int32_t m_grow_mode; // 0x08
+        uint8_t m_pad0[0xc]; // 0x00
         int32_t m_blocks_allocated; // 0xc
-        int32_t m_block_allocated_size; // 0x10
-        int32_t m_peak_alloc; // 0x14
     };
 
-    template <class T, typename K = uintptr_t>
+    template<class T, int Count, typename K = uintptr_t>
     class c_utl_ts_hash
     {
     public:
-        int32_t block_size() const
-        {
-            return this->m_entry_memory.block_size();
-        }
-
         int32_t size() const
         {
-            return this->m_entry_memory.size();
+            return m_entry_memory.size();
         }
 
-        vector<T> elements() const
+        int get_elements(int32_t first_element, int32_t size, uintptr_t* handles) const
         {
-            vector<T> list;
-            const auto& unallocated_data = this->m_buckets.m_unallocated_data;
-            auto idx{ 0 };
-
-            for (auto element = unallocated_data; element != nullptr; element = element->next())
+            int idx{ 0 };
+            for (int bucket_idx{ 0 }; bucket_idx < Count; bucket_idx++)
             {
-                const auto block_list = element->block_list();
+                const hash_bucket_t& hash_bucket = m_buckets[bucket_idx];
 
-                for (auto i{ 0 }; i < this->block_size() && i != this->size(); ++i)
+                hash_fixed_data_internal_t<T>* element = hash_bucket.m_first_uncommited;
+                for (; element; element = element->get_next())
                 {
-                    list.emplace_back(block_list[i].m_data);
+                    if (--first_element >= 0)
+                        continue;
 
-                    ++idx;
+                    handles[idx++] = reinterpret_cast<uintptr_t>(element);
 
-                    if (idx >= this->size())
-                        break;
+                    if (idx >= size)
+                        return idx;
                 }
             }
 
-            return list;
+            return idx;
+        }
+
+        T get_element(uintptr_t hash)
+        {
+            return static_cast<hash_fixed_data_internal_t<T>*>(reinterpret_cast<void*>(hash))->get_data();
         }
 
     private:
+        template<typename D>
+        struct hash_fixed_data_internal_t
+        {
+            D get_data()
+            {
+                return m_memory.read_t<D>(reinterpret_cast<uintptr_t>(this) + 0x10);
+            }
+
+            hash_fixed_data_internal_t<D>* get_next()
+            {
+                return m_memory.read_t< hash_fixed_data_internal_t<D>* >(reinterpret_cast<uintptr_t>(this) + 0x08);
+            }
+        };
+
+        struct hash_bucket_t
+        {
+            uint8_t m_pad0[0x18]; // 0x00
+            hash_fixed_data_internal_t<T>* m_first; // 0x18
+            hash_fixed_data_internal_t<T>* m_first_uncommited; // 0x20
+        };
+
         c_utl_memory_pool m_entry_memory; // 0x00
-        hash_bucket_t<T, K> m_buckets; // 0x18
+        uint8_t m_pad0[0x70]; // 0x10
+        hash_bucket_t m_buckets[Count]; // 0x80
     };
 }
