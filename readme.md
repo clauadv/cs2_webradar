@@ -13,7 +13,7 @@ if you have any suggestions, issues or questions, feel free to send them on my [
 ## sharing
 - in `usermode` project, `usermode.hpp` line 24, change `#define USE_LOCALHOST 1` to `#define USE_LOCALHOST 0`
 - in `react` project, `App.jsx` line 10, change `const USE_LOCALHOST = 1;` to `const USE_LOCALHOST = 0;`
-- in `react` project, `App.jsx` line 11, change `const PUBLIC_IP = "your ip";` with your ip address
+- in `react` project, `App.jsx` line 12, change `const PUBLIC_IP = "your ip";` with your ip address
 - in `cmd`, type `ipconfig`, find `Default Gateway` and navigate to it in your browser
 - in your router configuration, find `Port Forwarding` tab and forward port `22006/tcp` and `5173/tcp`
 - now your friends can see the radar by navigating to `your public ip:5173`
