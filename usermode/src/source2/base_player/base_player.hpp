@@ -65,7 +65,7 @@ namespace src::source2
 
 		int get_armor()
 		{
-			return m_memory.read_t<int>(this + GET_SCHEMA("c_csplayerpawnbase->m_armorvalue"));
+			return m_memory.read_t<int>(this + GET_SCHEMA("c_csplayerpawn->m_armorvalue"));
 		}
 
 		e_team get_team()
