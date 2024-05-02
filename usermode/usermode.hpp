@@ -38,6 +38,7 @@ using namespace std;
 
 // src/includes
 #include "utils/utils.hpp"
+#include "utils/exception.hpp"
 #include "math/vector.hpp"
 
 #include "source2/source2.hpp"

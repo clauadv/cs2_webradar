@@ -27,6 +27,7 @@
     <ClInclude Include="src\math\vector.hpp" />
     <ClInclude Include="src\memory\address\address.hpp" />
     <ClInclude Include="src\memory\memory.hpp" />
+    <ClInclude Include="src\utils\exception.hpp" />
     <ClInclude Include="src\utils\utils.hpp" />
     <ClInclude Include="usermode.hpp" />
     <ClInclude Include="src\pch.hpp" />

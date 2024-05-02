@@ -5,6 +5,13 @@ bool main()
 {
     LOG("usermode started \n");
 
+    if (!c_exception_handler::setup())
+    {
+        LOG_ERROR("failed to setup exception handler");
+        this_thread::sleep_for(chrono::seconds(5));
+        return true;
+    }
+
     if (!src::source2::c_base_sdk::setup())
     {
         LOG_ERROR("failed to setup cs2");
