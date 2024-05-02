@@ -58,6 +58,8 @@ bool main()
         }
 
         web_socket->poll();
+
+        this_thread::sleep_for(chrono::milliseconds(1));
     }
 
     system("pause");
