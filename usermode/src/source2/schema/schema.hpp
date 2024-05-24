@@ -69,7 +69,7 @@ namespace src::source2
 	public:
 		c_utl_ts_hash<c_schema_class_binding*, 256, uint32_t> get_bindings_table() const
 		{
-			return m_memory.read_t<c_utl_ts_hash<c_schema_class_binding*, 256, uint32_t>>(reinterpret_cast<uintptr_t>(this) + 0x5c0);
+			return m_memory.read_t<c_utl_ts_hash<c_schema_class_binding*, 256, uint32_t>>(reinterpret_cast<uintptr_t>(this) + 0x500);
 		}
 
 		string get_module_name() const
@@ -115,16 +115,19 @@ namespace src::source2
 
 		vector<c_schema_system_type_scope*> get_type_scopes() const
 		{
-			const auto size = m_memory.read_t<uint32_t>(reinterpret_cast<uintptr_t>(this) + 0x190);
-			if (!size)
+			const auto size = m_memory.read_t<uint32_t>(reinterpret_cast<uintptr_t>(this) + 0x188);
+			if (!size || size >= 50)
 			{
-				LOG_ERROR("type scopes are empty");
+				LOG_ERROR("type scope size is either empty or not good");
 				return {};
 			}
 
-			const auto data = m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x198);
-			if (!data)
+			const auto data = m_memory.read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x190);
+			if (!data || data <= 0x10000)
+			{
+				LOG_ERROR("type scope data is either empty or not good");
 				return {};
+			}
 
 			vector<c_schema_system_type_scope*> type_scopes{};
 			type_scopes.resize(size);

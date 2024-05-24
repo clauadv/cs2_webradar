@@ -25,7 +25,7 @@ namespace src::source2
 				return false;
 			}
 
-			m_base_player = m_memory.find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_PAWN)->rip().add(0x138).as<source2::c_base_player*>();
+			m_base_player = m_memory.find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_PAWN)->rip().add(0x148).as<source2::c_base_player*>();
 			if (!m_base_player)
 			{
 				LOG_ERROR("failed to get an address for m_base_player");

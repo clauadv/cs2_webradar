@@ -9,8 +9,7 @@ namespace src::source2
 
 		string get_map_name()
 		{
-			// @note: https://www.unknowncheats.me/forum/3870682-post1183.
-			const auto current_map_name = m_memory.read_t<uintptr_t>(this + 0x188);
+			const auto current_map_name = m_memory.read_t<uintptr_t>(this + 0x1b8);
 			if (!current_map_name)
 				return "invalid";
 
@@ -23,8 +22,7 @@ namespace src::source2
 
 		float get_curtime()
 		{
-			// @note: https://www.unknowncheats.me/forum/3870682-post1183.
-			return m_memory.read_t<float>(this + 0x2c);
+			return m_memory.read_t<float>(this + 0x34);
 		}
 	};
 }

@@ -38,7 +38,15 @@ namespace src
 			if (!global_vars)
 				return;
 
-			this->m_data["m_map"] = global_vars->get_map_name();
+			const auto map_name = global_vars->get_map_name();
+			if (map_name.find("invalid") != std::string::npos)
+			{
+				LOG_ERROR("failed to get map name");
+				this_thread::sleep_for(chrono::seconds(5));
+				std::exit(0);
+			}
+
+			this->m_data["m_map"] = map_name;
 		}
 
 		void get_player_info()
