@@ -43,7 +43,6 @@ namespace src
 			{
 				LOG_ERROR("failed to get map name");
 				this_thread::sleep_for(chrono::seconds(5));
-				std::exit(0);
 			}
 
 			this->m_data["m_map"] = map_name;
