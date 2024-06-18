@@ -132,6 +132,7 @@ namespace src
 								break;
 
 							case source2::e_weapon_type::knife:
+							case source2::e_weapon_type::taser:
 								melee_set.insert(weapon_name);
 								break;
 
