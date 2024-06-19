@@ -73,7 +73,7 @@ const App = () => {
 				(bombData && bombData.m_blow_time > 0 && !bombData.m_is_defused) && (
 					<div className={`flex flex-col items-center gap-1`}>
 						<div className={`flex justify-center items-center gap-1`}>
-							<MaskedIcon path={`./assets/icons/c4_sml.png`} height={32} color={bombData.m_is_defusing && `bg-radar-green` || `bg-radar-secondary`} />
+							<MaskedIcon path={`./assets/icons/c4_sml.png`} height={32} color={(bombData.m_is_defusing && ((bombData.m_blow_time - bombData.m_defuse_time) > 0)) && `bg-radar-green` || (bombData.m_blow_time - bombData.m_defuse_time) < 0 && `bg-radar-red` || `bg-radar-secondary`} />
 							<span>{`${bombData.m_blow_time.toFixed(1)}s ${bombData.m_is_defusing && `(${bombData.m_defuse_time.toFixed(1)}s)` || ''}`}</span>
 						</div>
 					</div>
