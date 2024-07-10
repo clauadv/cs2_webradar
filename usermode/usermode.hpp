@@ -18,44 +18,31 @@
 #include "ext/fnv1a/fnv1a.hpp"
 
 using namespace ext;
-using namespace std;
 
-// src/defines
-#define USE_LOCALHOST 1
+/* root */
+#include "common.hpp"
 
-// src/macros
-#define LOG(str, ...) \
-	{ \
-        const auto filename = filesystem::path(__FILE__).filename().string(); \
-        printf("[%s] " str "\n", filename.c_str(), __VA_ARGS__); \
-    }
-
-#define LOG_ERROR(str, ...) \
-    { \
-        const auto filename = filesystem::path(__FILE__).filename().string(); \
-        printf("[%s:%d] " str "\n", filename.c_str(), __LINE__, __VA_ARGS__); \
-    }
-
-// src/includes
+/* utils */
 #include "utils/utils.hpp"
 #include "utils/exception.hpp"
-#include "math/vector.hpp"
+#include "utils/address.hpp"
+#include "utils/memory.hpp"
 
-#include "source2/source2.hpp"
+/* core */
+#include "core/schema.hpp"
+#include "core/sdk.hpp"
 
-#include "memory/address/address.hpp"
-#include "memory/memory.hpp"
+/* datatypes */
+#include "sdk/datatypes/utl_ts_hash.hpp"
+#include "sdk/datatypes/utl_vector.hpp"
+#include "sdk/datatypes/vector.hpp"
 
-#include "source2/utils/utl_ts_hash.hpp"
-#include "source2/schema/schema.hpp"
-#include "source2/global_vars/global_vars.hpp"
-#include "source2/entity_list/entity_list.hpp"
-#include "source2/weapon_base_data/weapon_base_data.hpp"
-#include "source2/base_entity/base_entity.hpp"
-#include "source2/base_player_weapon/base_player_weapon.hpp"
-#include "source2/player_weapon_services/player_weapon_services.hpp"
-#include "source2/base_player/base_player.hpp"
-#include "source2/planted_c4/planted_c4.hpp"
-#include "source2/base_sdk/base_sdk.hpp"
+/* sdk */
+#include "sdk/base_handle.hpp"
+#include "sdk/entity.hpp"
+#include "sdk/game_entity_system.hpp"
+#include "sdk/schema_system.hpp"
+#include "sdk/global_vars.hpp"
 
+/* features */
 #include "features/features.hpp"

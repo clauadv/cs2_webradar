@@ -10,23 +10,21 @@
     <ClInclude Include="ext\easywsclient\easywsclient.hpp" />
     <ClInclude Include="ext\fnv1a\fnv1a.hpp" />
     <ClInclude Include="ext\nlohmann\json.hpp" />
-    <ClInclude Include="src\source2\base_sdk\base_sdk.hpp" />
-    <ClInclude Include="src\source2\base_player_weapon\base_player_weapon.hpp" />
-    <ClInclude Include="src\source2\planted_c4\planted_c4.hpp" />
-    <ClInclude Include="src\source2\weapon_base_data\weapon_base_data.hpp" />
-    <ClInclude Include="src\source2\player_weapon_services\player_weapon_services.hpp" />
-    <ClInclude Include="src\source2\schema\schema.hpp" />
-    <ClInclude Include="src\source2\utils\utl_ts_hash.hpp" />
+    <ClInclude Include="src\common.hpp" />
+    <ClInclude Include="src\core\sdk.hpp" />
+    <ClInclude Include="src\sdk\base_handle.hpp" />
+    <ClInclude Include="src\sdk\datatypes\utl_vector.hpp" />
+    <ClInclude Include="src\sdk\entity.hpp" />
+    <ClInclude Include="src\sdk\schema_system.hpp" />
+    <ClInclude Include="src\core\schema.hpp" />
+    <ClInclude Include="src\sdk\datatypes\utl_ts_hash.hpp" />
     <ClInclude Include="src\driver\driver.hpp" />
-    <ClInclude Include="src\source2\base_entity\base_entity.hpp" />
-    <ClInclude Include="src\source2\base_player\base_player.hpp" />
-    <ClInclude Include="src\source2\entity_list\entity_list.hpp" />
-    <ClInclude Include="src\source2\source2.hpp" />
-    <ClInclude Include="src\source2\global_vars\global_vars.hpp" />
+    <ClInclude Include="src\sdk\game_entity_system.hpp" />
+    <ClInclude Include="src\sdk\global_vars.hpp" />
     <ClInclude Include="src\features\features.hpp" />
-    <ClInclude Include="src\math\vector.hpp" />
-    <ClInclude Include="src\memory\address\address.hpp" />
-    <ClInclude Include="src\memory\memory.hpp" />
+    <ClInclude Include="src\sdk\datatypes\vector.hpp" />
+    <ClInclude Include="src\utils\address.hpp" />
+    <ClInclude Include="src\utils\memory.hpp" />
     <ClInclude Include="src\utils\exception.hpp" />
     <ClInclude Include="src\utils\utils.hpp" />
     <ClInclude Include="usermode.hpp" />
@@ -36,15 +34,20 @@
     <ClCompile Include="ext\easywsclient\easywsclient.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\source2\base_player\base_player.cpp" />
-    <ClCompile Include="src\source2\entity_list\entity_list.cpp" />
-    <ClCompile Include="src\source2\global_vars\global_vars.cpp" />
-    <ClCompile Include="src\source2\planted_c4\planted_c4.cpp" />
+    <ClCompile Include="src\core\sdk.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
-    <ClCompile Include="src\memory\address\address.cpp" />
+    <ClCompile Include="src\features\bomb\bomb.cpp" />
+    <ClCompile Include="src\features\features.cpp" />
+    <ClCompile Include="src\features\players\players.cpp" />
+    <ClCompile Include="src\sdk\entity.cpp" />
+    <ClCompile Include="src\utils\address.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\core\schema.cpp" />
+    <ClCompile Include="src\utils\exception.cpp" />
+    <ClCompile Include="src\utils\memory.cpp" />
+    <ClCompile Include="src\utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.md" />

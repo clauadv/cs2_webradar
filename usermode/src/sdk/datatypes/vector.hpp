@@ -49,7 +49,7 @@ namespace math
 			return out;
 		}
 
-		bool zero() const
+		bool is_zero() const
 		{
 			return (this->x == 0.f && this->y == 0.f && this->z == 0.f);
 		}

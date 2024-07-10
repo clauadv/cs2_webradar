@@ -5,27 +5,40 @@ bool main()
 {
     LOG("usermode started \n");
 
-    if (!c_exception_handler::setup())
+    if (!exc::setup())
     {
         LOG_ERROR("failed to setup exception handler");
-        this_thread::sleep_for(chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         return true;
     }
 
-    if (!src::source2::c_base_sdk::setup())
+    if (!mem::setup())
     {
-        LOG_ERROR("failed to setup cs2");
-        this_thread::sleep_for(chrono::seconds(5));
+        LOG_ERROR("failed to setup memory");
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         return true;
     }
 
-    // @easywsclient
+    if (!sdk::setup())
+    {
+        LOG_ERROR("failed to setup sdk");
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        return true;
+    }
+
+    if (!schema::setup())
+    {
+        LOG_ERROR("failed to setup schema");
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        return true;
+    }
+
     WSADATA wsa_data{};
     const auto wsa_startup = WSAStartup(MAKEWORD(2, 2), &wsa_data);
     if (wsa_startup != 0)
     {
         LOG_ERROR("failed to initialize winsock");
-        this_thread::sleep_for(chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         return true;
     }
 
@@ -33,7 +46,7 @@ bool main()
     if (ipv4_address.empty())
     {
         LOG_ERROR("failed to get your ipv4 address, set it manually");
-        this_thread::sleep_for(chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         return true;
     }
 
@@ -42,31 +55,31 @@ bool main()
     if (!web_socket)
     {
         LOG_ERROR("failed to connect to the web socket ('%s')", formatted_address.data());
-        this_thread::sleep_for(chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         return true;
     }
 
     LOG("connected to the web socket ('%s')", formatted_address.data());
 
-    auto start = chrono::system_clock::now();
+    auto start = std::chrono::system_clock::now();
 
     for (;;)
     {
-        const auto now = chrono::system_clock::now();
+        const auto now = std::chrono::system_clock::now();
         const auto duration = now - start;
-        if (duration >= chrono::milliseconds(100))
+        if (duration >= std::chrono::milliseconds(100))
         {
             start = now;
 
-            m_features.run();
+            f::run();
 
             // LOG("%s", m_features.get_data().dump().data());
-            web_socket->send(m_features.get_data().dump());
+            web_socket->send(f::m_data.dump());
         }
 
         web_socket->poll();
 
-        this_thread::sleep_for(chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     system("pause");
