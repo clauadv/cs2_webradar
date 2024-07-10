@@ -44,7 +44,7 @@ const App = () => {
 			}
 
 			webSocket.onerror = async (error) => {
-				document.getElementsByClassName("radar_message")[0].textContent = `WebSocket connection to '${webSocketURL}/cs2_webradar' failed`;
+				document.getElementsByClassName("radar_message")[0].textContent = `WebSocket connection to '${webSocketURL}' failed`;
 				console.error(error);
 			}
 
@@ -96,7 +96,7 @@ const App = () => {
 						<Radar playerArray={playerArray} radarImage={`./data/${mapData.name}/radar.png`} mapData={mapData} localTeam={localTeam} averageLatency={averageLatency} bombData={bombData} />
 					) || (
 						<div id="radar" className={`relative overflow-hidden origin-center`}>
-							<h1 className="radar_message">Waiting for data</h1>
+							<h1 className="radar_message">Connected! Waiting for data from usermode</h1>
 						</div>
 					)
 				}
