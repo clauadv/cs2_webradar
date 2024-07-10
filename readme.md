@@ -1,7 +1,7 @@
 # cs2_webradar
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](https://github.com/clauadv/cs2_webradar/blob/master/readme.md)
 [![en](https://img.shields.io/badge/lang-cn-blue.svg)](https://github.com/clauadv/cs2_webradar/blob/master/readme-CN.md) <br>
-undetected counter strike 2 browser based radar cheat **(work in progress)** <br>
+undetected counter strike 2 browser based radar cheat <br>
 <br>
 if you have any suggestions, issues or questions, feel free to send them on my [discord server](https://discord.gg/wVzuHN8uXd)
 
@@ -13,7 +13,7 @@ if you have any suggestions, issues or questions, feel free to send them on my [
 - run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
 
 ## sharing
-- in `usermode` project, `usermode.hpp` line 24, change `#define USE_LOCALHOST 1` to `#define USE_LOCALHOST 0`
+- in `usermode` project, `/src/common.hpp` line 6, change `#define USE_LOCALHOST 1` to `#define USE_LOCALHOST 0`
 - in `react` project, `App.jsx` line 10, change `const USE_LOCALHOST = 1;` to `const USE_LOCALHOST = 0;`
 - in `react` project, `App.jsx` line 12, change `const PUBLIC_IP = "your ip";` with your ip address
 - in `cmd`, type `ipconfig`, find `Default Gateway` and navigate to it in your browser
