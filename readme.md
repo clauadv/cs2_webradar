@@ -6,7 +6,7 @@ undetected counter strike 2 browser based radar cheat <br>
 if you have any suggestions, issues or questions, feel free to send them on my [discord server](https://discord.gg/wVzuHN8uXd)
 
 ## usage
-- download and install [nodejs](https://nodejs.org/en/download/current/)
+- download and install [nodejs](https://nodejs.org/en/download/prebuilt-installer/current/)
 - in the root folder, run `install.bat` to install dependencies
 - in the root folder, run `start.bat` to start both web server and react development server
 - compile `usermode` project using [visual studio](https://visualstudio.microsoft.com/vs/community/)
