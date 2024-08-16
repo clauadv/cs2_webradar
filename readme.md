@@ -5,12 +5,16 @@ undetected counter strike 2 browser based radar cheat <br>
 <br>
 if you have any suggestions, issues or questions, feel free to send them on my [discord server](https://discord.gg/wVzuHN8uXd)
 
+## requirements
+- [nodejs](https://nodejs.org/en/download/prebuilt-installer/current/)
+- [visual studio](https://visualstudio.microsoft.com/vs/community/)
+
 ## usage
-- download and install [nodejs](https://nodejs.org/en/download/prebuilt-installer/current/)
 - in the root folder, run `install.bat` to install dependencies
 - in the root folder, run `start.bat` to start both web server and react development server
-- compile `usermode` project using [visual studio](https://visualstudio.microsoft.com/vs/community/)
-- run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
+- in `usermode` project, run `cs2_webradar.sln`
+- in visual studio's toolbar, hover on `Build` and press `Build Solution` or press `Ctrl + Shift + B`
+- in `release` folder, run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
 
 ## sharing
 - in `usermode` project, `/src/common.hpp` line 6, change `#define USE_LOCALHOST 1` to `#define USE_LOCALHOST 0`
@@ -22,3 +26,6 @@ if you have any suggestions, issues or questions, feel free to send them on my [
 
 ## showcase
 https://github.com/clauadv/cs2_webradar/assets/26169415/718d5969-004b-4300-b152-2051a75d490d
+
+## license
+this project is licensed under the [GPL-3.0 license](https://github.com/clauadv/cs2_webradar?tab=GPL-3.0-1-ov-file#readme)
