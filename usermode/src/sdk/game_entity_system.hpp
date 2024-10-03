@@ -5,7 +5,7 @@ class c_game_entity_system
 public:
 	static inline c_game_entity_system* m_entity_list = nullptr;
 
-	SCHEMA_ADD_OFFSET(int32_t, m_highest_entity_idx, 0x1510);
+	SCHEMA_ADD_OFFSET(int32_t, m_highest_entity_idx, 0x1520);
 
 	template <typename T = c_base_entity*>
 	T get(int32_t idx)

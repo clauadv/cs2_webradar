@@ -73,7 +73,7 @@ bool main()
 
             f::run();
 
-            // LOG("%s", m_features.get_data().dump().data());
+            // LOG("%s\n", f::m_data.dump().data());
             web_socket->send(f::m_data.dump());
         }
 

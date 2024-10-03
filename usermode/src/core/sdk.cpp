@@ -24,6 +24,6 @@ bool sdk::setup()
 
 void sdk::update()
 {
-	c_cs_player_pawn::m_local_pawn = m_memory->read_t<c_cs_player_pawn*>(m_memory->find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_PAWN)->rip().add(0x160).as<c_cs_player_pawn*>());
+	c_cs_player_pawn::m_local_pawn = m_memory->read_t<c_cs_player_pawn*>(m_memory->find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_PAWN)->rip().add(0x168).as<c_cs_player_pawn*>());
 	c_global_vars::m_global_vars = m_memory->read_t<c_global_vars*>(m_memory->find_pattern(CLIENT_DLL, GET_GLOBAL_VARS)->rip().as<c_global_vars*>());
 }
