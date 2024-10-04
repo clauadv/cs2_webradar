@@ -1,65 +1,73 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.hpp"
 
 bool main()
 {
-    LOG("usermode started \n");
+    if (!utils::is_updated())
+        return {};
+
+    config_data_t config_data = {};
+    if (!cfg::setup(config_data))
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        return {};
+    }
+    LOG_INFO("config system initialization completed");
 
     if (!exc::setup())
     {
-        LOG_ERROR("failed to setup exception handler");
         std::this_thread::sleep_for(std::chrono::seconds(5));
-        return true;
+        return {};
     }
+    LOG_INFO("exception handler initialization completed");
 
-    if (!mem::setup())
+    if (!m_memory->setup())
     {
-        LOG_ERROR("failed to setup memory");
         std::this_thread::sleep_for(std::chrono::seconds(5));
-        return true;
+        return {};
     }
+    LOG_INFO("memory initialization completed");
 
-    if (!sdk::setup())
+    if (!i::setup())
     {
-        LOG_ERROR("failed to setup sdk");
         std::this_thread::sleep_for(std::chrono::seconds(5));
-        return true;
+        return {};
     }
+    LOG_INFO("interfaces initialization completed");
 
     if (!schema::setup())
     {
-        LOG_ERROR("failed to setup schema");
         std::this_thread::sleep_for(std::chrono::seconds(5));
-        return true;
+        return {};
     }
+    LOG_INFO("schema initialization completed");
 
-    WSADATA wsa_data{};
+    WSADATA wsa_data = {};
     const auto wsa_startup = WSAStartup(MAKEWORD(2, 2), &wsa_data);
     if (wsa_startup != 0)
     {
-        LOG_ERROR("failed to initialize winsock");
         std::this_thread::sleep_for(std::chrono::seconds(5));
-        return true;
+        return {};
     }
+    LOG_INFO("winsock initialization completed");
 
-    const auto ipv4_address = utils::get_ipv4_address();
+    const auto product_version = c_engine_client::get_product_version();
+    if (product_version.find(CS2_VERSION) == std::string::npos)
+        LOG_WARNING("version mismatch! current 'cs2' version is '%s'", product_version.c_str());
+    else
+        LOG_INFO("version match! current 'cs2' version is up to date");
+
+    const auto ipv4_address = utils::get_ipv4_address(config_data);
     if (ipv4_address.empty())
-    {
-        LOG_ERROR("failed to get your ipv4 address, set it manually");
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        return true;
-    }
+        LOG_WARNING("failed to automatically get your ipv4 address!\n                 we will use '%s' from 'config.json'. if the local ip is wrong, please set it", config_data.m_local_ip);
 
-    const auto formatted_address = format("ws://{}:22006/cs2_webradar", utils::get_ipv4_address());
+    const auto formatted_address = std::format("ws://{}:22006/cs2_webradar", ipv4_address);
     static auto web_socket = easywsclient::WebSocket::from_url(formatted_address);
     if (!web_socket)
     {
-        LOG_ERROR("failed to connect to the web socket ('%s')", formatted_address.data());
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        return true;
+        LOG_ERROR("failed to connect to the web socket ('%s')", formatted_address.c_str());
+        return {};
     }
-
-    LOG("connected to the web socket ('%s')", formatted_address.data());
+    LOG_INFO("connected to the web socket ('%s')", formatted_address.data());
 
     auto start = std::chrono::system_clock::now();
 
@@ -71,14 +79,13 @@ bool main()
         {
             start = now;
 
+            sdk::update();
             f::run();
 
-            // LOG("%s\n", f::m_data.dump().data());
             web_socket->send(f::m_data.dump());
         }
 
         web_socket->poll();
-
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 

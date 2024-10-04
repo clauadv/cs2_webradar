@@ -26,9 +26,11 @@ public:
 	template<typename T>
 	T as() const
 	{
-		return reinterpret_cast<T>(this->m_address);
+		if constexpr (std::is_same_v<T, uintptr_t>)
+			return this->m_address;
+		else
+			return reinterpret_cast<T>(this->m_address);
 	}
-
 private:
 	uintptr_t m_address{};
 };

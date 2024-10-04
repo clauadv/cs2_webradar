@@ -81,7 +81,7 @@ public:
 class c_game_scene_node
 {
 public:
-	SCHEMA_ADD_FIELD(fvector3, m_vecAbsOrigin, "CGameSceneNode->m_vecAbsOrigin");
+	SCHEMA_ADD_FIELD(f_vector, m_vecAbsOrigin, "CGameSceneNode->m_vecAbsOrigin");
 };
 
 class c_base_entity : public c_entity_instance
@@ -92,7 +92,7 @@ public:
 	SCHEMA_ADD_FIELD(e_cs_team, m_iTeamNum, "C_BaseEntity->m_iTeamNum");
 	SCHEMA_ADD_FIELD(c_base_entity*, m_hOwnerEntity, "C_BaseEntity->m_hOwnerEntity");
 
-	const fvector3& get_scene_origin();
+	const f_vector& get_scene_origin();
 };
 
 class c_player_weapon_services
@@ -120,14 +120,12 @@ public:
 class c_cs_player_pawn_base : public c_base_player_pawn
 {
 public:
-	SCHEMA_ADD_FIELD(fvector3, m_angEyeAngles, "C_CSPlayerPawnBase->m_angEyeAngles");
+	SCHEMA_ADD_FIELD(f_vector, m_angEyeAngles, "C_CSPlayerPawnBase->m_angEyeAngles");
 };
 
 class c_cs_player_pawn : public c_cs_player_pawn_base
 {
 public:
-	static inline c_cs_player_pawn* m_local_pawn = nullptr;
-
 	SCHEMA_ADD_FIELD(int32_t, m_ArmorValue, "C_CSPlayerPawn->m_ArmorValue");
 
 	const std::string get_model_name();
@@ -152,11 +150,11 @@ public:
 	SCHEMA_ADD_FIELD(c_in_game_money_services*, m_pInGameMoneyServices, "CCSPlayerController->m_pInGameMoneyServices");
 	SCHEMA_ADD_FIELD(e_colors, m_iCompTeammateColor, "CCSPlayerController->m_iCompTeammateColor");
 	SCHEMA_ADD_STRING(m_sSanitizedPlayerName, "CCSPlayerController->m_sSanitizedPlayerName");
-	SCHEMA_ADD_FIELD(c_base_handle, m_hPlayerPawn, "CCSPlayerController->m_hPlayerPawn");
-	SCHEMA_ADD_FIELD(bool, m_bPawnIsAlive, "CCSPlayerController->m_bPawnIsAlive");
 
+	static c_cs_player_controller* get_local_player_controller();
+	c_cs_player_pawn* get_player_pawn();
 	const e_colors get_color();
-	const fvector3& get_vec_origin();
+	const f_vector& get_vec_origin();
 };
 
 class c_planted_c4 : public c_base_entity

@@ -2,6 +2,7 @@
 
 namespace sdk
 {
-	bool setup();
 	void update();
+
+	inline c_cs_player_controller* m_local_controller = nullptr;
 }

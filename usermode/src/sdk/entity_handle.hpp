@@ -57,5 +57,5 @@ public:
 	}
 
 private:
-	uint32_t m_idx{};
+	uint32_t m_idx;
 };

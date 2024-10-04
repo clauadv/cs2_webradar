@@ -1,58 +1,29 @@
 #pragma once
 
-namespace math
+struct f_vector
 {
-	template<typename T>
-	union vector3
+	float m_x; // 0x00(0x04)
+	float m_y; // 0x04(0x04)
+	float m_z; // 0x08(0x04)
+
+	inline f_vector()
+		: m_x(0.f), m_y(0.f), m_z(0.f)
 	{
-		T data[3];
-		struct
-		{
-			T x, y, z;
-		};
+	}
 
-		vector3 operator+(float in) const { return { this->x + in, this->y + in, this->z + in }; }
-		vector3 operator+(vector3 in) const { return { this->x + in.x, this->y + in.y, this->z + in.z }; }
-		vector3 operator-(float in) const { return { this->x - in, this->y - in, this->z - in }; }
-		vector3 operator-(vector3 in) const { return { this->x - in.x, this->y - in.y, this->z - in.z }; }
-		vector3 operator*(float in) const { return { this->x * in, this->y * in, this->z * in }; }
-		vector3 operator*(vector3 in) const { return { this->x * in.x, this->y * in.y, this->z * in.z }; }
-		vector3 operator/(float in) const { return { this->x / in, this->y / in, this->z / in }; }
-		vector3 operator/(vector3 in) const { return { this->x / in.x, this->y / in.y, this->z / in.z }; }
-		vector3 operator+=(float in) const { return { this->x += in, this->y += in, this->z += in }; }
-		vector3 operator+=(vector3 in) const { return { this->x += in.x, this->y += in.y, this->z += in.z }; }
-		vector3 operator-=(float in) const { return { this->x -= in, this->y -= in, this->z -= in }; }
-		vector3 operator-=(vector3 in) const { return { this->x -= in.x, this->y -= in.y, this->z -= in.z }; }
-		vector3 operator*=(float in) const { return { this->x *= in, this->y *= in, this->z *= in }; }
-		vector3 operator*=(vector3 in) const { return { this->x *= in.x, this->y *= in.y, this->z *= in.z }; }
-		vector3 operator/=(float in) const { return { this->x /= in, this->y /= in, this->z /= in }; }
-		vector3 operator/=(vector3 in) const { return { this->x /= in.x, this->y /= in.y, this->z /= in.z }; }
+	inline f_vector(decltype(m_x) value)
+		: m_x(value), m_y(value), m_z(value)
+	{
+	}
 
-		vector3 normalize() const
-		{
-			vector3 out = *this;
+	inline f_vector(decltype(m_x) x, decltype(m_y) y, decltype(m_z) z)
+		: m_x(x), m_y(y), m_z(z)
+	{
+	}
 
-			if (out.x > 89)
-				out.x = 89;
-
-			if (out.x < -89)
-				out.x = -89;
-
-			while (out.y > 180)
-				out.y -= 360;
-
-			while (out.y < -180)
-				out.y += 360;
-
-			out.z = 0;
-
-			return out;
-		}
-
-		bool is_zero() const
-		{
-			return (this->x == 0.f && this->y == 0.f && this->z == 0.f);
-		}
-	};
-}
-typedef math::vector3<float> fvector3;
+	bool is_zero() const
+	{
+		return (m_x == 0.f && m_y == 0.f && m_z == 0.f);
+	}
+};
+static_assert(sizeof(f_vector) == 0x0c, "wrong size on f_vector");

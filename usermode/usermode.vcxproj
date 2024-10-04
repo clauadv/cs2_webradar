@@ -7,23 +7,50 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ext\curl\curl.h" />
+    <ClInclude Include="ext\curl\curlver.h" />
+    <ClInclude Include="ext\curl\easy.h" />
+    <ClInclude Include="ext\curl\header.h" />
+    <ClInclude Include="ext\curl\include\curl.h" />
+    <ClInclude Include="ext\curl\include\curlver.h" />
+    <ClInclude Include="ext\curl\include\easy.h" />
+    <ClInclude Include="ext\curl\include\header.h" />
+    <ClInclude Include="ext\curl\include\mprintf.h" />
+    <ClInclude Include="ext\curl\include\multi.h" />
+    <ClInclude Include="ext\curl\include\options.h" />
+    <ClInclude Include="ext\curl\include\stdcheaders.h" />
+    <ClInclude Include="ext\curl\include\system.h" />
+    <ClInclude Include="ext\curl\include\typecheck-gcc.h" />
+    <ClInclude Include="ext\curl\include\urlapi.h" />
+    <ClInclude Include="ext\curl\include\websockets.h" />
+    <ClInclude Include="ext\curl\mprintf.h" />
+    <ClInclude Include="ext\curl\multi.h" />
+    <ClInclude Include="ext\curl\options.h" />
+    <ClInclude Include="ext\curl\stdcheaders.h" />
+    <ClInclude Include="ext\curl\system.h" />
+    <ClInclude Include="ext\curl\typecheck-gcc.h" />
+    <ClInclude Include="ext\curl\urlapi.h" />
+    <ClInclude Include="ext\curl\websockets.h" />
     <ClInclude Include="ext\easywsclient\easywsclient.hpp" />
     <ClInclude Include="ext\fnv1a\fnv1a.hpp" />
     <ClInclude Include="ext\nlohmann\json.hpp" />
     <ClInclude Include="src\common.hpp" />
+    <ClInclude Include="src\core\interfaces.hpp" />
     <ClInclude Include="src\core\sdk.hpp" />
-    <ClInclude Include="src\sdk\base_handle.hpp" />
+    <ClInclude Include="src\sdk\entity_handle.hpp" />
     <ClInclude Include="src\sdk\datatypes\utl_vector.hpp" />
+    <ClInclude Include="src\sdk\interfaces\engine_client.hpp" />
     <ClInclude Include="src\sdk\entity.hpp" />
-    <ClInclude Include="src\sdk\schema_system.hpp" />
+    <ClInclude Include="src\sdk\interfaces\schema_system.hpp" />
     <ClInclude Include="src\core\schema.hpp" />
     <ClInclude Include="src\sdk\datatypes\utl_ts_hash.hpp" />
     <ClInclude Include="src\driver\driver.hpp" />
-    <ClInclude Include="src\sdk\game_entity_system.hpp" />
-    <ClInclude Include="src\sdk\global_vars.hpp" />
+    <ClInclude Include="src\sdk\interfaces\game_entity_system.hpp" />
+    <ClInclude Include="src\sdk\interfaces\global_vars.hpp" />
     <ClInclude Include="src\features\features.hpp" />
     <ClInclude Include="src\sdk\datatypes\vector.hpp" />
     <ClInclude Include="src\utils\address.hpp" />
+    <ClInclude Include="src\utils\config.hpp" />
     <ClInclude Include="src\utils\memory.hpp" />
     <ClInclude Include="src\utils\exception.hpp" />
     <ClInclude Include="src\utils\utils.hpp" />
@@ -34,6 +61,7 @@
     <ClCompile Include="ext\easywsclient\easywsclient.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\core\interfaces.cpp" />
     <ClCompile Include="src\core\sdk.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\features\bomb\bomb.cpp" />
@@ -45,6 +73,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\core\schema.cpp" />
+    <ClCompile Include="src\utils\config.cpp" />
     <ClCompile Include="src\utils\exception.cpp" />
     <ClCompile Include="src\utils\memory.cpp" />
     <ClCompile Include="src\utils\utils.cpp" />
@@ -90,7 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;DEVELOPER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -114,9 +143,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>crypt32.lib;wldap32.lib;normaliz.lib;libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <AdditionalLibraryDirectories>$(SolutionDir)ext\curl\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

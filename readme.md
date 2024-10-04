@@ -17,7 +17,7 @@ if you have any suggestions, issues or questions, feel free to send them on my [
 - in `release` folder, run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
 
 ## sharing
-- in `usermode` project, `/src/common.hpp` line 6, change `#define USE_LOCALHOST 1` to `#define USE_LOCALHOST 0`
+- after you built `usermode` project, open `config.json` and change `m_use_localhost` to `false`
 - in `react` project, `App.jsx` line 10, change `const USE_LOCALHOST = 1;` to `const USE_LOCALHOST = 0;`
 - in `react` project, `App.jsx` line 12, change `const PUBLIC_IP = "your ip";` with your ip address
 - in `cmd`, type `ipconfig`, find `Default Gateway` and navigate to it in your browser

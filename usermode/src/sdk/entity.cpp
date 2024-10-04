@@ -19,15 +19,15 @@ const std::string c_entity_instance::get_schema_class_name()
 	if (!class_info)
 		return {};
 
-	const auto unk_1 = m_memory->read_t<uintptr_t>(class_info + 0x28);
-	if (!unk_1)
+	const auto unk1 = m_memory->read_t<uintptr_t>(class_info + 0x28);
+	if (!unk1)
 		return {};
 
-	const auto unk_2 = m_memory->read_t<uintptr_t>(unk_1 + 0x08);
-	if (!unk_2)
+	const auto unk2 = m_memory->read_t<uintptr_t>(unk1 + 0x08);
+	if (!unk2)
 		return {};
 
-	auto name = m_memory->read_t<std::string>(unk_2);
+	auto name = m_memory->read_t<std::string>(unk2);
 	if (name.empty())
 		return {};
 
@@ -47,6 +47,21 @@ const std::string c_cs_player_pawn::get_model_name()
 	return model_path.substr(model_path.rfind("/") + 1, model_path.rfind(".") - model_path.rfind("/") - 1);
 }
 
+c_cs_player_controller* c_cs_player_controller::get_local_player_controller()
+{
+	static auto offset = m_memory->find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_CONTROLLER)->rip().as<void*>();
+	if (!offset)
+		return {};
+
+	return m_memory->read_t<c_cs_player_controller*>(offset);
+}
+
+c_cs_player_pawn* c_cs_player_controller::get_player_pawn()
+{
+	const auto& handle = this->m_hPawn();
+	return i::m_game_entity_system->get<c_cs_player_pawn*>(handle);
+}
+
 const e_colors c_cs_player_controller::get_color()
 {
 	const auto color = m_iCompTeammateColor();
@@ -56,40 +71,29 @@ const e_colors c_cs_player_controller::get_color()
 	return color;
 }
 
-const fvector3& c_cs_player_controller::get_vec_origin()
+const f_vector& c_cs_player_controller::get_vec_origin()
 {
-	const auto entity_list = c_game_entity_system::m_entity_list;
-	if (!entity_list)
-		return {};
-
-	const auto pawn_handle = m_hPawn();
-	if (!pawn_handle.is_valid())
-		return {};
-
-	const auto pawn = entity_list->get<c_cs_player_pawn*>(pawn_handle);
+	const auto pawn = get_player_pawn();
 	if (!pawn)
 		return {};
 
 	return pawn->get_scene_origin();
 }
 
-const fvector3& c_base_entity::get_scene_origin()
+const f_vector& c_base_entity::get_scene_origin()
 {
-	if (m_pGameSceneNode())
-		return m_pGameSceneNode()->m_vecAbsOrigin();
+	const auto game_scene_node = m_pGameSceneNode();
+	if (!game_scene_node)
+		return {};
 
-	return {};
+	return game_scene_node->m_vecAbsOrigin();
 }
 
 c_base_player_weapon* c_base_player_weapon::get(const int32_t idx)
 {
-	const auto entity_list = c_game_entity_system::m_entity_list;
-	if (!entity_list)
-		return nullptr;
-
 	const auto handle = m_memory->read_t<int32_t>(this + idx * 0x4);
 	if (handle == -1)
 		return nullptr;
 
-	return entity_list->get<c_base_player_weapon*>(handle & ENT_ENTRY_MASK);
+	return i::m_game_entity_system->get<c_base_player_weapon*>(handle & ENT_ENTRY_MASK);
 }

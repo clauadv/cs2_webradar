@@ -8,23 +8,16 @@ void f::bomb::get_carried_bomb(c_base_entity* bomb)
 	if (scene_origin.is_zero())
 		return;
 
-	m_data["m_bomb"]["x"] = scene_origin.x;
-	m_data["m_bomb"]["y"] = scene_origin.y;
+	m_data["m_bomb"]["x"] = scene_origin.m_x;
+	m_data["m_bomb"]["y"] = scene_origin.m_y;
 }
 
 void f::bomb::get_planted_bomb(c_planted_c4* planted_c4)
 {
-	if (!planted_c4)
-		return;
-
 	if (!planted_c4->m_bBombTicking())
 		return;
 
-	const auto global_vars = c_global_vars::m_global_vars;
-	if (!global_vars)
-		return;
-
-	const auto curtime = global_vars->m_curtime();
+	const auto curtime = i::m_global_vars->m_curtime();
 
 	const auto blow_time = (planted_c4->m_flC4Blow() - curtime);
 	if (blow_time <= 0.f)
@@ -38,8 +31,8 @@ void f::bomb::get_planted_bomb(c_planted_c4* planted_c4)
 	const auto is_defusing = planted_c4->m_bBeingDefused();
 	const auto defuse_time = (planted_c4->m_flDefuseCountDown() - curtime);
 
-	m_data["m_bomb"]["x"] = vec_origin.x;
-	m_data["m_bomb"]["y"] = vec_origin.y;
+	m_data["m_bomb"]["x"] = vec_origin.m_x;
+	m_data["m_bomb"]["y"] = vec_origin.m_y;
 	m_data["m_bomb"]["m_blow_time"] = blow_time;
 	m_data["m_bomb"]["m_is_defused"] = is_defused;
 	m_data["m_bomb"]["m_is_defusing"] = is_defusing;

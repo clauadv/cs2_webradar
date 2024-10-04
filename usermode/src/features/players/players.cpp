@@ -5,11 +5,12 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 	const auto health = player_pawn->m_iHealth();
 	const auto is_dead = health <= 0;
 	const auto vec_origin = player->get_vec_origin();
+	const auto team = player->m_iTeamNum();
 
 	m_player_data["m_idx"] = idx;
 	m_player_data["m_name"] = player->m_sSanitizedPlayerName();
 	m_player_data["m_color"] = player->get_color();
-	m_player_data["m_team"] = player->m_iTeamNum();
+	m_player_data["m_team"] = team;
 	m_player_data["m_health"] = health;
 	m_player_data["m_is_dead"] = is_dead;
 	m_player_data["m_model_name"] = player_pawn->get_model_name();
@@ -20,15 +21,15 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 		return {};
 
 	m_player_data["m_armor"] = player_pawn->m_ArmorValue();
-	m_player_data["m_position"]["x"] = vec_origin.x;
-	m_player_data["m_position"]["y"] = vec_origin.y;
-	m_player_data["m_eye_angle"] = player_pawn->m_angEyeAngles().normalize().y;
+	m_player_data["m_position"]["x"] = vec_origin.m_x;
+	m_player_data["m_position"]["y"] = vec_origin.m_y;
+	m_player_data["m_eye_angle"] = player_pawn->m_angEyeAngles().m_y;
 	m_player_data["m_has_helmet"] = player_pawn->m_pItemServices()->m_bHasHelmet();
 	m_player_data["m_has_defuser"] = player_pawn->m_pItemServices()->m_bHasDefuser();
 	m_player_data["m_weapons"] = nlohmann::json{};
 
-	if (player->m_iTeamNum() == e_cs_team::team_terrorist && player->m_bPawnIsAlive())
-		m_player_data["m_has_bomb"] = m_bomb_idx == (player->m_hPlayerPawn().get_entry_idx() & 0xffff);
+	if (team == e_cs_team::team_terrorist && !is_dead)
+		m_player_data["m_has_bomb"] = m_bomb_idx == (player->m_hPawn().get_entry_idx() & 0xffff);
 
 	return true;
 }
@@ -94,10 +95,6 @@ void f::players::get_weapons(c_cs_player_pawn* player_pawn)
 
 void f::players::get_active_weapon(c_cs_player_pawn* player_pawn)
 {
-	const auto entity_list = c_game_entity_system::m_entity_list;
-	if (!entity_list)
-		return;
-
 	const auto weapon_services = player_pawn->m_pWeaponServices();
 	if (!weapon_services)
 		return;
@@ -106,7 +103,7 @@ void f::players::get_active_weapon(c_cs_player_pawn* player_pawn)
 	if (!weapon_handle.is_valid())
 		return;
 
-	const auto active_weapon = entity_list->get<c_base_player_weapon*>(weapon_handle);
+	const auto active_weapon = i::m_game_entity_system->get<c_base_player_weapon*>(weapon_handle);
 	if (!active_weapon)
 		return;
 

@@ -2,21 +2,14 @@
 
 void f::run()
 {
-	sdk::update();
-
-	const auto local_pawn = c_cs_player_pawn::m_local_pawn;
-	if (!local_pawn)
-		return;
-
-	const auto team = local_pawn->m_iTeamNum();
-	if (team == e_cs_team::team_unassigned ||
-		team == e_cs_team::team_spectator)
+	const auto local_team = sdk::m_local_controller->m_iTeamNum();
+	if (local_team == e_cs_team::team_unassigned || local_team == e_cs_team::team_spectator)
 		return;
 
 	m_data = nlohmann::json{};
 	m_player_data = nlohmann::json{};
 
-	m_data["m_local_team"] = team;
+	m_data["m_local_team"] = local_team;
 
 	get_map();
 	get_player_info();
@@ -24,16 +17,13 @@ void f::run()
 
 void f::get_map()
 {
-	const auto global_vars = c_global_vars::m_global_vars;
-	if (!global_vars)
-		return;
-
-	const auto map_name = global_vars->m_map_name();
+	const auto map_name = i::m_global_vars->m_map_name();
 	if (map_name.empty() || map_name.find("<empty>") != std::string::npos)
 	{
 		m_data["m_map"] = "invalid";
-		LOG_ERROR("failed to get map name");
-		std::this_thread::sleep_for(std::chrono::seconds(5));
+
+		LOG_WARNING("failed to get map name! updating m_global_vars");
+		i::m_global_vars = m_memory->read_t<c_global_vars*>(m_memory->find_pattern(CLIENT_DLL, GET_GLOBAL_VARS)->rip().as<c_global_vars*>());
 	}
 
 	m_data["m_map"] = map_name;
@@ -43,14 +33,10 @@ void f::get_player_info()
 {
 	m_data["m_players"] = nlohmann::json::array();
 
-	const auto entity_list = c_game_entity_system::m_entity_list;
-	if (!entity_list)
-		return;
-
-	const auto highest_idx = entity_list->m_highest_entity_idx();
+	const auto highest_idx = i::m_game_entity_system->m_highest_entity_idx();
 	for (int32_t idx = 0; idx < highest_idx; idx++)
 	{
-		const auto entity = entity_list->get(idx);
+		const auto entity = i::m_game_entity_system->get(idx);
 		if (!entity)
 			continue;
 
@@ -66,11 +52,11 @@ void f::get_player_info()
 
 		if (hashed_class_name == fnv1a::hash("CCSPlayerController"))
 		{
-			const auto player = entity_list->get<c_cs_player_controller*>(entity_handle);
+			const auto player = i::m_game_entity_system->get<c_cs_player_controller*>(entity_handle);
 			if (!player)
 				continue;
 
-			const auto player_pawn = entity_list->get<c_cs_player_pawn*>(player->m_hPlayerPawn());
+			const auto player_pawn = player->get_player_pawn();
 			if (!player_pawn)
 				continue;
 
@@ -85,17 +71,11 @@ void f::get_player_info()
 		else if (hashed_class_name == fnv1a::hash("C_C4"))
 		{
 			const auto bomb = entity;
-			if (!bomb)
-				continue;
-
 			f::bomb::get_carried_bomb(bomb);
 		}
 		else if (hashed_class_name == fnv1a::hash("C_PlantedC4"))
 		{
 			const auto planted_c4 = reinterpret_cast<c_planted_c4*>(entity);
-			if (!planted_c4)
-				continue;
-
 			f::bomb::get_planted_bomb(planted_c4);
 		}
 	}
