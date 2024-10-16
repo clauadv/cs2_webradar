@@ -58,7 +58,7 @@ c_cs_player_controller* c_cs_player_controller::get_local_player_controller()
 
 c_cs_player_pawn* c_cs_player_controller::get_player_pawn()
 {
-	const auto& handle = this->m_hPawn();
+	const auto& handle = m_hPawn();
 	return i::m_game_entity_system->get<c_cs_player_pawn*>(handle);
 }
 

@@ -1,11 +1,11 @@
 #pragma once
 
-enum class e_cs_team : uint8_t
+enum class e_team : uint8_t
 {
-	team_unassigned,
-	team_spectator,
-	team_terrorist,
-	team_counter_terrorist
+	none,
+	spec,
+	t,
+	ct
 };
 
 enum class e_colors : uint32_t
@@ -18,28 +18,28 @@ enum class e_colors : uint32_t
 	white
 };
 
-enum class e_cs_weapon_type : uint32_t
+enum class e_weapon_type : uint32_t
 {
-	weapontype_knife,
-	weapontype_pistol,
-	weapontype_submachinegun,
-	weapontype_rifle,
-	weapontype_shotgun,
-	weapontype_sniper_rifle,
-	weapontype_machinegun,
-	weapontype_c4,
-	weapontype_taser,
-	weapontype_grenade,
-	weapontype_equipment,
-	weapontype_stackableitem,
-	weapontype_fists,
-	weapontype_breachcharge,
-	weapontype_bumpmine,
-	weapontype_tablet,
-	weapontype_melee,
-	weapontype_shield,
-	weapontype_zone_repulsor,
-	weapontype_unknown
+	knife,
+	pistol,
+	submachinegun,
+	rifle,
+	shotgun,
+	sniper_rifle,
+	machinegun,
+	c4,
+	taser,
+	grenade,
+	equipment,
+	stackableitem,
+	fists,
+	breachcharge,
+	bumpmine,
+	tablet,
+	melee,
+	shield,
+	zone_repulsor,
+	unknown
 };
 
 class c_entity_identity
@@ -89,7 +89,7 @@ class c_base_entity : public c_entity_instance
 public:
 	SCHEMA_ADD_FIELD(c_game_scene_node*, m_pGameSceneNode, "C_BaseEntity->m_pGameSceneNode");
 	SCHEMA_ADD_FIELD(int32_t, m_iHealth, "C_BaseEntity->m_iHealth");
-	SCHEMA_ADD_FIELD(e_cs_team, m_iTeamNum, "C_BaseEntity->m_iTeamNum");
+	SCHEMA_ADD_FIELD(e_team, m_iTeamNum, "C_BaseEntity->m_iTeamNum");
 	SCHEMA_ADD_FIELD(c_base_entity*, m_hOwnerEntity, "C_BaseEntity->m_hOwnerEntity");
 
 	const f_vector& get_scene_origin();
@@ -170,7 +170,7 @@ public:
 class c_cs_weapon_base_v_data
 {
 public:
-	SCHEMA_ADD_FIELD(e_cs_weapon_type, m_WeaponType, "CCSWeaponBaseVData->m_WeaponType");
+	SCHEMA_ADD_FIELD(e_weapon_type, m_WeaponType, "CCSWeaponBaseVData->m_WeaponType");
 	SCHEMA_ADD_STRING(m_szName, "CCSWeaponBaseVData->m_szName");
 };
 

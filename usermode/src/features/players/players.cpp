@@ -18,7 +18,7 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 	m_player_data["m_money"] = player->m_pInGameMoneyServices()->m_iAccount();
 
 	if (is_dead)
-		return {};
+		return true;
 
 	m_player_data["m_armor"] = player_pawn->m_ArmorValue();
 	m_player_data["m_position"]["x"] = vec_origin.m_x;
@@ -28,7 +28,7 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 	m_player_data["m_has_defuser"] = player_pawn->m_pItemServices()->m_bHasDefuser();
 	m_player_data["m_weapons"] = nlohmann::json{};
 
-	if (team == e_cs_team::team_terrorist && !is_dead)
+	if (team == e_team::t && !is_dead)
 		m_player_data["m_has_bomb"] = m_bomb_idx == (player->m_hPawn().get_entry_idx() & 0xffff);
 
 	return true;
@@ -66,24 +66,24 @@ void f::players::get_weapons(c_cs_player_pawn* player_pawn)
 		const auto weapon_type = weapon_data->m_WeaponType();
 		switch (weapon_type)
 		{
-			case e_cs_weapon_type::weapontype_submachinegun:
-			case e_cs_weapon_type::weapontype_rifle:
-			case e_cs_weapon_type::weapontype_shotgun:
-			case e_cs_weapon_type::weapontype_sniper_rifle:
-			case e_cs_weapon_type::weapontype_machinegun:
+			case e_weapon_type::submachinegun:
+			case e_weapon_type::rifle:
+			case e_weapon_type::shotgun:
+			case e_weapon_type::sniper_rifle:
+			case e_weapon_type::machinegun:
 				m_player_data["m_weapons"]["m_primary"] = weapon_name;
 				break;
 
-			case e_cs_weapon_type::weapontype_pistol:
+			case e_weapon_type::pistol:
 				m_player_data["m_weapons"]["m_secondary"] = weapon_name;
 				break;
 
-			case e_cs_weapon_type::weapontype_knife:
-			case e_cs_weapon_type::weapontype_taser:
+			case e_weapon_type::knife:
+			case e_weapon_type::taser:
 				melee_set.insert(weapon_name);
 				break;
 
-			case e_cs_weapon_type::weapontype_grenade:
+			case e_weapon_type::grenade:
 				utilities_set.insert(weapon_name);
 				break;
 		}

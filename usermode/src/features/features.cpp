@@ -3,7 +3,7 @@
 void f::run()
 {
 	const auto local_team = sdk::m_local_controller->m_iTeamNum();
-	if (local_team == e_cs_team::team_unassigned || local_team == e_cs_team::team_spectator)
+	if (local_team == e_team::none || local_team == e_team::spec)
 		return;
 
 	m_data = nlohmann::json{};
