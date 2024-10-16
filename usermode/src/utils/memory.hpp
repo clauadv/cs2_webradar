@@ -1,7 +1,5 @@
 #pragma once
 
-/* @todo: clean this ugly ahh */
-
 #define NT_SUCCESS(status) (static_cast<long>(status) >= 0)
 
 struct __system_handle_t

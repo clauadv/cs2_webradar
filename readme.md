@@ -1,4 +1,6 @@
 # cs2_webradar
+
+<a href="https://www.buymeacoffee.com/clauadv"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="en" width="95" /></a>
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](https://github.com/clauadv/cs2_webradar/blob/master/readme.md)
 [![en](https://img.shields.io/badge/lang-cn-blue.svg)](https://github.com/clauadv/cs2_webradar/blob/master/readme-CN.md) <br>
 undetected counter strike 2 browser based radar cheat <br>
@@ -7,11 +9,11 @@ if you have any suggestions, issues or questions, feel free to send them on my [
 
 ## requirements
 - [nodejs](https://nodejs.org/en/download/prebuilt-installer/current/)
-- [visual studio](https://visualstudio.microsoft.com/vs/community/)
+- [visual studio ide](https://visualstudio.microsoft.com/vs/community/)
 
 ## usage
 - in the root folder, run `install.bat` to install dependencies
-- in the root folder, run `start.bat` to start both web server and react development server
+- in the root folder, run `start.bat` to start the webapp
 - in `usermode` project, run `cs2_webradar.sln`
 - in visual studio's toolbar, hover on `Build` and press `Build Solution` or press `Ctrl + Shift + B`
 - in `release` folder, run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
@@ -29,3 +31,8 @@ https://github.com/clauadv/cs2_webradar/assets/26169415/718d5969-004b-4300-b152-
 
 ## license
 this project is licensed under the [GPL-3.0 license](https://github.com/clauadv/cs2_webradar?tab=GPL-3.0-1-ov-file#readme)
+
+## contributors
+<a href="https://github.com/clauadv/cs2_webradar/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=clauadv/cs2_webradar" />
+</a>
