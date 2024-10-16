@@ -16,10 +16,6 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 	m_player_data["m_model_name"] = player_pawn->get_model_name();
 	m_player_data["m_steam_id"] = std::to_string(player->m_steamID());
 	m_player_data["m_money"] = player->m_pInGameMoneyServices()->m_iAccount();
-
-	if (is_dead)
-		return true;
-
 	m_player_data["m_armor"] = player_pawn->m_ArmorValue();
 	m_player_data["m_position"]["x"] = vec_origin.m_x;
 	m_player_data["m_position"]["y"] = vec_origin.m_y;

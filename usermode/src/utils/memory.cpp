@@ -11,11 +11,11 @@ bool c_memory::setup()
 
 	this->m_id = process_id.value();
 
-	const auto handle = this->hijack_handle();
+	auto handle = this->hijack_handle();
 	if (!handle.has_value())
 	{
-		LOG_ERROR("failed to hijack a handle for 'cs2.exe'");
-		return {};
+		LOG_WARNING("failed to hijack a handle for 'cs2.exe', we will continue using the classic method");
+		handle.value() = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, this->m_id);
 	}
 
 	this->m_handle = handle.value();
