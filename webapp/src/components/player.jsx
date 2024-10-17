@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { getRadarPosition, playerColors } from "../utilities/utilities";
 
 let playerRotations = [];
@@ -13,14 +13,9 @@ const calculatePlayerRotation = (playerData) => {
   return playerRotations[idx];
 };
 
-const Player = ({
-  playerData,
-  mapData,
-  radarImage,
-  localTeam,
-  averageLatency,
-}) => {
-  const radarPosition = getRadarPosition(mapData, playerData.m_position);
+const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency }) => {
+  const [lastKnownPosition, setLastKnownPosition] = useState(null);
+  const radarPosition = getRadarPosition(mapData, playerData.m_position) || { x: 0, y: 0 };
   const invalidPosition = radarPosition.x <= 0 && radarPosition.y <= 0;
 
   const playerRef = useRef();
@@ -30,10 +25,25 @@ const Player = ({
 
   const radarImageBounding = (radarImage !== undefined &&
     radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
+
+  // Store the last known position when the player dies
+  useEffect(() => {
+    if (playerData.m_is_dead) {
+      if (!lastKnownPosition) {
+        console.log(`Storing last known position for player ${playerData.m_idx}:`, radarPosition);
+        setLastKnownPosition(radarPosition);
+      }
+    } else {
+      // Reset last known position when the player is alive
+      setLastKnownPosition(null);
+    }
+  }, [playerData.m_is_dead, radarPosition, lastKnownPosition]);
+
+  const effectivePosition = playerData.m_is_dead ? lastKnownPosition || { x: 0, y: 0 } : radarPosition;
+
   const radarImageTranslation = {
-    x: radarImageBounding.width * radarPosition.x - playerBounding.width * 0.5,
-    y:
-      radarImageBounding.height * radarPosition.y - playerBounding.height * 0.5,
+    x: radarImageBounding.width * effectivePosition.x - playerBounding.width * 0.5,
+    y: radarImageBounding.height * effectivePosition.y - playerBounding.height * 0.5,
   };
 
   return (
@@ -41,9 +51,7 @@ const Player = ({
       className={`absolute origin-center rounded-[100%] left-0 top-0 w-[1.6vw] h-[1.6vw] lg:w-[0.7vw] lg:h-[0.7vw]`}
       ref={playerRef}
       style={{
-        transform: `translate(${radarImageTranslation.x}px, ${
-          radarImageTranslation.y
-        }px) rotate(${(playerData.m_is_dead && `0`) || playerRotation}deg)`,
+        transform: `translate(${radarImageTranslation.x}px, ${radarImageTranslation.y}px) rotate(${(playerData.m_is_dead && `0`) || playerRotation}deg)`,
         transition: `transform ${averageLatency}ms linear`,
         backgroundColor: `${
           (playerData.m_team == localTeam &&
