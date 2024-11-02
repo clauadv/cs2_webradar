@@ -15,10 +15,10 @@ bool c_memory::setup()
 	if (!handle.has_value())
 	{
 		LOG_WARNING("failed to hijack a handle for 'cs2.exe', we will continue using the classic method");
-		handle.value() = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, this->m_id);
+		this->m_handle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, this->m_id);
 	}
-
-	this->m_handle = handle.value();
+	else
+		this->m_handle = handle.value();
 
 	return this->m_handle != nullptr;
 }
