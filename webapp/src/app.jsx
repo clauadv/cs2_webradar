@@ -9,6 +9,7 @@ import MaskedIcon from "./components/maskedicon";
 /* if you want to share the radar, set this to '0', otherwise let it be '1' */
 const USE_LOCALHOST = 1;
 
+/* you can get your public ip from https://ipinfo.io/ip */
 const PUBLIC_IP = "your ip goes here";
 const PORT = 22006;
 
@@ -23,6 +24,13 @@ const App = () => {
     const fetchData = async () => {
       let webSocket = null;
       let webSocketURL = null;
+
+      if (PUBLIC_IP.startsWith("192.168")) {
+        document.getElementsByClassName(
+          "radar_message"
+        )[0].textContent = `A public IP address is required! Currently detected IP (${PUBLIC_IP}) is a private/local IP`;
+        return;
+      }
 
       if (!webSocket) {
         if (USE_LOCALHOST) {
