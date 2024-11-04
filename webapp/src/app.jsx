@@ -6,11 +6,13 @@ import Radar from "./components/Radar";
 import { getLatency, Latency } from "./components/latency";
 import MaskedIcon from "./components/maskedicon";
 
+const CONNECTION_TIMEOUT = 5000;
+
 /* if you want to share the radar, set this to '0', otherwise let it be '1' */
 const USE_LOCALHOST = 1;
 
 /* you can get your public ip from https://ipinfo.io/ip */
-const PUBLIC_IP = "your ip goes here";
+const PUBLIC_IP = "your ip goes here".trim();
 const PORT = 22006;
 
 const App = () => {
@@ -24,6 +26,7 @@ const App = () => {
     const fetchData = async () => {
       let webSocket = null;
       let webSocketURL = null;
+      let connectionTimeout = null;
 
       if (PUBLIC_IP.startsWith("192.168")) {
         document.getElementsByClassName(
@@ -33,28 +36,41 @@ const App = () => {
       }
 
       if (!webSocket) {
-        if (USE_LOCALHOST) {
-          webSocketURL = `ws://localhost:${PORT}/cs2_webradar`;
-        } else {
-          webSocketURL = `ws://${PUBLIC_IP}:${PORT}/cs2_webradar`;
-        }
+        try {
+          if (USE_LOCALHOST) {
+            webSocketURL = `ws://localhost:${PORT}/cs2_webradar`;
+          } else {
+            webSocketURL = `ws://${PUBLIC_IP}:${PORT}/cs2_webradar`;
+          }
 
-        if (!webSocketURL) return;
-        webSocket = new WebSocket(webSocketURL);
+          if (!webSocketURL) return;
+          webSocket = new WebSocket(webSocketURL);
+        } catch (error) {
+          document.getElementsByClassName(
+            "radar_message"
+          )[0].textContent = `${error}`;
+        }
       }
 
+      connectionTimeout = setTimeout(() => {
+        webSocket.close();
+      }, CONNECTION_TIMEOUT);
+
       webSocket.onopen = async () => {
+        clearTimeout(connectionTimeout);
         console.info("connected to the web socket");
       };
 
       webSocket.onclose = async () => {
+        clearTimeout(connectionTimeout);
         console.error("disconnected from the web socket");
       };
 
       webSocket.onerror = async (error) => {
+        clearTimeout(connectionTimeout);
         document.getElementsByClassName(
           "radar_message"
-        )[0].textContent = `WebSocket connection to '${webSocketURL}' failed`;
+        )[0].textContent = `WebSocket connection to '${webSocketURL}' failed. Please check the IP address and try again`;
         console.error(error);
       };
 
