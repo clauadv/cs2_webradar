@@ -543,7 +543,7 @@ namespace
         socket_t sockfd = hostname_connect(host, port);
         if (sockfd == INVALID_SOCKET)
         {
-            fprintf(stderr, "Unable to connect to %s:%d\n", host, port);
+            // fprintf(stderr, "Unable to connect to %s:%d\n", host, port);
             return NULL;
         }
         {
