@@ -52,6 +52,8 @@ bool utils::is_updated()
     curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0l);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0l);
 
     const auto response = curl_easy_perform(curl);
     curl_easy_cleanup(curl);

@@ -4,7 +4,7 @@
 #define CS2_WEBRADAR_VERSION "v1.2.3"
 
 /* current build of cs2 */
-#define CS2_VERSION "14:39:37"
+#define CS2_VERSION "15:38:02"
 
 /* game modules */
 #define CLIENT_DLL "client.dll"
