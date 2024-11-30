@@ -26,7 +26,9 @@ public:
 		if (this->m_handle != nullptr)
 			CloseHandle(this->m_handle);
 	}
-
+	
+	bool check_anticheat_processes();
+	
 	bool setup();
 	std::optional<uint32_t> get_process_id(const std::string_view& process_name);
 	std::optional<void*> hijack_handle();

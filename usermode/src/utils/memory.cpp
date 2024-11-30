@@ -1,26 +1,61 @@
 #include "pch.hpp"
 
+bool c_memory::check_anticheat_processes()
+{
+    const std::vector<std::string_view> anticheat_processes = {
+        "BEService.exe",          // BE
+        "EasyAntiCheat.exe",      // EAC
+        "vgc.exe",               // VANGUARD
+        "faceitclient.exe",      // FACEIT
+        "esportal.exe",          // ESPORTAL
+        "mhyprot.sys",           // mhyprot
+        "vgk.sys",              // VANGUARD kernel
+        "anticheatsdk.exe"       // EPIC
+    };
+
+    for (const auto& process : anticheat_processes)
+    {
+        if (const auto pid = get_process_id(process))
+        {
+            LOG_ERROR("Detected anti-cheat process: %s", process.data());
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            return false;
+        }
+    }
+    return true;
+}
+
 bool c_memory::setup()
 {
-	const auto process_id = this->get_process_id("cs2.exe");
-	if (!process_id.has_value())
-	{
-		LOG_ERROR("failed to get process id for 'cs2.exe'\n			  make sure the game is running");
-		return {};
-	}
+    LOG_INFO("starting anti-cheat process verification...");
+    
+    if (!check_anticheat_processes())
+    {
+        LOG_ERROR("anti-cheat process detected - terminating setup");
+        return {};
+    }
+    
+    LOG_INFO("anti-cheat verification completed - no conflicts detected");
 
-	this->m_id = process_id.value();
+    const auto process_id = this->get_process_id("cs2.exe");
+    if (!process_id.has_value())
+    {
+        LOG_ERROR("failed to get process id for 'cs2.exe'\n           make sure the game is running");
+        return {};
+    }
 
-	auto handle = this->hijack_handle();
-	if (!handle.has_value())
-	{
-		LOG_WARNING("failed to hijack a handle for 'cs2.exe', we will continue using the classic method");
-		this->m_handle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, this->m_id);
-	}
-	else
-		this->m_handle = handle.value();
+    this->m_id = process_id.value();
 
-	return this->m_handle != nullptr;
+    auto handle = this->hijack_handle();
+    if (!handle.has_value())
+    {
+        LOG_WARNING("failed to hijack a handle for 'cs2.exe', we will continue using the classic method");
+        this->m_handle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, this->m_id);
+    }
+    else
+        this->m_handle = handle.value();
+
+    return this->m_handle != nullptr;
 }
 
 std::optional<uint32_t> c_memory::get_process_id(const std::string_view& process_name)
