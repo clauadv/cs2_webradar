@@ -70,7 +70,10 @@ std::optional<uint32_t> c_memory::get_process_id(const std::string_view& process
 	for (Process32First(snapshot, &process_entry); Process32Next(snapshot, &process_entry);)
 	{
 		if (std::string_view(process_entry.szExeFile) == process_name)
+		{
+			CloseHandle(snapshot);
 			return process_entry.th32ProcessID;
+		}
 	}
 
 	CloseHandle(snapshot);
