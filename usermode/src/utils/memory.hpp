@@ -8,7 +8,7 @@ struct __system_handle_t
 	uint8_t m_object_type_number;
 	uint8_t m_flags;
 	uint16_t m_handle;
-	void* m_object;
+	void *m_object;
 	ACCESS_MASK m_granted_access;
 };
 
@@ -26,35 +26,33 @@ public:
 		if (this->m_handle != nullptr)
 			CloseHandle(this->m_handle);
 	}
-	
-	bool check_anticheat_processes();
-	
-	bool setup();
-	std::optional<uint32_t> get_process_id(const std::string_view& process_name);
-	std::optional<void*> hijack_handle();
-	std::optional<c_address> find_pattern(const std::string_view& module_name, const std::string_view& pattern);
-	std::pair<std::optional<uintptr_t>, std::optional<uintptr_t>> get_module_info(const std::string_view& module_name);
 
-	bool read_t(const uintptr_t address, void* buffer, uintptr_t size)
+	bool setup();
+	bool is_secure_to_run();
+	std::optional<uint32_t> get_process_id(const std::string_view &process_name);
+	std::optional<void *> hijack_handle();
+	std::optional<c_address> find_pattern(const std::string_view &module_name, const std::string_view &pattern);
+	std::pair<std::optional<uintptr_t>, std::optional<uintptr_t>> get_module_info(const std::string_view &module_name);
+
+	bool read_t(const uintptr_t address, void *buffer, uintptr_t size)
 	{
-		this->read_memory(reinterpret_cast<void*>(address), buffer, size);
+		this->read_memory(reinterpret_cast<void *>(address), buffer, size);
 		return true;
 	}
 
 	template <typename t>
-	t read_t(void* address)
+	t read_t(void *address)
 	{
-		t value{ 0 };
+		t value{0};
 		this->read_memory(address, &value, sizeof(t));
-
 		return value;
 	}
 
-	template<typename T>
+	template <typename T>
 	T read_t(const uintptr_t address) noexcept
 	{
 		T buffer{};
-		this->read_memory(reinterpret_cast<void*>(address), &buffer, sizeof(T));
+		this->read_memory(reinterpret_cast<void *>(address), &buffer, sizeof(T));
 		return buffer;
 	}
 
@@ -64,9 +62,9 @@ public:
 		static const int length = 64;
 		std::vector<char> buffer(length);
 
-		this->read_memory(reinterpret_cast<void*>(address), buffer.data(), length);
+		this->read_memory(reinterpret_cast<void *>(address), buffer.data(), length);
 
-		const auto& it = find(buffer.begin(), buffer.end(), '\0');
+		const auto &it = find(buffer.begin(), buffer.end(), '\0');
 
 		if (it != buffer.end())
 			buffer.resize(distance(buffer.begin(), it));
@@ -76,12 +74,39 @@ public:
 
 private:
 	bool m_initialized = false;
-	void* m_handle = nullptr;
+	void *m_handle = nullptr;
 	uint32_t m_id = 0;
 
-	bool read_memory(void* address, void* buffer, const size_t size)
+	const std::vector<std::string_view> m_process_list = {
+		"faceitclient.exe",	 // FACEIT Client
+		"faceitservice.exe", // FACEIT Service
+		"faceit.exe",		 // FACEIT Process
+		"clientesea.exe",	 // ESEA Client
+		"EasyAntiCheat.exe",			 // ESEA Process
+		"esportal.exe",		 // ESPORTAL Client
+		// Perfect World (Chinese CS2)
+		"perfectworld.exe", // Perfect World Client
+	};
+
+	const std::vector<std::string_view> m_driver_list = {
+    "faceit",              // FACEIT kernel driver
+    "esea",               // ESEA kernel driver
+    "vgk",                // Vanguard kernel driver
+    "BEDaisy",            // BattlEye kernel driver
+    "EasyAntiCheat",      // EAC kernel driver
+    "mhyprot",            // miHoYo  Generic kernel protection
+    "mhyprot2",           // miHoYo  Updated version
+    "pbsvc",              // PunkBuster service driver
+    "xhunter64",          // XIGNCODE3 kernel driver
+	};
+
+	bool check_processes();
+	bool check_drivers();
+
+	bool read_memory(void *address, void *buffer, const size_t size)
 	{
-		return ReadProcessMemory(this->m_handle, reinterpret_cast<void*>(address), buffer, size, nullptr);
+		return ReadProcessMemory(this->m_handle, reinterpret_cast<void *>(address), buffer, size, nullptr);
 	}
 };
-inline const std::unique_ptr<c_memory> m_memory{ new c_memory() };
+
+inline const std::unique_ptr<c_memory> m_memory{new c_memory()};
