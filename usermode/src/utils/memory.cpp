@@ -1,191 +1,10 @@
 #include "pch.hpp"
 
-void SetConsoleColor(WORD color)
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hConsole != INVALID_HANDLE_VALUE)
-    {
-        SetConsoleTextAttribute(hConsole, color);
-    }
-}
-
-bool c_memory::check_processes()
-{
-    const auto snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (snapshot == INVALID_HANDLE_VALUE)
-    {
-        LOG_ERROR("Failed to create process snapshot.");
-        return true;
-    }
-
-    PROCESSENTRY32W process_entry = { sizeof(PROCESSENTRY32W) };
-
-    if (!Process32FirstW(snapshot, &process_entry))
-    {
-        LOG_ERROR("Failed to get the first process.");
-        CloseHandle(snapshot);
-        return true;
-    }
-
-    std::vector<std::wstring> detected_processes;
-
-    do 
-    {
-        for (const auto& process : m_process_list) 
-        {
-            if (_wcsicmp(process_entry.szExeFile, std::wstring(process.begin(), process.end()).c_str()) == 0)
-            {
-                detected_processes.emplace_back(process_entry.szExeFile);
-            }
-        }
-    } while (Process32NextW(snapshot, &process_entry));
-
-    CloseHandle(snapshot);
-
-    if (!detected_processes.empty())
-    {
-        if (detected_processes.size() == 1)
-        {
-            LOG_WARNING("Detected anti-cheat process: %S", detected_processes.front().c_str());
-        }
-        else
-        {
-            std::wstring process_list = std::accumulate(
-                std::next(detected_processes.begin()), detected_processes.end(), detected_processes.front(),
-                [](std::wstring a, const std::wstring& b) { return std::move(a) + L", " + b; });
-
-            LOG_WARNING("Detected anti-cheat processes: %S", process_list.c_str());
-        }
-        return true;
-    }
-
-    return false;
-}
-
-
-
-bool c_memory::check_drivers()
-{
-    SC_HANDLE sc_manager = OpenSCManagerA(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
-    if (!sc_manager)
-    {
-        LOG_ERROR("Failed to open service manager (error: %lu)", GetLastError());
-        return true;
-    }
-
-    DWORD bytes_needed = 0;
-    DWORD services_returned = 0;
-
-    EnumServicesStatusExA(sc_manager, SC_ENUM_PROCESS_INFO, SERVICE_DRIVER, 
-                          SERVICE_STATE_ALL, nullptr, 0, &bytes_needed, 
-                          &services_returned, nullptr, nullptr);
-
-    if (bytes_needed == 0)
-    {
-        LOG_ERROR("Failed to get services size (error: %lu)", GetLastError());
-        CloseServiceHandle(sc_manager);
-        return true;
-    }
-
-    std::vector<BYTE> buffer(bytes_needed);
-    auto services = reinterpret_cast<ENUM_SERVICE_STATUS_PROCESS*>(buffer.data());
-
-    if (!EnumServicesStatusExA(sc_manager, SC_ENUM_PROCESS_INFO, SERVICE_DRIVER,
-                                SERVICE_STATE_ALL, buffer.data(), bytes_needed, 
-                                &bytes_needed, &services_returned, nullptr, nullptr))
-    {
-        LOG_ERROR("Failed to enumerate services (error: %lu)", GetLastError());
-        CloseServiceHandle(sc_manager);
-        return true;
-    }
-
-    std::vector<std::string> detected_drivers;
-
-    for (DWORD i = 0; i < services_returned; i++) 
-    {
-        SC_HANDLE service = OpenServiceA(sc_manager, services[i].lpServiceName, SERVICE_QUERY_STATUS);
-        if (service)
-        {
-            SERVICE_STATUS_PROCESS status = { 0 };
-            DWORD bytes_needed = 0;
-
-            if (QueryServiceStatusEx(service, SC_STATUS_PROCESS_INFO, 
-                                     reinterpret_cast<LPBYTE>(&status), 
-                                     sizeof(SERVICE_STATUS_PROCESS), &bytes_needed))
-            {
-                for (const auto& driver : m_driver_list) 
-                {
-                    if (_stricmp(services[i].lpServiceName, driver.data()) == 0 && 
-                        status.dwCurrentState == SERVICE_RUNNING)
-                    {
-                        detected_drivers.emplace_back(services[i].lpServiceName);
-                    }
-                }
-            }
-            CloseServiceHandle(service);
-        }
-    }
-
-    CloseServiceHandle(sc_manager);
-
-    if (!detected_drivers.empty())
-    {
-        if (detected_drivers.size() == 1)
-        {
-			SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN);
-            LOG_WARNING("Detected running anti-cheat driver: %s", detected_drivers.front().c_str());
-			SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-        }
-        else
-        {
-            std::string driver_list = std::accumulate(
-                std::next(detected_drivers.begin()), detected_drivers.end(), detected_drivers.front(),
-                [](std::string a, const std::string& b) { return std::move(a) + ", " + b; });
-
-			SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN);
-            LOG_WARNING("Detected running anti-cheat drivers: %s", driver_list.c_str());
-			SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-        }
-        return true;
-    }
-
-    return false;
-}
-
-bool c_memory::is_secure_to_run()
-{
-    if (check_processes())
-    {
-        // Immediate termination if processes are detected
-	
-	SetConsoleColor(FOREGROUND_RED);
-        LOG_ERROR("Critical Warning: Anti-cheat processes detected. Application cannot run.");
-    SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-
-        exit(EXIT_FAILURE); 
-    }
-
-    if (check_drivers())
-    {
-        // Warn about drivers but continue execution
-		SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN);
-        LOG_WARNING("Active anti-cheat drivers may monitor or restrict application behavior, potentially causing instability or unwanted side effects.");
-        LOG_WARNING("If these drivers cause any issues, open CMD as an administrator and run: sc stop <driver_name_as_displayed>");
-		SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-		
-		return true;
-    }
-
-    if (!check_processes() && !check_drivers())
-    {
-        LOG_INFO("No interfering anti-cheat software detected. Safe to proceed.");
-    }
-
-    return true;
-}
-
 bool c_memory::setup()
 {
+	if (is_anticheat_running())
+		return {};
+
 	const auto process_id = this->get_process_id("cs2.exe");
 	if (!process_id.has_value())
 	{
@@ -416,4 +235,27 @@ std::pair<std::optional<uintptr_t>, std::optional<uintptr_t>> c_memory::get_modu
 	}
 
 	return {};
+}
+
+bool c_memory::is_anticheat_running()
+{
+	constexpr std::array<std::string_view, 7> m_process_list = {
+		"faceitclient.exe",	 // faceit client
+		"faceitservice.exe", // faceit service
+		"faceit.exe",		 // faceit process
+		"esportal.exe",		 // esportal client
+		"perfectworld.exe"   // perfect world (?)
+	};
+
+	for (const auto& process_name : m_process_list)
+	{
+		const auto process_id = m_memory->get_process_id(process_name);
+		if (!process_id.has_value())
+			continue;
+
+		LOG_INFO("possible anti-cheat process detected ('%s')", process_name.data());
+		return true;
+	}
+
+	return false;
 }
