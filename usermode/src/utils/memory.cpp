@@ -2,6 +2,9 @@
 
 bool c_memory::setup()
 {
+	if (is_anticheat_running())
+		return {};
+
 	const auto process_id = this->get_process_id("cs2.exe");
 	if (!process_id.has_value())
 	{
@@ -232,4 +235,27 @@ std::pair<std::optional<uintptr_t>, std::optional<uintptr_t>> c_memory::get_modu
 	}
 
 	return {};
+}
+
+bool c_memory::is_anticheat_running()
+{
+	constexpr std::array<std::string_view, 7> m_process_list = {
+		"faceitclient.exe",	 // faceit client
+		"faceitservice.exe", // faceit service
+		"faceit.exe",		 // faceit process
+		"esportal.exe",		 // esportal client
+		"perfectworld.exe"   // perfect world (?)
+	};
+
+	for (const auto& process_name : m_process_list)
+	{
+		const auto process_id = m_memory->get_process_id(process_name);
+		if (!process_id.has_value())
+			continue;
+
+		LOG_INFO("possible anti-cheat process detected ('%s')", process_name.data());
+		return true;
+	}
+
+	return false;
 }
