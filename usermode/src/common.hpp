@@ -1,10 +1,10 @@
 #pragma once
 
 /* current build of cs2_webradar */
-#define CS2_WEBRADAR_VERSION "v1.2.4"
+#define CS2_WEBRADAR_VERSION "v1.2.5"
 
 /* current build of cs2 */
-#define CS2_VERSION "15:59:25"
+#define CS2_VERSION "14:24:43"
 
 /* game modules */
 #define CLIENT_DLL "client.dll"

@@ -3,7 +3,7 @@
 class c_game_entity_system
 {
 public:
-	SCHEMA_ADD_OFFSET(int32_t, m_highest_entity_idx, 0x1520);
+	SCHEMA_ADD_OFFSET(int32_t, m_highest_entity_idx, 0x20f0);
 
 	template <typename T = c_base_entity*>
 	T get(int32_t idx)
