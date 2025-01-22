@@ -39,7 +39,6 @@
     <ClInclude Include="src\core\sdk.hpp" />
     <ClInclude Include="src\sdk\entity_handle.hpp" />
     <ClInclude Include="src\sdk\datatypes\utl_vector.hpp" />
-    <ClInclude Include="src\sdk\interfaces\engine_client.hpp" />
     <ClInclude Include="src\sdk\entity.hpp" />
     <ClInclude Include="src\sdk\interfaces\schema_system.hpp" />
     <ClInclude Include="src\core\schema.hpp" />

@@ -45,7 +45,6 @@
 #include "sdk/interfaces/game_entity_system.hpp"
 #include "sdk/interfaces/schema_system.hpp"
 #include "sdk/interfaces/global_vars.hpp"
-#include "sdk/interfaces/engine_client.hpp"
 
 #include "core/sdk.hpp"
 

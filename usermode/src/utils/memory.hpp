@@ -8,7 +8,7 @@ struct __system_handle_t
 	uint8_t m_object_type_number;
 	uint8_t m_flags;
 	uint16_t m_handle;
-	void *m_object;
+	void* m_object;
 	ACCESS_MASK m_granted_access;
 };
 
@@ -83,4 +83,4 @@ private:
 	}
 };
 
-inline const std::unique_ptr<c_memory> m_memory{new c_memory()};
+inline const std::unique_ptr<c_memory> m_memory{ new c_memory() };

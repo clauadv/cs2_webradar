@@ -3,9 +3,6 @@
 /* current build of cs2_webradar */
 #define CS2_WEBRADAR_VERSION "v1.2.5"
 
-/* current build of cs2 */
-#define CS2_VERSION "14:24:43"
-
 /* game modules */
 #define CLIENT_DLL "client.dll"
 #define ENGINE2_DLL "engine2.dll"
@@ -16,7 +13,6 @@
 #define GET_ENTITY_LIST "48 8b 0d ? ? ? ? 48 89 7c 24 ? 8b fa c1 eb"
 #define GET_GLOBAL_VARS "48 89 15 ? ? ? ? 48 89 42"
 #define GET_LOCAL_PLAYER_CONTROLLER "48 8b 05 ? ? ? ? 48 85 c0 74 ? 8b 90"
-#define GET_PRODUCT_VERSION "48 8b 05 ? ? ? ? 48 8d 0d ? ? ? ? 48 85 c0 4c 8b c1"
 
 /* custom defines */
 #define LOG_INFO(str, ...) \

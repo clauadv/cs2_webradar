@@ -50,12 +50,6 @@ bool main()
     }
     LOG_INFO("winsock initialization completed");
 
-    const auto product_version = c_engine_client::get_product_version();
-    if (product_version.find(CS2_VERSION) == std::string::npos)
-        LOG_WARNING("version mismatch! current 'cs2' version is '%s'", product_version.c_str());
-    else
-        LOG_INFO("version match! current 'cs2' version is up to date");
-
     const auto ipv4_address = utils::get_ipv4_address(config_data);
     if (ipv4_address.empty())
         LOG_WARNING("failed to automatically get your ipv4 address!\n                 we will use '%s' from 'config.json'. if the local ip is wrong, please set it", config_data.m_local_ip);
