@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { getRadarPosition, teamEnum } from "../utilities/utilities";
 
-const Bomb = ({ bombData, mapData, radarImage, localTeam, averageLatency }) => {
+const Bomb = ({ bombData, mapData, radarImage, localTeam, averageLatency, settings }) => {
   const radarPosition = getRadarPosition(mapData, bombData);
 
   const bombRef = useRef();
@@ -15,11 +15,17 @@ const Bomb = ({ bombData, mapData, radarImage, localTeam, averageLatency }) => {
     y: radarImageBounding.height * radarPosition.y - bombBounding.height * 0.5,
   };
 
+  // Calculate bomb size based on settings
+  const baseSize = 1.5; // Base size in vw
+  const scaledSize = baseSize * settings.bombSize;
+
   return (
     <div
-      className={`absolute origin-center rounded-[100%] left-0 top-0 w-[1.5vw] h-[1.5vw] lg:w-[0.8vw] lg:h-[0.8vw]`}
+      className={`absolute origin-center rounded-[100%] left-0 top-0`}
       ref={bombRef}
       style={{
+        width: `${scaledSize}vw`,
+        height: `${scaledSize}vw`,
         transform: `translate(${radarImageTranslation.x}px, ${radarImageTranslation.y}px)`,
         transition: `transform ${averageLatency}ms linear`,
         backgroundColor: `${
