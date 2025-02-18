@@ -80,10 +80,10 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency }) 
         }}
       ></div>
  <div
-  className="absolute left-1/2 top-1/2 w-[1.5vw] h-[3vw] bg-white opacity-30"
+  className={`absolute left-1/2 top-1/2 w-[2.5vw] h-[3vw] bg-white opacity-20`}
   style={{
-    transform: `translate(-50%, 5%) rotate(0deg)`, // Pushes it forward
-    clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", // Triangle pointing forward
+    transform: `translate(-50%, 0%) rotate(0deg)`,
+    clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)",
   }}
   />
     </div>
