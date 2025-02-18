@@ -9,6 +9,7 @@ const Radar = ({
   localTeam,
   averageLatency,
   bombData,
+  settings
 }) => {
   const radarImageRef = useRef();
 
@@ -24,6 +25,7 @@ const Radar = ({
           radarImage={radarImageRef.current}
           localTeam={localTeam}
           averageLatency={averageLatency}
+          settings={settings}
         />
       ))}
 
@@ -34,6 +36,7 @@ const Radar = ({
           radarImage={radarImageRef.current}
           localTeam={localTeam}
           averageLatency={averageLatency}
+          settings={settings}
         />
       )}
     </div>
