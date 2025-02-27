@@ -15,12 +15,32 @@ const USE_LOCALHOST = 1;
 const PUBLIC_IP = "your ip goes here".trim();
 const PORT = 22006;
 
+
+const DEFAULT_SETTINGS = {
+  dotSize: 1,
+  bombSize: 0.5,
+  showAllNames: false,
+  showEnemyNames: true,
+  showViewCones: false,
+};
+
+const loadSettings = () => {
+  const savedSettings = localStorage.getItem("radarSettings");
+  return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
+};
+
 const App = () => {
   const [averageLatency, setAverageLatency] = useState(0);
   const [playerArray, setPlayerArray] = useState([]);
   const [mapData, setMapData] = useState();
   const [localTeam, setLocalTeam] = useState();
-  const [bombData, setBombData] = useState();
+  const [bombData, setBombData] = useState(); 
+  const [settings, setSettings] = useState(loadSettings());
+
+  // Save settings to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem("radarSettings", JSON.stringify(settings));
+  }, [settings]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,14 +118,15 @@ const App = () => {
 
   return (
     <div
-      className={`w-screen h-screen flex flex-col justify-center backdrop-blur-[7.5px]`}
+      className={`w-screen h-screen flex flex-col justify-center backdrop-blur-[7.5px] overflow-hidden`}
       style={{
         background: `radial-gradient(50% 50% at 50% 50%, rgba(20, 40, 55, 0.95) 0%, rgba(7, 20, 30, 0.95) 100%)`,
         backdropFilter: `blur(7.5px)`,
       }}
     >
+
       {bombData && bombData.m_blow_time > 0 && !bombData.m_is_defused && (
-        <div className={`flex flex-col items-center gap-1`}>
+        <div className={`absolute left-1/2 top-2 flex-col items-center gap-1 z-50`}>
           <div className={`flex justify-center items-center gap-1`}>
             <MaskedIcon
               path={`./assets/icons/c4_sml.png`}
@@ -119,17 +140,20 @@ const App = () => {
                 `bg-radar-secondary`
               }
             />
-            <span>{`${bombData.m_blow_time.toFixed(1)}s ${
-              (bombData.m_is_defusing &&
+            <span>{`${bombData.m_blow_time.toFixed(1)}s ${(bombData.m_is_defusing &&
                 `(${bombData.m_defuse_time.toFixed(1)}s)`) ||
               ""
-            }`}</span>
+              }`}</span>
           </div>
         </div>
       )}
 
       <div className={`flex items-center justify-evenly`}>
-        <Latency value={averageLatency} />
+        <Latency
+         value={averageLatency}
+         settings={settings}
+         setSettings={setSettings}
+        />
 
         <ul id="terrorist" className="lg:flex hidden flex-col gap-7 m-0 p-0">
           {playerArray
@@ -151,14 +175,15 @@ const App = () => {
             localTeam={localTeam}
             averageLatency={averageLatency}
             bombData={bombData}
+            settings={settings}
           />
         )) || (
-          <div id="radar" className={`relative overflow-hidden origin-center`}>
-            <h1 className="radar_message">
-              Connected! Waiting for data from usermode
-            </h1>
-          </div>
-        )}
+            <div id="radar" className={`relative overflow-hidden origin-center`}>
+              <h1 className="radar_message">
+                Connected! Waiting for data from usermode
+              </h1>
+            </div>
+          )}
 
         <ul
           id="counterTerrorist"
@@ -167,7 +192,12 @@ const App = () => {
           {playerArray
             .filter((player) => player.m_team == 3)
             .map((player) => (
-              <PlayerCard right={true} key={player.m_idx} playerData={player} />
+              <PlayerCard
+                right={true}
+                key={player.m_idx}
+                playerData={player}
+                settings={settings}
+              />
             ))}
         </ul>
       </div>
