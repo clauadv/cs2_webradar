@@ -56,12 +56,6 @@ const App = () => {
         return;
       }
 
-      if (!USE_LOCALHOST && window.location.hostname === "localhost") {
-        document.getElementsByClassName("radar_message")[0].textContent = 
-          "Sharing mode is enabled, but you're accessing this page via 'localhost'. Please use your local IP instead.";
-        return; 
-      }
-
       if (!webSocket) {
         try {
           if (USE_LOCALHOST) {
