@@ -15,7 +15,7 @@ const USE_LOCALHOST = 0;
 const PUBLIC_IP = "your ip goes here".trim();
 const PORT = 22006;
 
-const EFFECTIVE_IP = PUBLIC_IP.match(/[a-zA-Z]/) ? window.location.hostname : PUBLIC_IP;
+const EFFECTIVE_IP = USE_LOCALHOST ? "localhost" : PUBLIC_IP.match(/[a-zA-Z]/) ? window.location.hostname : PUBLIC_IP;
 
 const DEFAULT_SETTINGS = {
   dotSize: 1,
@@ -54,6 +54,12 @@ const App = () => {
           "radar_message"
         )[0].textContent = `A public IP address is required! Currently detected IP (${PUBLIC_IP}) is a private/local IP`;
         return;
+      }
+
+      if (!USE_LOCALHOST && window.location.hostname === "localhost") {
+        document.getElementsByClassName("radar_message")[0].textContent = 
+          "Sharing mode is enabled, but you're accessing this page via 'localhost'. Please use your local IP instead.";
+        return; 
       }
 
       if (!webSocket) {
