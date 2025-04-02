@@ -4,8 +4,10 @@
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](https://github.com/clauadv/cs2_webradar/blob/master/readme.md)
 [![en](https://img.shields.io/badge/lang-cn-blue.svg)](https://github.com/clauadv/cs2_webradar/blob/master/readme-CN.md) <br>
 undetected counter strike 2 browser based radar cheat <br>
-<br>
 if you have any suggestions, issues or questions, feel free to send them on my [discord server](https://discord.gg/wVzuHN8uXd)
+# hurracan
+i’m excited to introduce <a href="https://hurracan.com">hurracan</a> —<b>a plug & play</b> version that’s designed to make your life easier.<br>
+no more headaches with setup or configuration. just run it, and a server is automatically created with <b>a shareable link</b>—ready to go in seconds!<br>
 
 ## requirements
 - [nodejs](https://nodejs.org/en/download/prebuilt-installer/current/)
