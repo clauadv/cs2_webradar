@@ -14,10 +14,8 @@ bool cfg::setup(config_data_t& config_data)
     "m_public_ip": "x.x.x.x"
 })");
 
-		// Set default values and continue instead of exiting huh?
+		// Set default value and continue instead of exiting huh?
 		config_data.m_use_localhost = true;
-		config_data.m_local_ip = "192.168.x.x";
-		config_data.m_public_ip = "x.x.x.x";
 		return true;
 	}
 
