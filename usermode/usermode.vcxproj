@@ -77,9 +77,6 @@
     <ClCompile Include="src\utils\memory.cpp" />
     <ClCompile Include="src\utils\utils.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="readme.md" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
