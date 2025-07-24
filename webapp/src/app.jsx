@@ -8,12 +8,11 @@ import MaskedIcon from "./components/maskedicon";
 
 const CONNECTION_TIMEOUT = 5000;
 
-/* change this to '1' if you want to use offline (your own pc only) */
-const USE_LOCALHOST = 0;
-
-/* you can get your public ip from https://ipinfo.io/ip */
-const PUBLIC_IP = "your ip goes here".trim();
-const PORT = 22006;
+// Configuration values are provided by the .env file
+const USE_LOCALHOST = import.meta.env.VITE_USE_LOCALHOST === "1";
+const PUBLIC_IP = (import.meta.env.VITE_PUBLIC_IP || "").trim();
+const PORT = parseInt(import.meta.env.VITE_WS_PORT || "22006", 10);
+const AUTH_TOKEN = import.meta.env.VITE_AUTH_TOKEN || "";
 
 const EFFECTIVE_IP = USE_LOCALHOST ? "localhost" : PUBLIC_IP.match(/[a-zA-Z]/) ? window.location.hostname : PUBLIC_IP;
 
@@ -59,9 +58,9 @@ const App = () => {
       if (!webSocket) {
         try {
           if (USE_LOCALHOST) {
-            webSocketURL = `ws://localhost:${PORT}/cs2_webradar`;
+            webSocketURL = `ws://localhost:${PORT}/cs2_webradar?token=${AUTH_TOKEN}`;
           } else {
-            webSocketURL = `ws://${EFFECTIVE_IP}:${PORT}/cs2_webradar`;
+            webSocketURL = `ws://${EFFECTIVE_IP}:${PORT}/cs2_webradar?token=${AUTH_TOKEN}`;
           }
 
           if (!webSocketURL) return;

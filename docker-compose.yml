@@ -1,0 +1,7 @@
+services:
+  cs2_webradar:
+    build: .
+    ports:
+      - "${HTTP_PORT:-5173}:${HTTP_PORT:-5173}"
+      - "${PORT:-22006}:${PORT:-22006}"
+    env_file: .env
