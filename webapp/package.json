@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"node ws/app.js\" \"vite\"",
+    "dev": "concurrently \"node server.js\" \"vite\"",
     "build": "vite build",
+    "start": "node server.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -13,7 +14,9 @@
     "concurrently": "^9.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

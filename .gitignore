@@ -1,2 +1,4 @@
 kernelmode
 usermode/src/driver/driver.hpp
+node_modules
+.env

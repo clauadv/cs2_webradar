@@ -52,7 +52,10 @@ bool main()
 
     const auto ipv4_address = utils::get_ipv4_address(config_data);
     if (ipv4_address.empty())
-        LOG_WARNING("failed to automatically get your ipv4 address!\n                 we will use '%s' from 'config.json'. if the local ip is wrong, please set it", config_data.m_local_ip);
+    {
+        LOG_ERROR("invalid local ip address. please set 'm_local_ip' in config.json");
+        return {};
+    }
 
     const auto formatted_address = std::format("ws://{}:22006/cs2_webradar", ipv4_address);
     static auto web_socket = easywsclient::WebSocket::from_url(formatted_address);
