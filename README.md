@@ -12,7 +12,7 @@ This project provides a browser-based radar for Counter Strike 2. The web applic
 
 ### 1. Configuration
 1. Copy `.env.example` to `.env` and adjust the values if needed. The most important settings are the WebSocket `PORT` and the `AUTH_TOKEN` used for authentication.
-2. Run the program once so that `config.json` is generated in the project root. Edit `m_local_ip` in this file to match the local IP address of the machine running `usermode.exe`.
+2. Run the program once so that `config.json` is generated in the project root. Edit `m_local_ip` in this file to match the local IP address of the machine running `usermode.exe`. Adjust `m_ws_port` if you changed the WebSocket port.
 
 ### 2. Build and Run with Docker
 Make sure you have Docker and docker‑compose installed.
@@ -21,7 +21,7 @@ Make sure you have Docker and docker‑compose installed.
 docker-compose up --build
 ```
 
-The web interface will be available on port `5173` and the WebSocket server on the port defined in `.env` (default `22006`).
+The web interface will be available on port `5173` and the WebSocket server on the port defined in `.env`/`config.json` (default `22006`).
 
 ### 3. Using the Application
 1. Build the `usermode` project using Visual Studio and run `usermode.exe`.
