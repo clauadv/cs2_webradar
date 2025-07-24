@@ -57,7 +57,7 @@ bool main()
         return {};
     }
 
-    const auto formatted_address = std::format("ws://{}:22006/cs2_webradar", ipv4_address);
+    const auto formatted_address = std::format("ws://{}:{}/cs2_webradar", ipv4_address, config_data.m_ws_port);
     static auto web_socket = easywsclient::WebSocket::from_url(formatted_address);
     if (!web_socket)
     {

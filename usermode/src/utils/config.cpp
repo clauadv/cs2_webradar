@@ -7,11 +7,12 @@ bool cfg::setup(config_data_t& config_data)
 	{
 		LOG_WARNING("cannot open file 'config.json'");
 
-		std::ofstream example_config("config.json");
-		example_config << std::format("{}", R"({
+                std::ofstream example_config("config.json");
+                example_config << std::format("{}", R"({
     "m_use_localhost": true,
     "m_local_ip": "192.168.x.x",
-    "m_public_ip": "x.x.x.x"
+    "m_public_ip": "x.x.x.x",
+    "m_ws_port": 22006
 })");
 
 		return {};
