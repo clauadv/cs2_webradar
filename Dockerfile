@@ -1,7 +1,8 @@
 # Build stage
 FROM node:18-alpine AS build
 WORKDIR /app
-COPY webapp/package*.json ./webapp/
+# copy the entire webapp source so vite can find index.html during the build
+COPY webapp ./webapp
 COPY .env ./webapp/.env
 RUN cd webapp && npm install && npm run build
 
