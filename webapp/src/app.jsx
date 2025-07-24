@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom/client";
 import { useEffect, useState } from "react";
 import "./App.css";
 import PlayerCard from "./components/PlayerCard";

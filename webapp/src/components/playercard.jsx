@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import MaskedIcon from "./maskedicon";
 import { playerColors, teamEnum } from "../utilities/utilities";

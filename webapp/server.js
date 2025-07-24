@@ -1,3 +1,5 @@
+/* eslint-env node */
+/* global process */
 import { WebSocketServer } from 'ws';
 import http from 'http';
 import express from 'express';

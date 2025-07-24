@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 const MaskedIcon = ({ path, height, color }) => {
   return (
     <div
