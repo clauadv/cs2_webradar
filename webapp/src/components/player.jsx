@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useRef, useState, useEffect } from "react";
 import { getRadarPosition, playerColors } from "../utilities/utilities";
 
