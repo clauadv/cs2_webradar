@@ -5,7 +5,7 @@ bool cfg::setup(config_data_t& config_data)
 	std::ifstream file("config.json");
 	if (!file.is_open())
 	{
-		LOG_WARNING("cannot open file 'config.json'");
+		LOG_WARNING("cannot open file 'config.json', creating a new one and continuing with default values");
 
 		std::ofstream example_config("config.json");
 		example_config << std::format("{}", R"({
@@ -14,7 +14,9 @@ bool cfg::setup(config_data_t& config_data)
     "m_public_ip": "x.x.x.x"
 })");
 
-		return {};
+		// Set default value and continue instead of exiting huh?
+		config_data.m_use_localhost = true;
+		return true;
 	}
 
 	const auto parsed_data = nlohmann::json::parse(file);
