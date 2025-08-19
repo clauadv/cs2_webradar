@@ -33,7 +33,7 @@ void f::get_player_info()
 {
 	m_data["m_players"] = nlohmann::json::array();
 
-	const auto highest_idx = i::m_game_entity_system->m_highest_entity_idx();
+	const auto highest_idx = 1024;
 	for (int32_t idx = 0; idx < highest_idx; idx++)
 	{
 		const auto entity = i::m_game_entity_system->get(idx);
