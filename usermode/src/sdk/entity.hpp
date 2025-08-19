@@ -117,16 +117,11 @@ public:
 	SCHEMA_ADD_FIELD(c_player_item_services*, m_pItemServices, "C_BasePlayerPawn->m_pItemServices");
 };
 
-class c_cs_player_pawn_base : public c_base_player_pawn
-{
-public:
-	SCHEMA_ADD_FIELD(f_vector, m_angEyeAngles, "C_CSPlayerPawnBase->m_angEyeAngles");
-};
-
-class c_cs_player_pawn : public c_cs_player_pawn_base
+class c_cs_player_pawn : public c_base_player_pawn
 {
 public:
 	SCHEMA_ADD_FIELD(int32_t, m_ArmorValue, "C_CSPlayerPawn->m_ArmorValue");
+	SCHEMA_ADD_FIELD(f_vector, m_angEyeAngles, "C_CSPlayerPawn->m_angEyeAngles");
 
 	const std::string get_model_name();
 };
