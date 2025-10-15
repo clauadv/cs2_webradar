@@ -69,9 +69,9 @@ private:
 
     struct hash_bucket_t
     {
-        uint8_t m_pad0[0x18]; // 0x00
-        hash_fixed_data_internal_t<T>* m_first; // 0x18
-        hash_fixed_data_internal_t<T>* m_first_uncommited; // 0x20
+        uint8_t m_pad0[0x08]; // 0x00
+        hash_fixed_data_internal_t<T>* m_first; // 0x08
+        hash_fixed_data_internal_t<T>* m_first_uncommited; // 0x10
     };
 
     c_utl_memory_pool m_entry_memory; // 0x00(0x10)

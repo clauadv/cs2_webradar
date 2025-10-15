@@ -31,7 +31,7 @@ private:
 		if (!entry_list)
 			return nullptr;
 
-		const auto player_controller = (uint32_t*)(120i64 * (idx & 0x1ff) + entry_list);
+		const auto player_controller = (uint32_t*)(112i64 * (idx & 0x1ff) + entry_list);
 		if (!player_controller)
 			return nullptr;
 
