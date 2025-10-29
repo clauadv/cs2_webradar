@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import Player from "./player";
 import Bomb from "./bomb";
+import Grenade from "./grenade";
+import DroppedWeapon from "./droppedweapons";
 
 const Radar = ({
   playerArray,
@@ -9,7 +11,9 @@ const Radar = ({
   localTeam,
   averageLatency,
   bombData,
-  settings
+  settings,
+  grenadeData,
+  droppedWeaponsData,
 }) => {
   const radarImageRef = useRef();
 
@@ -39,6 +43,42 @@ const Radar = ({
           settings={settings}
         />
       )}
+
+      {grenadeData && grenadeData["landed"]!={} && settings.showGrenades && grenadeData["landed"].map((grenade) => (
+        <Grenade
+          key={grenade.m_idx}
+          grenadeData={grenade}
+          mapData={mapData}
+          settings={settings}
+          averageLatency={averageLatency}
+          radarImage={radarImageRef.current}
+          type={"landed"}
+        />
+      ))}
+
+      {grenadeData && grenadeData["thrown"]!={} && settings.showGrenades && grenadeData["thrown"].map((grenade) => (
+        <Grenade
+          key={grenade.m_idx}
+          grenadeData={grenade}
+          mapData={mapData}
+          settings={settings}
+          averageLatency={averageLatency}
+          radarImage={radarImageRef.current}
+          type={"thrown"}
+        />
+      ))}
+
+      {settings.showDroppedWeapons && droppedWeaponsData && droppedWeaponsData!={} && droppedWeaponsData.map((droppedWeapon) => (
+        <DroppedWeapon
+          key={droppedWeapon.m_idx}
+          droppedWeaponData={droppedWeapon}
+          mapData={mapData}
+          settings={settings}
+          averageLatency={averageLatency}
+          radarImage={radarImageRef.current}
+        />
+      ))}
+
     </div>
   );
 };

@@ -34,7 +34,7 @@ const Bomb = ({ bombData, mapData, radarImage, localTeam, averageLatency, settin
           `#c90b0b`
         }`,
         WebkitMask: `url('./assets/icons/c4_sml.png') no-repeat center / contain`,
-        opacity: `1`,
+        opacity: `${settings.showOnlyEnemies && bombData.owner_entity < 141288103162675 && localTeam == teamEnum.terrorist ? 0 : 1}`,
         zIndex: `1`,
       }}
     />

@@ -10,9 +10,13 @@ export default {
         radar: {
           "primary": "#b1d0e7",
           "secondary": "#6492b4",
+
           "green": "#50904c",
-          "red": "#c90b0be6"
-        }
+          "red": "#c90b0be6",
+
+          "redbutton": "rgb(70, 0, 0)",
+          "redbutton_hover": "rgb(150, 0, 0)"
+        },
       },
     },
   },

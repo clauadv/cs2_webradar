@@ -27,7 +27,9 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
   const radarImageBounding = (radarImage !== undefined &&
     radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
 
-  const scaledSize = 0.7 * settings.dotSize;
+  let scaledSize = 0.7 * settings.dotSize;
+
+  if (settings.showOnlyEnemies && playerData.m_team === localTeam) { scaledSize = 0.0; if (settings.showAllNames) {settings.showAllNames = false;} }
 
   // Store the last known position when the player dies
   useEffect(() => {
@@ -70,6 +72,8 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
         </div>
       ) : null}
 
+
+
       {/* Rotating container for player elements */}
       <div
         style={{
@@ -85,13 +89,14 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
           className={`w-full h-full rounded-[50%_50%_50%_0%] rotate-[315deg]`}
           style={{
 
-            backgroundColor: `${(playerData.m_team == localTeam && playerColors[playerData.m_color]) || `red`}`,
+            backgroundColor: `${(playerData.m_team == localTeam && playerColors[playerData.m_color]) || (settings.showOnlyEnemies && playerData.m_team != localTeam && playerColors[playerData.m_color]) || `red`}`,
             opacity: `${(playerData.m_is_dead && `0.8`) || (invalidPosition && `0`) || `1`}`,
+            border: `${(playerData.m_team != localTeam && `1.5px solid white`) || `none`}`,
           }}
         />
 
         {/* View cone (kept exactly as it was) */}
-        {settings.showViewCones && !playerData.m_is_dead && (
+        {(settings.showOnlyEnemies && playerData.m_team === localTeam && settings.showViewCones && !playerData.m_is_dead) || (settings.showViewCones && !playerData.m_is_dead) && (
           <div
             className="absolute left-1/2 top-1/2 w-[1.5vw] h-[3vw] bg-white opacity-30"
             style={{
@@ -101,6 +106,11 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
           />
         )}
       </div>
+      {(mapData.name === "de_nuke" && !playerData.m_is_dead) && (
+        <img id="nuke_level_indicator"
+          src={playerData.m_position.z < -490 ? `./assets/icons/down.png` : `./assets/icons/up.png`}
+        />
+      )}
     </div>
   );
 };

@@ -1,9 +1,17 @@
 import { useState, useEffect } from "react";
 import MaskedIcon from "./maskedicon";
-import { playerColors, teamEnum } from "../utilities/utilities";
+import { playerColors, teamEnum, colorSchemePallette } from "../utilities/utilities";
 
-const PlayerCard = ({ playerData, isOnRightSide }) => {
+const PlayerCard = ({ playerData, isOnRightSide, settings }) => {
   const [modelName, setModelName] = useState(playerData.m_model_name);
+
+  function getArmor(armor) {
+    if (armor<=100 && armor>0) {
+      return armor;
+    } else {
+      return 0;
+    }
+  }
 
   useEffect(() => {
     if (playerData.m_model_name)
@@ -15,33 +23,38 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
       style={{ opacity: `${(playerData.m_is_dead && `0.5`) || `1`}` }}
       className={`flex ${isOnRightSide && `flex-row-reverse`}`}
     >
-      <div
-        className={`flex flex-col gap-[0.375rem] justify-center items-center`}
-      >
+      <div className="flex items-center mr-2">
+
         <div
-          className={`hover:cursor-pointer`}
-          onClick={() =>
-            window.open(
-              `https://steamcommunity.com/profiles/${playerData.m_steam_id}`,
-              "_blank",
-              "noopener,noreferrer"
-            )
-          }
+          className={`flex flex-col gap-[0.375rem] justify-center items-center`}
         >
-          {playerData.m_name}
+          <div
+            className={`hover:cursor-pointer`}
+            onClick={() =>
+              window.open(
+                `https://steamcommunity.com/profiles/${playerData.m_steam_id}`,
+                "_blank",
+                "noopener,noreferrer"
+              )
+            }
+          >
+            {playerData.m_name}
+          </div>
+          {/* <div
+            className={`w-0 h-0 border-solid border-t-[12px] border-r-[8px] border-b-[12px] border-l-[8px]`}
+            style={{
+              borderColor: `${
+                playerColors[playerData.m_color]
+              } transparent transparent transparent`,
+            }}
+          ></div> */}
+          <img
+            className={`h-[8rem] ${isOnRightSide && `scale-x-[-1]`}`}
+            src={`./assets/characters/${modelName}.png`}
+            style={{backgroundColor:playerColors[playerData.m_color], borderRadius:'30px'}}
+          ></img>
         </div>
-        <div
-          className={`w-0 h-0 border-solid border-t-[12px] border-r-[8px] border-b-[12px] border-l-[8px]`}
-          style={{
-            borderColor: `${
-              playerColors[playerData.m_color]
-            } transparent transparent transparent`,
-          }}
-        ></div>
-        <img
-          className={`h-[8rem] ${isOnRightSide && `scale-x-[-1]`}`}
-          src={`./assets/characters/${modelName}.png`}
-        ></img>
+
       </div>
 
       <div
@@ -60,8 +73,14 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
             <MaskedIcon
               path={`./assets/icons/health.svg`}
               height={16}
-              color={`bg-radar-secondary`}
+              color={`${colorSchemePallette[settings.colorScheme][1]}`}
             />
+            <div className="w-20 h-4 bg-neutral-700 rounded-sm border border-black/50 overflow-hidden">
+              <div
+                className={`h-full transition-all duration-600`}
+                style={{ width: `${playerData.m_health}%`, backgroundColor: colorSchemePallette[settings.colorScheme][1] }}
+              ></div>
+            </div>
             <span className="text-radar-primary">{playerData.m_health}</span>
           </div>
 
@@ -71,9 +90,9 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
                 (playerData.m_has_helmet && `kevlar_helmet`) || `kevlar`
               }.svg`}
               height={16}
-              color={`bg-radar-secondary`}
+              color={`${colorSchemePallette[settings.colorScheme][1]}`}
             />
-            <span className="text-radar-primary">{playerData.m_armor}</span>
+            <span className="text-radar-primary">{getArmor(playerData.m_armor)}</span>
           </div>
         </div>
 
@@ -85,8 +104,8 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
               color={`${
                 (playerData.m_weapons.m_active ==
                   playerData.m_weapons.m_primary &&
-                  `bg-radar-primary`) ||
-                `bg-radar-secondary`
+                  `${colorSchemePallette[settings.colorScheme][0]}`) ||
+                `${colorSchemePallette[settings.colorScheme][1]}`
               }`}
             />
           )}
@@ -98,8 +117,8 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
               color={`${
                 (playerData.m_weapons.m_active ==
                   playerData.m_weapons.m_secondary &&
-                  `bg-radar-primary`) ||
-                `bg-radar-secondary`
+                  `${colorSchemePallette[settings.colorScheme][0]}`) ||
+                `${colorSchemePallette[settings.colorScheme][1]}`
               }`}
             />
           )}
@@ -113,8 +132,8 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
                 height={28}
                 color={`${
                   (playerData.m_weapons.m_active == melee &&
-                    `bg-radar-primary`) ||
-                  `bg-radar-secondary`
+                    `${colorSchemePallette[settings.colorScheme][0]}`) ||
+                  `${colorSchemePallette[settings.colorScheme][1]}`
                 }`}
               />
             ))}
@@ -135,8 +154,8 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
                   height={28}
                   color={`${
                     (playerData.m_weapons.m_active == utility &&
-                      `bg-radar-primary`) ||
-                    `bg-radar-secondary`
+                      `${colorSchemePallette[settings.colorScheme][0]}`) ||
+                    `${colorSchemePallette[settings.colorScheme][1]}`
                   }`}
                 />
               ))}
@@ -155,7 +174,8 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
             ].map((_, i) => (
               <div
                 key={i}
-                className="rounded-full w-[6px] h-[6px] bg-radar-primary"
+                className={`rounded-full w-[6px] h-[6px]`}
+                style = {{backgroundColor:colorSchemePallette[settings.colorScheme][1]}}
               ></div>
             ))}
 
@@ -164,7 +184,7 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
                 <MaskedIcon
                   path={`./assets/icons/defuser.svg`}
                   height={28}
-                  color={`bg-radar-secondary`}
+                  color={`${colorSchemePallette[settings.colorScheme][1]}`}
                 />
               )) ||
               (playerData.m_team == teamEnum.terrorist &&
@@ -175,8 +195,8 @@ const PlayerCard = ({ playerData, isOnRightSide }) => {
                     color={
                       ((playerData.m_weapons &&
                         playerData.m_weapons.m_active) == `c4` &&
-                        `bg-radar-primary`) ||
-                      `bg-radar-secondary`
+                        `${colorSchemePallette[settings.colorScheme][0]}`) ||
+                      `${colorSchemePallette[settings.colorScheme][1]}`
                     }
                   />
                 ))}
