@@ -17,6 +17,12 @@
 		return m_memory->read_t<std::string>(name_ptr); \
 	}
 
+#define SCHEMA_ADD_ARRAY(arrtype, arrsize, name, field) \
+	inline std::array<arrtype, arrsize> name() \
+	{ \
+		return m_memory->read_t<std::array<arrtype, arrsize>>(reinterpret_cast<DWORD64>(this) + schema::get_offset(fnv1a::hash_const(field))); \
+	}
+
 #define SCHEMA_ADD_OFFSET(type, name, offset) \
 	inline type name() \
 	{ \

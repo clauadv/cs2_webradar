@@ -13,13 +13,29 @@ namespace f::bomb
 	void get_planted_bomb(c_planted_c4* planted_c4);
 }
 
+namespace f::dropped_weapons
+{
+	bool is_weapon(std::string weapon_name);
+	void get_weapon(c_base_entity* weapon);
+}
+
+namespace f::grenades
+{
+	void get_smoke(c_smoke_grenade* smoke);
+	void get_molo(c_molo_grenade* molo);
+	void get_thrown(c_base_grenade* nade, std::string designer_name);
+}
+
 namespace f
 {
-	void run();
+	bool run();
 	void get_map();
 	void get_player_info();
 
 	inline nlohmann::json m_data = {};
 	inline nlohmann::json m_player_data = {};
+	inline nlohmann::json m_grenade_data = {};
+	inline nlohmann::json m_grenade_thrown_data = {};
+	inline nlohmann::json m_dropped_weapon_data = {};
 	inline uint32_t m_bomb_idx = 0;
 }

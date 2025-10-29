@@ -1,18 +1,23 @@
-#include "pch.hpp"
+﻿#include "pch.hpp"
 
-void f::run()
+
+bool f::run()
 {
 	const auto local_team = sdk::m_local_controller->m_iTeamNum();
 	if (local_team == e_team::none || local_team == e_team::spec)
-		return;
+		return false;
 
 	m_data = nlohmann::json{};
 	m_player_data = nlohmann::json{};
+	m_grenade_data = nlohmann::json{};
+	m_grenade_thrown_data = nlohmann::json{};
+	m_dropped_weapon_data = nlohmann::json{};
 
 	m_data["m_local_team"] = local_team;
 
 	get_map();
 	get_player_info();
+	return true;
 }
 
 void f::get_map()
@@ -32,6 +37,9 @@ void f::get_map()
 void f::get_player_info()
 {
 	m_data["m_players"] = nlohmann::json::array();
+	m_data["m_grenades"]["landed"] = nlohmann::json::array();
+	m_data["m_grenades"]["thrown"] = nlohmann::json::array();
+	m_data["m_dropped_weapons"] = nlohmann::json::array();
 
 	const auto highest_idx = 1024;
 	for (int32_t idx = 0; idx < highest_idx; idx++)
@@ -49,6 +57,8 @@ void f::get_player_info()
 			continue;
 
 		const auto hashed_class_name = fnv1a::hash(class_name);
+
+		std::string designer_name = entity->m_pEntity()->m_designerName();
 
 		if (hashed_class_name == fnv1a::hash("CCSPlayerController"))
 		{
@@ -77,6 +87,70 @@ void f::get_player_info()
 		{
 			const auto planted_c4 = reinterpret_cast<c_planted_c4*>(entity);
 			f::bomb::get_planted_bomb(planted_c4);
+		}
+		else if (hashed_class_name == fnv1a::hash("C_SmokeGrenadeProjectile")) {
+
+			m_grenade_data = {};
+			m_grenade_thrown_data = {};
+
+			const auto smoke = reinterpret_cast<c_smoke_grenade*>(entity);
+			f::grenades::get_smoke(smoke);
+
+			if (m_grenade_data.empty()) {
+				f::grenades::get_thrown(reinterpret_cast<c_base_grenade*>(entity), designer_name);
+
+				if (!m_grenade_thrown_data.empty()) {
+
+					m_grenade_thrown_data["m_idx"] = idx;
+					m_data["m_grenades"]["thrown"].push_back(m_grenade_thrown_data);
+
+				}
+				
+				continue;
+			}
+
+			m_data["m_grenades"]["landed"].push_back(m_grenade_data);
+		}
+		else if (hashed_class_name == fnv1a::hash("C_Inferno")) {
+
+			m_grenade_data = {};
+
+			const auto molo = reinterpret_cast<c_molo_grenade*>(entity);
+			f::grenades::get_molo(molo);
+
+			if (m_grenade_data.empty())
+				continue;
+
+			m_data["m_grenades"]["landed"].push_back(m_grenade_data);
+		}
+		else if (hashed_class_name == fnv1a::hash("C_HEGrenadeProjectile") || hashed_class_name == fnv1a::hash("C_FlashbangProjectile") || hashed_class_name == fnv1a::hash("C_DecoyProjectile") || hashed_class_name == fnv1a::hash("C_MolotovProjectile"))
+		{
+			m_grenade_thrown_data = {};
+
+			f::grenades::get_thrown(reinterpret_cast<c_base_grenade*>(entity), designer_name);
+
+			if (m_grenade_thrown_data.empty())
+				continue;
+
+			m_grenade_thrown_data["m_idx"] = idx;
+
+			m_data["m_grenades"]["thrown"].push_back(m_grenade_thrown_data);
+		}
+		else if (!designer_name.empty()) {
+			if (f::dropped_weapons::is_weapon(designer_name)) {
+
+				m_dropped_weapon_data = {};
+
+				const auto weapon = reinterpret_cast<c_base_entity*>(entity);
+				f::dropped_weapons::get_weapon(weapon);
+
+				if (m_dropped_weapon_data.empty())
+					continue;
+
+				m_dropped_weapon_data["m_idx"] = idx;
+
+				m_data["m_dropped_weapons"].push_back(m_dropped_weapon_data);
+			}
 		}
 	}
 }

@@ -56,14 +56,19 @@ bool main()
 
     const auto formatted_address = std::format("ws://{}:22006/cs2_webradar", ipv4_address);
     static auto web_socket = easywsclient::WebSocket::from_url(formatted_address);
-    if (!web_socket)
-    {
-        LOG_ERROR("failed to connect to the web socket ('%s')", formatted_address.c_str());
-        return {};
+
+    while (!web_socket) {
+        web_socket = easywsclient::WebSocket::from_url(formatted_address);
+        if (!web_socket)
+        {
+            LOG_ERROR("failed to connect to the web socket ('%s'), please press ENTER to try again...", formatted_address.c_str());
+            std::cin.ignore();
+        }
     }
     LOG_INFO("connected to the web socket ('%s')", formatted_address.data());
 
     auto start = std::chrono::system_clock::now();
+    bool in_match = false;
 
     for (;;)
     {
@@ -74,8 +79,10 @@ bool main()
             start = now;
 
             sdk::update();
-            f::run();
-
+            in_match = f::run();
+            if (!in_match) {
+                f::m_data["m_map"] = "invalid";
+            }
             web_socket->send(f::m_data.dump());
         }
 

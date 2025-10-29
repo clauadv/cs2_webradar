@@ -19,6 +19,7 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 	m_player_data["m_armor"] = player_pawn->m_ArmorValue();
 	m_player_data["m_position"]["x"] = vec_origin.m_x;
 	m_player_data["m_position"]["y"] = vec_origin.m_y;
+	m_player_data["m_position"]["z"] = vec_origin.m_z;
 	m_player_data["m_eye_angle"] = player_pawn->m_angEyeAngles().m_y;
 	m_player_data["m_has_helmet"] = player_pawn->m_pItemServices()->m_bHasHelmet();
 	m_player_data["m_has_defuser"] = player_pawn->m_pItemServices()->m_bHasDefuser();

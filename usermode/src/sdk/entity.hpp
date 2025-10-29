@@ -47,7 +47,7 @@ class c_entity_identity
 public:
 	SCHEMA_ADD_OFFSET(uintptr_t, m_pClassInfo, 0x08);
 	SCHEMA_ADD_OFFSET(uint32_t, m_Idx, 0x10);
-	SCHEMA_ADD_FIELD(const char*, m_designerName, "CEntityIdentity->m_designerName");
+	SCHEMA_ADD_STRING(m_designerName, "CEntityIdentity->m_designerName");
 	SCHEMA_ADD_FIELD(uint32_t, m_flags, "CEntityIdentity->m_flags");
 
 	bool is_valid()
@@ -82,6 +82,7 @@ class c_game_scene_node
 {
 public:
 	SCHEMA_ADD_FIELD(f_vector, m_vecAbsOrigin, "CGameSceneNode->m_vecAbsOrigin");
+	SCHEMA_ADD_FIELD(f_vector, m_vecOrigin, "CGameSceneNode->m_vecOrigin");
 };
 
 class c_base_entity : public c_entity_instance
@@ -91,7 +92,6 @@ public:
 	SCHEMA_ADD_FIELD(int32_t, m_iHealth, "C_BaseEntity->m_iHealth");
 	SCHEMA_ADD_FIELD(e_team, m_iTeamNum, "C_BaseEntity->m_iTeamNum");
 	SCHEMA_ADD_FIELD(c_base_entity*, m_hOwnerEntity, "C_BaseEntity->m_hOwnerEntity");
-
 	const f_vector& get_scene_origin();
 };
 
@@ -175,4 +175,26 @@ public:
 	SCHEMA_ADD_FIELD_OFFSET(c_cs_weapon_base_v_data*, m_WeaponData, "C_BaseEntity->m_nSubclassID", 0x08);
 
 	c_base_player_weapon* get(const int32_t idx);
+};
+
+class c_smoke_grenade : public c_base_entity
+{
+public:
+	SCHEMA_ADD_FIELD(int, m_nSmokeEffectTickBegin, "C_SmokeGrenadeProjectile->m_nSmokeEffectTickBegin");
+	SCHEMA_ADD_FIELD(f_vector, m_vSmokeDetonationPos, "C_SmokeGrenadeProjectile->m_vSmokeDetonationPos");
+};
+
+class c_molo_grenade : public c_base_entity
+{
+public:
+	SCHEMA_ADD_ARRAY(bool, 64, m_bFireIsBurning, "C_Inferno->m_bFireIsBurning");
+	SCHEMA_ADD_ARRAY(f_vector, 64, m_firePositions, "C_Inferno->m_firePositions");
+	SCHEMA_ADD_FIELD(int, m_fireCount, "C_Inferno->m_fireCount");
+	SCHEMA_ADD_FIELD(int, m_nFireEffectTickBegin, "C_Inferno->m_nFireEffectTickBegin");
+};
+
+class c_base_grenade : public c_base_entity
+{
+public:
+	SCHEMA_ADD_FIELD_OFFSET(c_cs_weapon_base_v_data*, m_WeaponData, "C_BaseEntity->m_nSubclassID", 0x08);
 };

@@ -10,6 +10,8 @@ void f::bomb::get_carried_bomb(c_base_entity* bomb)
 
 	m_data["m_bomb"]["x"] = scene_origin.m_x;
 	m_data["m_bomb"]["y"] = scene_origin.m_y;
+	m_data["m_bomb"]["owner_entity"] = reinterpret_cast<uintptr_t>(bomb->m_hOwnerEntity());
+
 }
 
 void f::bomb::get_planted_bomb(c_planted_c4* planted_c4)
