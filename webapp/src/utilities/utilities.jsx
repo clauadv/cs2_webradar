@@ -101,6 +101,10 @@ export const teamEnum = {
 };
 
 export const colorSchemePallette = {
+  undefined: [
+    "#b1d0e7",
+    "#6492b4"
+  ],
   "default": [
     "#b1d0e7",
     "#6492b4"

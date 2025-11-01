@@ -41,11 +41,13 @@ const DEFAULT_SETTINGS = {
   thrownGrenadeColor: "#FF0000",
   whichPlayerAreYou: "0",
   colorScheme: "default",
+  settings_version: "1.0"
 };
 
 const loadSettings = () => {
   const savedSettings = localStorage.getItem("radarSettings");
-  return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
+  let parsedSettings = JSON.parse(savedSettings);
+  return (savedSettings && parsedSettings.settings_version && parsedSettings.settings_version == DEFAULT_SETTINGS.settings_version) ? parsedSettings : DEFAULT_SETTINGS;
 };
 
 const PlayerSelectionModal = ({ players, onSelect, localTeam }) => {
@@ -206,7 +208,7 @@ const App = () => {
             />
         )}
 
-      <div className={`w-full h-full flex flex-col justify-center overflow-hidden relative`}>
+      <div className={`w-full h-full flex flex-col justify-center overflow-hidden relative`} style={{transform: "rotate(0deg)"}}>
         {bombData && bombData.m_blow_time > 0 && !bombData.m_is_defused && (
           <div className={`absolute left-1/2 top-2 flex-col items-center gap-1 z-50`}>
             <div className={`flex justify-center items-center gap-1`}>
@@ -251,17 +253,19 @@ const App = () => {
           </ul>
 
           {(playerArray && playerArray.length > 0 && mapData && mapData.name !== "invalid" && settings.whichPlayerAreYou && (
-            <Radar
-              playerArray={playerArray}
-              radarImage={(tempPlayer_ && tempPlayer_.m_position.z < -490 && mapData.name == "de_nuke" ? `./data/${mapData.name}/radar_lower.png` : `./data/${mapData.name}/radar.png`)}
-              mapData={mapData}
-              localTeam={localTeam}
-              averageLatency={averageLatency}
-              bombData={bombData}
-              settings={settings}
-              grenadeData={grenadeData}
-              droppedWeaponsData={droppedWeaponsData}
-            />
+            <div style={{transform: "scale(1)"}}>
+              <Radar
+                playerArray={playerArray}
+                radarImage={(tempPlayer_ && tempPlayer_.m_position.z < -490 && mapData.name == "de_nuke" ? `./data/${mapData.name}/radar_lower.png` : `./data/${mapData.name}/radar.png`)}
+                mapData={mapData}
+                localTeam={localTeam}
+                averageLatency={averageLatency}
+                bombData={bombData}
+                settings={settings}
+                grenadeData={grenadeData}
+                droppedWeaponsData={droppedWeaponsData}
+              />
+            </div>
           )) || (
               <div id="radar" className={`relative overflow-hidden origin-center`}>
                 <h1 className="radar_message">
