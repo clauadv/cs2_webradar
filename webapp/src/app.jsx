@@ -36,6 +36,7 @@ const App = () => {
   const [mapData, setMapData] = useState();
   const [localTeam, setLocalTeam] = useState();
   const [bombData, setBombData] = useState();
+  const [nades, setNades] = useState([]);
   const [settings, setSettings] = useState(loadSettings());
   const [bannerOpened, setBannerOpened] = useState(true)
 
@@ -103,6 +104,7 @@ const App = () => {
         setPlayerArray(parsedData.m_players);
         setLocalTeam(parsedData.m_local_team);
         setBombData(parsedData.m_bomb);
+        setNades(parsedData.m_grenades || []);
 
         const map = parsedData.m_map;
         if (map !== "invalid") {
@@ -163,57 +165,23 @@ const App = () => {
           </div>
         )}
 
-        <div className={`flex items-center justify-evenly`}>
-          <Latency
-            value={averageLatency}
-            settings={settings}
-            setSettings={setSettings}
-          />
+        <div className="flex items-center justify-evenly w-full h-full">
+          <Latency value={averageLatency} settings={settings} setSettings={setSettings} />
 
-          <ul id="terrorist" className="lg:flex hidden flex-col gap-7 m-0 p-0">
-            {playerArray
-              .filter((player) => player.m_team == 2)
-              .map((player) => (
-                <PlayerCard
-                  right={false}
-                  key={player.m_idx}
-                  playerData={player}
-                />
-              ))}
+          <ul id="terrorist" className="lg:flex hidden flex-col gap-3 overflow-y-auto max-h-[80vh] p-0 m-0">
+            {playerArray.filter((p) => p.m_team == 2).map((p) => <PlayerCard key={p.m_idx} playerData={p} localTeam={localTeam} />)}
           </ul>
 
           {(playerArray.length > 0 && mapData && (
-            <Radar
-              playerArray={playerArray}
-              radarImage={`./data/${mapData.name}/radar.png`}
-              mapData={mapData}
-              localTeam={localTeam}
-              averageLatency={averageLatency}
-              bombData={bombData}
-              settings={settings}
-            />
+            <Radar playerArray={playerArray} radarImage={`./data/${mapData.name}/radar.png`} mapData={mapData} localTeam={localTeam} averageLatency={averageLatency} bombData={bombData} nades={nades} settings={settings} />
           )) || (
-              <div id="radar" className={`relative overflow-hidden origin-center`}>
-                <h1 className="radar_message">
-                  Connected! Waiting for data from usermode
-                </h1>
-              </div>
-            )}
+            <div id="radar" className="relative overflow-hidden origin-center">
+              <h1 className="radar_message">Connected! Waiting for data from usermode</h1>
+            </div>
+          )}
 
-          <ul
-            id="counterTerrorist"
-            className="lg:flex hidden flex-col gap-7 m-0 p-0"
-          >
-            {playerArray
-              .filter((player) => player.m_team == 3)
-              .map((player) => (
-                <PlayerCard
-                  right={true}
-                  key={player.m_idx}
-                  playerData={player}
-                  settings={settings}
-                />
-              ))}
+          <ul id="counterTerrorist" className="lg:flex hidden flex-col gap-3 overflow-y-auto max-h-[80vh] p-0 m-0">
+            {playerArray.filter((p) => p.m_team == 3).map((p) => <PlayerCard right={true} key={p.m_idx} playerData={p} settings={settings} />)}
           </ul>
         </div>
       </div>

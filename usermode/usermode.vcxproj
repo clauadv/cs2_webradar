@@ -65,6 +65,7 @@
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\features\bomb\bomb.cpp" />
     <ClCompile Include="src\features\features.cpp" />
+    <ClCompile Include="src\features\grenades\grenades.cpp" />
     <ClCompile Include="src\features\players\players.cpp" />
     <ClCompile Include="src\sdk\entity.cpp" />
     <ClCompile Include="src\utils\address.cpp" />

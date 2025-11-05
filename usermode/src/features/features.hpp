@@ -13,6 +13,11 @@ namespace f::bomb
 	void get_planted_bomb(c_planted_c4* planted_c4);
 }
 
+namespace f::nades
+{
+	void add(c_base_entity* e, const std::string& t);
+}
+
 namespace f
 {
 	void run();

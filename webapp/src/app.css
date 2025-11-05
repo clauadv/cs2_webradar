@@ -33,3 +33,27 @@ body {
 .banner-link:hover {
   box-shadow: 0px 2.5px 0 0 #1E3A54;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(20, 40, 55, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 146, 180, 0.5);
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 146, 180, 0.8);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 146, 180, 0.5) rgba(20, 40, 55, 0.3);
+}
