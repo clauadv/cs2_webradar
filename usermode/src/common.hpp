@@ -16,14 +16,44 @@
 
 /* custom defines */
 #define LOG_INFO(str, ...) \
-    printf(" [info] " str "\n", __VA_ARGS__)
+    { \
+        FILE* log = fopen("WR_Log.txt", "a+"); \
+        if (log) { \
+            fprintf(log, "[INFO] " str "\n", __VA_ARGS__); \
+            fclose(log); \
+        } \
+    }
 
 #define LOG_WARNING(str, ...) \
-    printf(" [warning] " str "\n", __VA_ARGS__)
+    { \
+        FILE* log = fopen("WR_Log.txt", "a+"); \
+        if (log) { \
+        fprintf(log, "[WARNING] " str "\n", __VA_ARGS__); \
+        fclose(log); \
+        } \
+    }
 
 #define LOG_ERROR(str, ...) \
     { \
         const auto filename = std::filesystem::path(__FILE__).filename().string(); \
-        printf(" [error] [%s:%d] " str "\n", filename.c_str(), __LINE__, __VA_ARGS__); \
-        std::this_thread::sleep_for(std::chrono::seconds(5)); \
+        FILE* log = fopen("WR_Log.txt", "a+"); \
+        if (log) { \
+        fprintf(log, "[ERROR] [%s:%d] " str "\n", filename.c_str(), __LINE__, __VA_ARGS__); \
+        fclose(log); \
+        } \
     }
+
+#define LOG_CLEAR() \
+    { \
+        FILE* log = fopen("WR_Log.txt", "w+"); \
+        if (log) { \
+            fclose(log); \
+        } \
+    }
+
+#define SLEEP(sec) \
+    { \
+        auto wait_to = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) + sec; \
+        while (wait_to >= std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}; \
+    }
+    

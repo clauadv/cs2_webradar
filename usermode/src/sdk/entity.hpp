@@ -122,6 +122,7 @@ class c_cs_player_pawn : public c_base_player_pawn
 public:
 	SCHEMA_ADD_FIELD(int32_t, m_ArmorValue, "C_CSPlayerPawn->m_ArmorValue");
 	SCHEMA_ADD_FIELD(f_vector, m_angEyeAngles, "C_CSPlayerPawn->m_angEyeAngles");
+	SCHEMA_ADD_FIELD(float, m_flFlashOverlayAlpha, "C_CSPlayerPawnBase->m_flFlashOverlayAlpha");
 
 	const std::string get_model_name();
 };

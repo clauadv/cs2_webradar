@@ -24,6 +24,7 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 	m_player_data["m_has_helmet"] = player_pawn->m_pItemServices()->m_bHasHelmet();
 	m_player_data["m_has_defuser"] = player_pawn->m_pItemServices()->m_bHasDefuser();
 	m_player_data["m_weapons"] = nlohmann::json{};
+	m_player_data["m_flashed"] = player_pawn->m_flFlashOverlayAlpha();
 
 	if (team == e_team::t && !is_dead)
 		m_player_data["m_has_bomb"] = m_bomb_idx == (player->m_hPawn().get_entry_idx() & 0xffff);

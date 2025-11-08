@@ -11,5 +11,5 @@ struct config_data_t
 
 namespace cfg
 {
-	bool setup(config_data_t& config_data);
+	int setup(config_data_t& config_data);
 }

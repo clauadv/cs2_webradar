@@ -1,5 +1,7 @@
 {
 	"x": -3453,
 	"y": 2887,
-	"scale": 7 
+	"scale": 7,
+	"leveling": true,
+	"level_change": -490
 }

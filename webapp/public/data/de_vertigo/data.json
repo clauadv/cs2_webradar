@@ -2,5 +2,7 @@
 	"x": -3168,	
 	"y": 1762,
 	"scale": 4.0,
-	"value": 11701
+	"value": 11701,
+	"leveling": true,
+	"level_change": 11635
 }

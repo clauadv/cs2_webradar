@@ -27,9 +27,8 @@ public:
 			CloseHandle(this->m_handle);
 	}
 
-	bool setup();
+	int setup();
 	std::optional<uint32_t> get_process_id(const std::string_view& process_name);
-	std::optional<void*> hijack_handle();
 	std::optional<c_address> find_pattern(const std::string_view& module_name, const std::string_view& pattern);
 	std::pair<std::optional<uintptr_t>, std::optional<uintptr_t>> get_module_info(const std::string_view& module_name);
 	bool is_anticheat_running();

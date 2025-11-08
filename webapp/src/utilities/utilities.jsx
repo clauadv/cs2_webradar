@@ -1,6 +1,5 @@
-export const getRadarPosition = (mapData, entityCoords, nade) => {
-  const isNade = nade || false;
-  const divide = isNade ? 1040 : 1024;
+export const getRadarPosition = (mapData, entityCoords) => {
+  const divide = 1024;
 
   if (!entityCoords.x || !entityCoords.y) {
     return { x: 0, y: 0 };

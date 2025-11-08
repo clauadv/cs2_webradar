@@ -3,6 +3,7 @@ import Player from "./player";
 import Bomb from "./bomb";
 import Grenade from "./grenade";
 import DroppedWeapon from "./droppedweapons";
+import Draggable from 'react-draggable'
 
 const Radar = ({
   playerArray,
@@ -19,7 +20,8 @@ const Radar = ({
 
   return (
     <div id="radar" className={`relative overflow-hidden origin-center`}>
-      <img ref={radarImageRef} className={`w-full h-auto`} src={radarImage} />
+
+      <img ref={radarImageRef} className={`w-full h-auto`} src={radarImage} draggable={false}/>
 
       {playerArray.map((player) => (
         <Player

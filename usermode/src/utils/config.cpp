@@ -1,27 +1,25 @@
 #include "pch.hpp"
 
-bool cfg::setup(config_data_t& config_data)
+int cfg::setup(config_data_t& config_data)
 {
 	std::ifstream file("config.json");
 	if (!file.is_open())
 	{
-		LOG_WARNING("cannot open file 'config.json'");
-
 		std::ofstream example_config("config.json");
 		example_config << std::format("{}", R"({
     "m_use_localhost": true,
     "m_local_ip": "192.168.x.x",
     "m_public_ip": "x.x.x.x"
 })");
-
-		return {};
+		LOG_WARNING("Couldn't open config.json file, please check files and configure it.");
+		return 1;
 	}
 
 	const auto parsed_data = nlohmann::json::parse(file);
 	if (parsed_data.empty())
 	{
-		LOG_ERROR("failed to parse 'config.json'");
-		return {};
+		LOG_WARNING("Failed to parse config.json, please check syntax.");
+		return 2;
 	}
 
 	try
@@ -30,9 +28,9 @@ bool cfg::setup(config_data_t& config_data)
 	}
 	catch (const std::exception& e)
 	{
-		LOG_ERROR("failed to deserialize 'config_data_t' (%s)", e.what());
-		return {};
+		LOG_WARNING("Failed to deserialize config.json.");
+		return 3;
 	}
 
-	return true;
+	return 0;
 }

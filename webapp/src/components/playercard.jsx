@@ -48,11 +48,23 @@ const PlayerCard = ({ playerData, isOnRightSide, settings }) => {
               } transparent transparent transparent`,
             }}
           ></div> */}
+          <div className="flex">
           <img
             className={`h-[8rem] ${isOnRightSide && `scale-x-[-1]`}`}
             src={`./assets/characters/${modelName}.png`}
             style={{backgroundColor:playerColors[playerData.m_color], borderRadius:'30px'}}
           ></img>
+          <img
+            className={`h-[8rem] absolute ${isOnRightSide && `scale-x-[-1]`}`}
+            src={`./assets/icons/blind.png`}
+            style={{
+              backgroundColor:playerColors[playerData.m_color], 
+              borderRadius:'30px', 
+              transition: `opacity 100ms linear`,
+              opacity:`${playerData.m_flashed}`}}
+          ></img>
+          </div>
+
         </div>
 
       </div>

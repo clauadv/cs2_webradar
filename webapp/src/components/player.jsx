@@ -45,8 +45,8 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
   const effectivePosition = playerData.m_is_dead ? lastKnownPosition || { x: 0, y: 0 } : radarPosition;
 
   const radarImageTranslation = {
-    x: radarImageBounding.width * effectivePosition.x - playerBounding.width * 0.5,
-    y: radarImageBounding.height * effectivePosition.y - playerBounding.height * 0.5,
+    x: (radarImageBounding.width * effectivePosition.x - playerBounding.width * 0.5),
+    y: (radarImageBounding.height * effectivePosition.y - playerBounding.height * 0.5),
   };
 
   return (
@@ -106,9 +106,9 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
           />
         )}
       </div>
-      {(mapData.name === "de_nuke" && !playerData.m_is_dead) && (
-        <img id="nuke_level_indicator"
-          src={playerData.m_position.z < -490 ? `./assets/icons/down.png` : `./assets/icons/up.png`}
+      {(mapData.leveling && !playerData.m_is_dead) && (
+        <img id="level_indicator"
+          src={playerData.m_position.z < mapData.level_change ? `./assets/icons/down.png` : `./assets/icons/up.png`}
         />
       )}
     </div>

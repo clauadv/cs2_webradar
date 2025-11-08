@@ -256,7 +256,7 @@ const App = () => {
             <div style={{transform: "scale(1)"}}>
               <Radar
                 playerArray={playerArray}
-                radarImage={(tempPlayer_ && tempPlayer_.m_position.z < -490 && mapData.name == "de_nuke" ? `./data/${mapData.name}/radar_lower.png` : `./data/${mapData.name}/radar.png`)}
+                radarImage={(tempPlayer_ && (mapData.leveling && tempPlayer_.m_position.z < mapData.level_change) ? `./data/${mapData.name}/radar_lower.png` : `./data/${mapData.name}/radar.png`)}
                 mapData={mapData}
                 localTeam={localTeam}
                 averageLatency={averageLatency}

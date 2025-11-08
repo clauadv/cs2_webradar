@@ -1,5 +1,4 @@
 #include "pch.hpp"
-
 std::string utils::get_ipv4_address(config_data_t& config_data)
 {
 	if (config_data.m_use_localhost)
