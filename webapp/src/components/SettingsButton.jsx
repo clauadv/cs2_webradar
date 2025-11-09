@@ -12,8 +12,6 @@ const SettingsButton = ({ settings, onSettingsChange }) => {
 
   document.addEventListener('mousedown',closeSettingsIfOpen)
 
-  console.log(window.innerHeight)
-
   return (
     <div className="z-50">
       {window.innerHeight>500 && (
