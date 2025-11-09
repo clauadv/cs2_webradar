@@ -28,6 +28,7 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
     radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
 
   let scaledSize = 0.7 * settings.dotSize;
+  if (window.innerHeight<=500) scaledSize+=2;
 
   if (settings.showOnlyEnemies && playerData.m_team === localTeam) { scaledSize = 0.0; if (settings.showAllNames) {settings.showAllNames = false;} }
 

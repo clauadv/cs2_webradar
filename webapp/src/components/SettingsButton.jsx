@@ -5,22 +5,27 @@ const SettingsButton = ({ settings, onSettingsChange }) => {
   const settingsMenu = useRef(null);
 
   const closeSettingsIfOpen = (e)=>{
-    if(isOpen && !settingsMenu.current?.contains(e.target)){
+    if(isOpen && !settingsMenu.current?.contains(e.target) && !settingsbut.contains(e.target)){
       setIsOpen(false)
     }
   }
 
   document.addEventListener('mousedown',closeSettingsIfOpen)
 
+  console.log(window.innerHeight)
+
   return (
     <div className="z-50">
+      {window.innerHeight>500 && (
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 transition-all rounded-xl"
+        id="settingsbut"
       >
         <img className={`w-[1.3rem]`} src={`./assets/icons/cog.svg`} />
         <span className="text-radar-primary">Settings</span>
       </button>
+      )}
 
       {isOpen && (
         <div className="absolute right-0 mt-2 bg-black bg-opacity-50 w-64 backdrop-blur-lg rounded-xl p-4 shadow-xl border border-radar-secondary/20" ref={settingsMenu}>
