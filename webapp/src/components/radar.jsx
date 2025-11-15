@@ -1,9 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import Draggable from "react-draggable"
 import Player from "./player";
 import Bomb from "./bomb";
 import Grenade from "./grenade";
 import DroppedWeapon from "./droppedweapons";
-import Draggable from 'react-draggable'
 
 const Radar = ({
   playerArray,
@@ -17,11 +17,20 @@ const Radar = ({
   droppedWeaponsData,
 }) => {
   const radarImageRef = useRef();
+  const [radarScale, setRadarScale] = useState(1);
+
+  const onScroll = (e) => {
+    const delta = e.deltaY * -0.001;
+    const newScale = radarScale + delta;
+    if (newScale>0.3&&newScale<4) setRadarScale(newScale)
+};
 
   return (
     <div id="radar" className={`relative overflow-hidden origin-center`}>
 
-      <img ref={radarImageRef} className={`w-full h-auto`} src={radarImage} draggable={false}/>
+      <Draggable>
+        <img onWheelCapture={onScroll} ref={radarImageRef} className={`w-full h-auto`} src={radarImage} draggable={false} style={{scale: `${radarScale}`, transition: "scale 150ms linear"}}/>
+      </Draggable>
 
       {playerArray.map((player) => (
         <Player
@@ -29,6 +38,7 @@ const Radar = ({
           playerData={player}
           mapData={mapData}
           radarImage={radarImageRef.current}
+          radarScale={radarScale}
           localTeam={localTeam}
           averageLatency={averageLatency}
           settings={settings}

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { getRadarPosition, teamEnum, colorSchemePallette, weaponList } from "../utilities/utilities";
+import { getRadarPosition, teamEnum, colorSchemePallette, weaponList, calculatePositionWithScale } from "../utilities/utilities";
 import MaskedIcon from "./maskedicon";
 
 const DroppedWeapon = ({ droppedWeaponData, mapData, settings, averageLatency, radarImage }) => {
@@ -9,11 +9,10 @@ const DroppedWeapon = ({ droppedWeaponData, mapData, settings, averageLatency, r
   const wepRef = useRef();
   const wepBounding = (wepRef.current &&
     wepRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
-  const radarImageBounding = (radarImage !== undefined &&
-    radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
+  const scaledPos = calculatePositionWithScale(radarImage, radarPosition);
   const radarImageTranslation = {
-    x: radarImageBounding.width * radarPosition.x - wepBounding.width * 0.5,
-    y: radarImageBounding.width * radarPosition.y - wepBounding.height * 0.5,
+    x: (scaledPos[0] - wepBounding.width * 0.5),
+    y: (scaledPos[1] - wepBounding.height * 0.5),
   };
 
 return (

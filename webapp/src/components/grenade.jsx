@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import GrenadeEffects from "./grenadeeffects.jsx";
-import { getRadarPosition, teamEnum } from "../utilities/utilities";
+import { getRadarPosition, teamEnum, calculatePositionWithScale } from "../utilities/utilities";
 import MaskedIcon from "./maskedicon.jsx";
 
 const Grenade = ({ grenadeData, mapData, settings, averageLatency, radarImage, type }) => {
@@ -12,11 +12,10 @@ const Grenade = ({ grenadeData, mapData, settings, averageLatency, radarImage, t
   const grenRef = useRef();
   const grenBounding = (grenRef.current &&
     grenRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
-  const radarImageBounding = (radarImage !== undefined &&
-    radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
+  const scaledPos = calculatePositionWithScale(radarImage, radarPosition);
   const radarImageTranslation = {
-    x: radarImageBounding.width * radarPosition.x - grenBounding.width * 0.5,
-    y: radarImageBounding.width * radarPosition.y - grenBounding.height * 0.5,
+    x: (scaledPos[0] - grenBounding.width * 0.5),
+    y: (scaledPos[1] - grenBounding.height * 0.5),
   };
 
   if(type == "landed") {

@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { getRadarPosition, playerColors } from "../utilities/utilities";
+import { getRadarPosition, playerColors, calculatePositionWithScale } from "../utilities/utilities";
 
 
 let playerRotations = [];
@@ -14,18 +14,15 @@ const calculatePlayerRotation = (playerData) => {
   return playerRotations[idx];
 };
 
-const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, settings }) => {
+
+const Player = ({ playerData, mapData, radarImage, radarScale, localTeam, averageLatency, settings }) => {
   const [lastKnownPosition, setLastKnownPosition] = useState(null);
   const radarPosition = getRadarPosition(mapData, playerData.m_position) || { x: 0, y: 0 };
   const invalidPosition = radarPosition.x <= 0 && radarPosition.y <= 0;
-
   const playerRef = useRef();
   const playerBounding = (playerRef.current &&
     playerRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
   const playerRotation = calculatePlayerRotation(playerData);
-
-  const radarImageBounding = (radarImage !== undefined &&
-    radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
 
   let scaledSize = 0.7 * settings.dotSize;
   if (window.innerHeight<=500) scaledSize+=2;
@@ -45,9 +42,10 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
 
   const effectivePosition = playerData.m_is_dead ? lastKnownPosition || { x: 0, y: 0 } : radarPosition;
 
+  const scaledPos = calculatePositionWithScale(radarImage, effectivePosition);
   const radarImageTranslation = {
-    x: (radarImageBounding.width * effectivePosition.x - playerBounding.width * 0.5),
-    y: (radarImageBounding.height * effectivePosition.y - playerBounding.height * 0.5),
+    x: (scaledPos[0] - playerBounding.width * 0.5),
+    y: (scaledPos[1] - playerBounding.height * 0.5),
   };
 
   return (

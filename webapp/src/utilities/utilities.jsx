@@ -17,6 +17,33 @@ export const getRadarPosition = (mapData, entityCoords) => {
   return position;
 };
 
+export const calculatePositionWithScale = (radarImage, radarPosition) => {
+  const radarImageBounding = (radarImage !== undefined &&
+  radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
+  let transformRadar = [0,0,0]
+  try {
+    let match = radarImage.style.transform.match(/translate\(([^,]+)px,\s*([^)]+)px\)/)
+    if (match) transformRadar = match;
+  } catch {}
+  let radarScale = 1;
+  try {
+    let scale = radarImage.style.scale;
+    if (scale) radarScale = scale;
+  } catch {}
+
+  const unscaledWidth = radarImageBounding.width / radarScale;
+  const unscaledHeight = radarImageBounding.height / radarScale;
+  const centerX = unscaledWidth / 2;
+  const centerY = unscaledHeight / 2;
+  
+  const posX = unscaledWidth * radarPosition.x + Number(transformRadar[1]);
+  const posY = unscaledHeight * radarPosition.y + Number(transformRadar[2]);
+  
+  const scaledPosX = centerX + (posX - centerX) * radarScale;
+  const scaledPosY = centerY + (posY - centerY) * radarScale;
+  return [scaledPosX, scaledPosY]
+}
+
 export const playerColors = [
   // blue
   "#84c8ed",

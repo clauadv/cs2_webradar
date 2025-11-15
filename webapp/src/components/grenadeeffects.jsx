@@ -1,24 +1,25 @@
 import { useRef } from "react";
-import { getRadarPosition, teamEnum } from "../utilities/utilities";
+import { getRadarPosition, teamEnum, calculatePositionWithScale } from "../utilities/utilities";
 
 const GrenadeEffects = ({ grenadeData, type, mapData, settings, averageLatency, radarImage }) => {
 
-    const smokeSize = 3;
-    const fireSize = 1.3;
+    let radarScale = 1; try { let scale = radarImage.style.scale; if (scale) radarScale = scale;} catch {}
+
+    const smokeSize = 3 * radarScale;
+    const fireSize = 1.3 * radarScale;
     const radarPosition = getRadarPosition(mapData, { x: grenadeData.m_x, y: grenadeData.m_y });
 
     const grenRef = useRef();
     const grenBounding = (grenRef.current &&
       grenRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
 
-    const radarImageBounding = (radarImage !== undefined &&
-      radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
+    const scaledPos = calculatePositionWithScale(radarImage, radarPosition);
+    const radarImageTranslation = {
+      x: (scaledPos[0] - grenBounding.width * 0.5),
+      y: (scaledPos[1] - grenBounding.height * 0.5),
+    };
 
   if (type == "smoke") {
-    const radarImageTranslation = {
-      x: radarImageBounding.width * radarPosition.x - grenBounding.width * 0.5,
-      y: radarImageBounding.width * radarPosition.y - grenBounding.height * 0.5,
-    };
     return (
         <div 
         ref={grenRef}
@@ -52,10 +53,6 @@ const GrenadeEffects = ({ grenadeData, type, mapData, settings, averageLatency, 
         </div>
     );
   } else if (type == "molo") {
-    const radarImageTranslation = {
-      x: radarImageBounding.width * radarPosition.x - grenBounding.width * 0.5,
-      y: radarImageBounding.width * radarPosition.y - grenBounding.height * 0.5,
-    };
     return ( 
       <div
         ref={grenRef}

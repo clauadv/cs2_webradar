@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { getRadarPosition, teamEnum } from "../utilities/utilities";
+import { getRadarPosition, teamEnum, calculatePositionWithScale } from "../utilities/utilities";
 
 const Bomb = ({ bombData, mapData, radarImage, localTeam, averageLatency, settings }) => {
   const radarPosition = getRadarPosition(mapData, bombData);
@@ -8,12 +8,11 @@ const Bomb = ({ bombData, mapData, radarImage, localTeam, averageLatency, settin
   const bombBounding = (bombRef.current &&
     bombRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
 
-  const radarImageBounding = (radarImage !== undefined &&
-    radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
-  const radarImageTranslation = {
-    x: radarImageBounding.width * radarPosition.x - bombBounding.width * 0.5,
-    y: radarImageBounding.height * radarPosition.y - bombBounding.height * 0.5,
-  };
+  const scaledPos = calculatePositionWithScale(radarImage, radarPosition);
+    const radarImageTranslation = {
+      x: (scaledPos[0] - bombBounding.width * 0.5),
+      y: (scaledPos[1] - bombBounding.height * 0.5),
+    };
 
   // Calculate bomb size based on settings
   const baseSize = 1.5; // Base size in vw
