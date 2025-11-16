@@ -14,9 +14,11 @@ const PlayerCard = ({ playerData, isOnRightSide, settings }) => {
   }
 
   useEffect(() => {
-    if (playerData.m_model_name)
+    if (playerData.m_model_name&&!playerData.m_is_dead)
       setModelName(playerData.m_model_name);
-  }, [playerData.m_model_name]);
+    else
+      setModelName("cs_observer");
+  }, [playerData.m_model_name, playerData.m_is_dead]);
 
   return (
     <li

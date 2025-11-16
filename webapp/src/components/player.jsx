@@ -23,13 +23,16 @@ const Player = ({ playerData, mapData, radarImage, radarScale, localTeam, averag
   const playerBounding = (playerRef.current &&
     playerRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
   const playerRotation = calculatePlayerRotation(playerData);
+  const [scaledSize, setScaledSize] = useState(0.7 * settings.dotSize);
 
-  let scaledSize = 0.7 * settings.dotSize;
-  if (window.innerHeight<=500) scaledSize+=2;
+  useEffect(() => {
+    if (window.innerHeight<=500) setScaledSize(0.7 * settings.dotSize+1.5); else setScaledSize(0.7 * settings.dotSize);
+  }, [window.innerHeight])
 
-  if (settings.showOnlyEnemies && playerData.m_team === localTeam) { scaledSize = 0.0; if (settings.showAllNames) {settings.showAllNames = false;} }
-
-  // Store the last known position when the player dies
+  useEffect(() => {
+    if (settings.showOnlyEnemies && playerData.m_team === localTeam) { setScaledSize(0.0); if (settings.showAllNames) {settings.showAllNames = false;} } else { setScaledSize(0.7 * settings.dotSize) }
+  }, [settings.showOnlyEnemies])
+  
   useEffect(() => {
     if (playerData.m_is_dead) {
       if (!lastKnownPosition) {
@@ -38,7 +41,7 @@ const Player = ({ playerData, mapData, radarImage, radarScale, localTeam, averag
     } else {
       setLastKnownPosition(null);
     }
-  }, [playerData.m_is_dead, radarPosition, lastKnownPosition]);
+  }, [playerData.m_is_dead, radarPosition]);
 
   const effectivePosition = playerData.m_is_dead ? lastKnownPosition || { x: 0, y: 0 } : radarPosition;
 

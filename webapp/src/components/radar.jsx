@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import Draggable from "react-draggable"
+import Draggable from "./Draggable"
 import Player from "./player";
 import Bomb from "./bomb";
 import Grenade from "./grenade";
@@ -28,7 +28,9 @@ const Radar = ({
   return (
     <div id="radar" className={`relative overflow-hidden origin-center`}>
 
-      <Draggable>
+      <Draggable
+      imgref={radarImageRef.current}
+      >
         <img onWheelCapture={onScroll} ref={radarImageRef} className={`w-full h-auto`} src={radarImage} draggable={false} style={{scale: `${radarScale}`, transition: "scale 150ms linear"}}/>
       </Draggable>
 

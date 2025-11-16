@@ -26,13 +26,13 @@ const SettingsButton = ({ settings, onSettingsChange }) => {
       )}
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 bg-black bg-opacity-50 w-64 backdrop-blur-lg rounded-xl p-4 shadow-xl border border-radar-secondary/20" ref={settingsMenu}>
+        <div className="absolute right-0 mt-2 bg-black bg-opacity-80 w-64 backdrop-blur-lg rounded-xl p-4 shadow-xl border border-radar-secondary/20" ref={settingsMenu}>
           <h3 className="text-radar-primary text-lg font-semibold mb-4">Radar Settings</h3>
 
           <div className="space-y-3">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-radar-secondary text-sm">Dot Size</span>
+                <span className="text-radar-secondary text-sm">Player Dot Size</span>
                 <span className="text-radar-primary text-sm font-mono">{settings.dotSize}x</span>
               </div>
               <input
