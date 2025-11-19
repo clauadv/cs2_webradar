@@ -44,6 +44,37 @@ export const calculatePositionWithScale = (radarImage, radarPosition) => {
   return [scaledPosX, scaledPosY]
 }
 
+export const calculateMapOffsetForCentering = (playerPosition, radarImage, mapData) => {
+    if (!playerPosition || !radarImage) {
+        return { x: 0, y: 0 };
+    }
+
+    const radarPosition = getRadarPosition(mapData, playerPosition) || { x: 0, y: 0 };
+    let radarScale = 1;
+    if (radarImage) radarScale = radarImage.style.scale;
+
+    if (!radarPosition) {
+        return { x: 0, y: 0 };
+    }
+    
+    const radarImageBounding = (radarImage !== undefined &&
+    radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
+
+    const unscaledWidth = radarImageBounding.width / radarScale;
+    const unscaledHeight = radarImageBounding.height / radarScale;
+
+    const playerXOnMap = unscaledWidth * radarPosition.x
+    const playerYOnMap = unscaledHeight * radarPosition.y
+
+    const centerX = radarImage.width/2;
+    const centerY = radarImage.height/2;
+
+    const offsetX = centerX - playerXOnMap;
+    const offsetY = centerY - playerYOnMap;
+
+    return { x: offsetX, y: offsetY };
+};
+
 export const playerColors = [
   // blue
   "#84c8ed",

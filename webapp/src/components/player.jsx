@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { getRadarPosition, playerColors, calculatePositionWithScale } from "../utilities/utilities";
-
+import { getRadarPosition, playerColors, calculatePositionWithScale, calculateMapOffsetForCentering } from "../utilities/utilities";
 
 let playerRotations = [];
 const calculatePlayerRotation = (playerData) => {
@@ -14,8 +13,7 @@ const calculatePlayerRotation = (playerData) => {
   return playerRotations[idx];
 };
 
-
-const Player = ({ playerData, mapData, radarImage, radarScale, localTeam, averageLatency, settings }) => {
+const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, settings }) => {
   const [lastKnownPosition, setLastKnownPosition] = useState(null);
   const radarPosition = getRadarPosition(mapData, playerData.m_position) || { x: 0, y: 0 };
   const invalidPosition = radarPosition.x <= 0 && radarPosition.y <= 0;
@@ -30,8 +28,16 @@ const Player = ({ playerData, mapData, radarImage, radarScale, localTeam, averag
   }, [window.innerHeight])
 
   useEffect(() => {
-    if (settings.showOnlyEnemies && playerData.m_team === localTeam) { setScaledSize(0.0); if (settings.showAllNames) {settings.showAllNames = false;} } else { setScaledSize(0.7 * settings.dotSize) }
-  }, [settings.showOnlyEnemies])
+    if (settings.showOnlyEnemies && playerData.m_team === localTeam) { 
+      if (!settings.followYourself) {
+        setScaledSize(0.0);
+      } else if (settings.followYourself && playerData.m_steam_id!=settings.whichPlayerAreYou) {
+        setScaledSize(0.0);
+      } else {
+        setScaledSize(0.7 * settings.dotSize);
+      }
+    if (settings.showAllNames) {settings.showAllNames = false;} } else { setScaledSize(0.7 * settings.dotSize) }
+  }, [settings.showOnlyEnemies, settings.followYourself])
   
   useEffect(() => {
     if (playerData.m_is_dead) {
@@ -50,6 +56,19 @@ const Player = ({ playerData, mapData, radarImage, radarScale, localTeam, averag
     x: (scaledPos[0] - playerBounding.width * 0.5),
     y: (scaledPos[1] - playerBounding.height * 0.5),
   };
+
+  if (playerData.m_steam_id==settings.whichPlayerAreYou) {
+    if (radarImage && mapData && playerData.m_position && settings.followYourself) {
+      const radarOffset = calculateMapOffsetForCentering(playerData.m_position, radarImage, mapData);
+      if (radarImage.getAttribute("isbeingdragged")=="false") {
+        radarImage.setAttribute("moveoverride", "true")
+        radarImage.setAttribute("newtransx", `${Math.floor(radarOffset.x)}`)
+        radarImage.setAttribute("newtransy", `${Math.floor(radarOffset.y)}`)
+      }
+    } else if (radarImage) {
+      radarImage.setAttribute("moveoverride", "false")
+    }
+  }
 
   return (
     <div

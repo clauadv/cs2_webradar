@@ -23,13 +23,16 @@ const Radar = ({
     const delta = e.deltaY * -0.001;
     const newScale = radarScale + delta;
     if (newScale>0.3&&newScale<4) setRadarScale(newScale)
-};
+  };
+
+
 
   return (
     <div id="radar" className={`relative overflow-hidden origin-center`}>
 
       <Draggable
       imgref={radarImageRef.current}
+      avrPing={averageLatency}
       >
         <img onWheelCapture={onScroll} ref={radarImageRef} className={`w-full h-auto`} src={radarImage} draggable={false} style={{scale: `${radarScale}`, transition: "scale 150ms linear"}}/>
       </Draggable>
