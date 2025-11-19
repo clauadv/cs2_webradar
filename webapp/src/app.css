@@ -43,4 +43,24 @@ body {
 
 select option {
   background-color: #0b1a33;
+  color: rgba(100, 146, 180, 0.5) rgba(20, 40, 55, 0.3);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(20, 40, 55, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 146, 180, 0.5);
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 146, 180, 0.8);
 }

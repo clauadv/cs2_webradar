@@ -1,8 +1,19 @@
 #include "pch.hpp"
 
+static std::unordered_map<std::string, bool> dropped_weapon_cache;
+
 bool f::dropped_weapons::is_weapon(std::string weapon_name) 
 {
-	return weapon_name.starts_with("weapon_");
+	auto is_in_cache = dropped_weapon_cache.find(weapon_name);
+	if (is_in_cache != dropped_weapon_cache.end()) {
+		return is_in_cache->second;
+	}
+
+	bool is_weapon = weapon_name.starts_with("weapon_");
+
+	dropped_weapon_cache[weapon_name] = is_weapon;
+
+	return is_weapon;
 }
 
 

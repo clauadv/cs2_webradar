@@ -3,9 +3,10 @@ import { useState, useRef } from "react";
 const SettingsButton = ({ settings, onSettingsChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const settingsMenu = useRef(null);
+  const settingsBut = useRef(null);
 
   const closeSettingsIfOpen = (e)=>{
-    if(isOpen && !settingsMenu.current?.contains(e.target) && !settingsbut.contains(e.target)){
+    if(isOpen && !settingsMenu.current?.contains(e.target) && !settingsBut.current?.contains(e.target)){
       setIsOpen(false)
     }
   }
@@ -13,12 +14,11 @@ const SettingsButton = ({ settings, onSettingsChange }) => {
   document.addEventListener('mousedown',closeSettingsIfOpen)
 
   return (
-    <div className="z-50">
+    <div className="z-50" ref={settingsBut}>
       {window.innerHeight>500 && (
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 transition-all rounded-xl"
-        id="settingsbut"
       >
         <img className={`w-[1.3rem]`} src={`./assets/icons/cog.svg`} />
         <span className="text-radar-primary">Settings</span>
@@ -26,10 +26,10 @@ const SettingsButton = ({ settings, onSettingsChange }) => {
       )}
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 bg-black bg-opacity-80 w-64 backdrop-blur-lg rounded-xl p-4 shadow-xl border border-radar-secondary/20" ref={settingsMenu}>
+        <div className="absolute right-0 mt-2 bg-black bg-opacity-80 w-80 backdrop-blur-lg rounded-xl p-4 pr-2 shadow-xl border border-radar-secondary/20" ref={settingsMenu}>
           <h3 className="text-radar-primary text-lg font-semibold mb-4">Radar Settings</h3>
 
-          <div className="space-y-3">
+          <div className="space-y-3 overflow-y-auto max-h-[715px] h-screen pr-2">
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-radar-secondary text-sm">Player Dot Size</span>
@@ -244,8 +244,8 @@ const SettingsButton = ({ settings, onSettingsChange }) => {
                 </select>
               </label>
 
-              <button className="flex items-center justify-between p-3 bg-radar-redbutton rounded-lg hover:bg-radar-redbutton_hover transition-colors cursor-pointer w-full" onClick={(e) => onSettingsChange({ ...settings, whichPlayerAreYou: "0" })}>
-                  <span className="text-white text-sm ml-7">Choose Yourself Again</span>
+              <button className="flex items-center justify-center p-3 bg-radar-redbutton rounded-lg hover:bg-radar-redbutton_hover transition-colors cursor-pointer w-full" onClick={(e) => onSettingsChange({ ...settings, whichPlayerAreYou: "0" })}>
+                  <span className="text-white text-sm">Choose Yourself Again</span>
               </button>
             </div>
           </div>
