@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
-const Draggable = ({ children, imgref, avrPing, ...props }) => {
+const Draggable = ({ children, imgref, avrPing, radarContentRef, ...props }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const draggableRef = useRef(null);
+  const currentScale = imgref ? parseFloat(imgref.style.scale) || 1 : 1;
   let moveoverride = "false";
   let newtransx = "0";
   let newtransy = "0";
@@ -18,8 +19,8 @@ const Draggable = ({ children, imgref, avrPing, ...props }) => {
     if (e.button !== 0 || moveoverride!="false") return;
     setIsDragging(true);
     setDragOffset({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
+      x: e.clientX - position.x * currentScale,
+      y: e.clientY - position.y * currentScale,
     });
   };
 
@@ -27,14 +28,20 @@ const Draggable = ({ children, imgref, avrPing, ...props }) => {
     if (!isDragging) return;
     if (e.clientX - dragOffset.x < imgref.width*0.5 && e.clientX - dragOffset.x > imgref.width*-0.5 && e.clientY - dragOffset.y < imgref.height*0.5 && e.clientY - dragOffset.y > imgref.height*-0.5) {
       setPosition({
-        x: e.clientX - dragOffset.x,
-        y: e.clientY - dragOffset.y,
+        x: (e.clientX - dragOffset.x) / currentScale,
+        y: (e.clientY - dragOffset.y) / currentScale,
       });
     }
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
+  };
+
+  const handleMouseLeave = (e) => {
+    if (isDragging && radarContentRef && !radarContentRef.contains(e.relatedTarget)) {
+      setIsDragging(false);
+    }
   };
 
   useEffect(()=>{
@@ -49,7 +56,7 @@ const Draggable = ({ children, imgref, avrPing, ...props }) => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
       style={{
         cursor: isDragging ? "grabbing" : "grab",
         userSelect: "none"

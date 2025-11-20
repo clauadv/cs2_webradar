@@ -17,6 +17,7 @@ const Radar = ({
   droppedWeaponsData,
 }) => {
   const radarImageRef = useRef();
+  const radarContentRef = useRef();
   const [radarScale, setRadarScale] = useState(1);
 
   const onScroll = (e) => {
@@ -28,11 +29,12 @@ const Radar = ({
 
 
   return (
-    <div id="radar" className={`relative overflow-hidden origin-center`}>
+    <div id="radar" className={`relative overflow-hidden origin-center`} ref={radarContentRef}>
 
       <Draggable
       imgref={radarImageRef.current}
       avrPing={averageLatency}
+      radarContentRef={radarContentRef.current}
       >
         <img onWheelCapture={onScroll} ref={radarImageRef} className={`w-full h-auto`} src={radarImage} draggable={false} style={{scale: `${radarScale}`, transition: "scale 150ms linear"}}/>
       </Draggable>
