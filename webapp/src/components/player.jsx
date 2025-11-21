@@ -25,7 +25,7 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
 
   useEffect(() => {
     if (window.innerHeight<=500) setScaledSize(0.7 * settings.dotSize+1.5); else setScaledSize(0.7 * settings.dotSize);
-  }, [window.innerHeight])
+  }, [window.innerHeight, settings.dotSize])
 
   useEffect(() => {
     if (settings.showOnlyEnemies && playerData.m_team === localTeam) { 
@@ -37,7 +37,8 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
         setScaledSize(0.7 * settings.dotSize);
       }
     if (settings.showAllNames) {settings.showAllNames = false;} } else { setScaledSize(0.7 * settings.dotSize) }
-  }, [settings.showOnlyEnemies, settings.followYourself])
+    console.log("Settings changed, recalculating player size.")
+  }, [settings.showOnlyEnemies, settings.followYourself, radarImage])
   
   useEffect(() => {
     if (playerData.m_is_dead) {
