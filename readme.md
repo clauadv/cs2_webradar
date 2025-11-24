@@ -10,7 +10,7 @@ i’m excited to introduce <a href="https://hurracan.com">hurracan</a> —<b>a p
 no more headaches with setup or configuration. just run it, and a server is automatically created with <b>a shareable link</b>—ready to go in seconds!<br>
 
 ## requirements
-- [nodejs](https://nodejs.org/en/download/prebuilt-installer/current/)
+- [nodejs](https://nodejs.org/en/download)
 - [visual studio ide](https://visualstudio.microsoft.com/vs/community/)
 
 ## usage
