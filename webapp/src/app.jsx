@@ -39,6 +39,7 @@ const DEFAULT_SETTINGS = {
   showViewCones: false,
   showOnlyEnemies: false,
   followYourself: false,
+  followYourselfRotation: false,
   showDroppedWeapons: true,
   droppedWeaponSize: 0.5,
   droppedWeaponGlow: true,

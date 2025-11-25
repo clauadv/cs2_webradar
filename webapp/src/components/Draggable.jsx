@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 const Draggable = ({ children, imgref, avrPing, radarContentRef, ...props }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const draggableRef = useRef(null);
@@ -9,10 +10,12 @@ const Draggable = ({ children, imgref, avrPing, radarContentRef, ...props }) => 
   let moveoverride = "false";
   let newtransx = "0";
   let newtransy = "0";
+  let newrotation = "0";
   if (imgref) { 
     moveoverride = imgref.getAttribute("moveoverride"); 
     newtransx = imgref.getAttribute("newtransx"); 
     newtransy = imgref.getAttribute("newtransy"); 
+    newrotation = imgref.getAttribute("newrotation"); 
   }
 
   const handleMouseDown = (e) => {
@@ -46,9 +49,13 @@ const Draggable = ({ children, imgref, avrPing, radarContentRef, ...props }) => 
 
   useEffect(()=>{
     if (moveoverride=="true") {
-      setPosition({x: newtransx, y: newtransy})
+      setPosition({x: newtransx, y: newtransy});
+      setRotation(newrotation);
+    } else {
+      setRotation(0);
+      setPosition({x:0, y:0});
     }
-  }, [moveoverride, newtransx, newtransy])
+  }, [moveoverride, newtransx, newtransy, newrotation])
 
   return (
     <div
@@ -72,6 +79,7 @@ const Draggable = ({ children, imgref, avrPing, radarContentRef, ...props }) => 
               moveoverride: `${false}`,
               style: {
                 ...children.props.style,
+                rotate: `${rotation}deg`,
                 transform: `translate(${position.x}px, ${position.y}px)`,
                 transition: `transform ${avrPing}ms linear, scale 100ms linear`
               },

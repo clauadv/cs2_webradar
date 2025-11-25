@@ -1,16 +1,35 @@
 import { useRef, useState, useEffect } from "react";
 import { getRadarPosition, playerColors, calculatePositionWithScale, calculateMapOffsetForCentering } from "../utilities/utilities";
+import { use } from "react";
 
 let playerRotations = [];
-const calculatePlayerRotation = (playerData) => {
+const calculatePlayerRotation = (playerData, radarImage) => {
+  let mapAngleDeg = 0;
+  
+  if (radarImage) {
+    const style = radarImage.style;
+    let rotStr = style.rotate;
+    const transformString = style.transform || "";
+
+    if (!rotStr && transformString.includes("rotate")) {
+      const rotMatch = transformString.match(/rotate\((.*?)\)/);
+      if (rotMatch) rotStr = rotMatch[1];
+    }
+
+    if (rotStr) {
+      const s = rotStr.trim();
+      mapAngleDeg = Number(s.slice(0, -3));
+      if (!isFinite(mapAngleDeg)) mapAngleDeg = 0;
+    }
+  }
+
   const playerViewAngle = 270 - playerData.m_eye_angle;
   const idx = playerData.m_idx;
 
   playerRotations[idx] = (playerRotations[idx] || 0) % 360;
-  playerRotations[idx] +=
-    ((playerViewAngle - playerRotations[idx] + 540) % 360) - 180;
+  playerRotations[idx] += ((playerViewAngle - playerRotations[idx] + 540) % 360) - 180;
 
-  return playerRotations[idx];
+  return playerRotations[idx] + mapAngleDeg;
 };
 
 const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, settings }) => {
@@ -20,7 +39,7 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
   const playerRef = useRef();
   const playerBounding = (playerRef.current &&
     playerRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
-  const playerRotation = calculatePlayerRotation(playerData);
+  const playerRotation = calculatePlayerRotation(playerData, radarImage);
   const [scaledSize, setScaledSize] = useState(0.7 * settings.dotSize);
 
   useEffect(() => {
@@ -37,7 +56,6 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
         setScaledSize(0.7 * settings.dotSize);
       }
     if (settings.showAllNames) {settings.showAllNames = false;} } else { setScaledSize(0.7 * settings.dotSize) }
-    console.log("Settings changed, recalculating player size.")
   }, [settings.showOnlyEnemies, settings.followYourself, radarImage])
   
   useEffect(() => {
@@ -58,13 +76,25 @@ const Player = ({ playerData, mapData, radarImage, localTeam, averageLatency, se
     y: (scaledPos[1] - playerBounding.height * 0.5),
   };
 
+
   if (playerData.m_steam_id==settings.whichPlayerAreYou) {
-    if (radarImage && mapData && playerData.m_position && settings.followYourself) {
+    if (radarImage && mapData && playerData.m_position && settings.followYourself && !playerData.m_is_dead) {
       const radarOffset = calculateMapOffsetForCentering(playerData.m_position, radarImage, mapData);
       if (radarImage.getAttribute("isbeingdragged")=="false") {
+        let playerRotation = 0;
+        const playerViewAngle = 270 - playerData.m_eye_angle;
+
+        playerRotation = (playerRotation || 0) % 360;
+        playerRotation += ((playerViewAngle - playerRotation + 540) % 360);
+
         radarImage.setAttribute("moveoverride", "true")
         radarImage.setAttribute("newtransx", `${Math.floor(radarOffset.x)}`)
         radarImage.setAttribute("newtransy", `${Math.floor(radarOffset.y)}`)
+        if (settings.followYourselfRotation) {
+          radarImage.setAttribute("newrotation", `${Math.floor(-playerRotation)}`)
+        } else {
+          radarImage.setAttribute("newrotation", "0")
+        }
       }
     } else if (radarImage) {
       radarImage.setAttribute("moveoverride", "false")

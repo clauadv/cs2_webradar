@@ -18,61 +18,138 @@ export const getRadarPosition = (mapData, entityCoords) => {
 };
 
 export const calculatePositionWithScale = (radarImage, radarPosition) => {
-  const radarImageBounding = (radarImage !== undefined &&
-  radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
-  let transformRadar = [0,0,0]
-  try {
-    let match = radarImage.style.transform.match(/translate\(([^,]+)px,\s*([^)]+)px\)/)
-    if (match) transformRadar = match;
-  } catch {}
-  let radarScale = 1;
-  try {
-    let scale = radarImage.style.scale;
-    if (scale) radarScale = scale;
-  } catch {}
+  if (!radarImage) return [0, 0];
 
-  const unscaledWidth = radarImageBounding.width / radarScale;
-  const unscaledHeight = radarImageBounding.height / radarScale;
-  const centerX = unscaledWidth / 2;
-  const centerY = unscaledHeight / 2;
-  
-  const posX = unscaledWidth * radarPosition.x + Number(transformRadar[1]);
-  const posY = unscaledHeight * radarPosition.y + Number(transformRadar[2]);
-  
-  const scaledPosX = centerX + (posX - centerX) * radarScale;
-  const scaledPosY = centerY + (posY - centerY) * radarScale;
-  return [scaledPosX, scaledPosY]
-}
+  const width = radarImage.offsetWidth;
+  const height = radarImage.offsetHeight;
+  const style = radarImage.style;
+  const transformString = style.transform || "";
+
+  let transformX = 0;
+  let transformY = 0;
+  const transMatch = transformString.match(/translate\(\s*([+-]?\d+(\.\d+)?)px,\s*([+-]?\d+(\.\d+)?)px\)/);
+  if (transMatch) {
+    transformX = Number(transMatch[1]);
+    transformY = Number(transMatch[3]);
+  }
+
+  let radarScale = 1;
+  if (style.scale) {
+    const s = Number(style.scale);
+    if (!isNaN(s)) radarScale = s;
+  }
+
+  let angleRad = 0;
+  let rotStr = style.rotate;
+
+  if (!rotStr && transformString.includes("rotate")) {
+    const rotMatch = transformString.match(/rotate\((.*?)\)/);
+    if (rotMatch) rotStr = rotMatch[1];
+  }
+
+  if (rotStr) {
+    const s = rotStr.trim();
+    angleRad = Number(s.slice(0, -3)) * (Math.PI / 180);
+    if (!isFinite(angleRad)) angleRad = 0;
+  }
+
+  const rotateIndex = transformString.indexOf("rotate");
+  const translateIndex = transformString.indexOf("translate");
+  const scaleIndex = transformString.indexOf("scale");
+
+  const isRotateAfterTranslate = style.rotate || (rotateIndex !== -1 && translateIndex !== -1 && rotateIndex < translateIndex);
+
+  const isScaleAfterTranslate = style.scale || (scaleIndex !== -1 && translateIndex !== -1 && scaleIndex > translateIndex);
+
+  const centerX = width / 2;
+  const centerY = height / 2;
+
+  const localX = (width * radarPosition.x) - centerX;
+  const localY = (height * radarPosition.y) - centerY;
+
+  const scaledLocalX = localX * radarScale;
+  const scaledLocalY = localY * radarScale;
+
+  const cos = Math.cos(angleRad);
+  const sin = Math.sin(angleRad);
+
+  const rotatedPointX = (scaledLocalX * cos) - (scaledLocalY * sin);
+  const rotatedPointY = (scaledLocalX * sin) + (scaledLocalY * cos);
+
+  let finalTransformX = transformX;
+  let finalTransformY = transformY;
+
+  if (isScaleAfterTranslate) {
+    finalTransformX *= radarScale;
+    finalTransformY *= radarScale;
+  }
+
+  if (isRotateAfterTranslate) {
+    const tx = finalTransformX;
+    const ty = finalTransformY;
+    finalTransformX = (tx * cos) - (ty * sin);
+    finalTransformY = (tx * sin) + (ty * cos);
+  }
+
+  const finalX = centerX + rotatedPointX + finalTransformX;
+  const finalY = centerY + rotatedPointY + finalTransformY;
+
+  return [finalX, finalY];
+};
 
 export const calculateMapOffsetForCentering = (playerPosition, radarImage, mapData) => {
-    if (!playerPosition || !radarImage) {
-        return { x: 0, y: 0 };
-    }
+  if (!playerPosition || !radarImage) {
+    return { x: 0, y: 0 };
+  }
 
-    const radarPosition = getRadarPosition(mapData, playerPosition) || { x: 0, y: 0 };
-    let radarScale = 1;
-    if (radarImage) radarScale = radarImage.style.scale;
+  const radarPosition = getRadarPosition(mapData, playerPosition);
+  if (!radarPosition) {
+    return { x: 0, y: 0 };
+  }
 
-    if (!radarPosition) {
-        return { x: 0, y: 0 };
-    }
-    
-    const radarImageBounding = (radarImage !== undefined &&
-    radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
+  const width = radarImage.offsetWidth;
+  const height = radarImage.offsetHeight;
+  const style = radarImage.style;
+  const transformString = style.transform || "";
 
-    const unscaledWidth = radarImageBounding.width / radarScale;
-    const unscaledHeight = radarImageBounding.height / radarScale;
+  let angleRad = 0;
+  let rotStr = style.rotate;
 
-    const playerXOnMap = unscaledWidth * radarPosition.x
-    const playerYOnMap = unscaledHeight * radarPosition.y
+  if (!rotStr && transformString.includes("rotate")) {
+    const rotMatch = transformString.match(/rotate\((.*?)\)/);
+    if (rotMatch) rotStr = rotMatch[1];
+  }
 
-    const centerX = radarImage.width/2;
-    const centerY = radarImage.height/2;
+  if (rotStr) {
+    const s = rotStr.trim();
+    angleRad = Number(s.slice(0, -3)) * (Math.PI / 180);
+    if (!isFinite(angleRad)) angleRad = 0;
+  }
 
-    const offsetX = centerX - playerXOnMap;
-    const offsetY = centerY - playerYOnMap;
+  const rotateIndex = transformString.indexOf("rotate");
+  const translateIndex = transformString.indexOf("translate");
+  const isRotateFirst = style.rotate || (rotateIndex !== -1 && translateIndex !== -1 && rotateIndex < translateIndex);
 
-    return { x: offsetX, y: offsetY };
+  const mapCenterX = width / 2;
+  const mapCenterY = height / 2;
+
+  const playerPixelX = width * radarPosition.x;
+  const playerPixelY = height * radarPosition.y;
+
+  const vecX = playerPixelX - mapCenterX;
+  const vecY = playerPixelY - mapCenterY;
+  
+  if (isRotateFirst) {
+    return { x: -vecX, y: -vecY };
+  } else {
+    const cos = Math.cos(angleRad);
+    const sin = Math.sin(angleRad);
+
+    const rotatedVecX = (vecX * cos) - (vecY * sin);
+    const rotatedVecY = (vecX * sin) + (vecY * cos);
+
+    return { x: -rotatedVecX, y: -rotatedVecY };
+  }
 };
 
 export const playerColors = [
