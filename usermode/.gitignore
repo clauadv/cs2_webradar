@@ -4,6 +4,8 @@
 
 # others
 release
+debug
+config.json
 
 # for debug
 client.dll.json
