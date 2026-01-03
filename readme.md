@@ -9,18 +9,34 @@ if you have any suggestions, issues or questions, feel free to send them on my [
 i’m excited to introduce <a href="https://hurracan.com">hurracan</a> —<b>a plug & play</b> version that’s designed to make your life easier.<br>
 no more headaches with setup or configuration. just run it, and a server is automatically created with <b>a shareable link</b>—ready to go in seconds!<br>
 
-## requirements
+## Requirements
 - [nodejs](https://nodejs.org/en/download)
-- [visual studio ide](https://visualstudio.microsoft.com/vs/community/)
+- [Visual Studio (2022 or higher)](https://visualstudio.microsoft.com/vs/community/)
+- MSVC v143 (Visual Studio 2022 C++ x64/x86 build tools)
+- Windows SDK
 
-## usage
-- in the root folder, run `install.bat` to install dependencies
-- in the root folder, run `start.bat` to start the webapp
-- in `usermode` project, run `cs2_webradar.sln`
-- in visual studio's toolbar, hover on `Build` and press `Build Solution` or press `Ctrl + Shift + B`
-- in `release` folder, run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
+## Usage
+1. Install dependencies:
+    - In the root directory, run `install.bat` to install dependencies.
 
-## sharing
+2. Build the usermode application:
+    - Open `usermode\cs2_webradar.sln` in Visual Studio
+    - Set the build configuration to `release` and platform to `x64`
+    - In Visual Studio's toolbar, click `Build` -> `Build Solution` or press `Ctrl + Shift + B`
+
+3. Start the web application:
+    - Navigate to the `webapp` directory
+    - Run `npm run dev` to start the development server
+
+4. Running the radar:
+    - Start `cs2.exe`
+    - In the `release` directory, run `usermode.exe`
+    - In your browser, navigate to `localhost:5173`
+
+> **Note:** On first startup, `usermode.exe` will fail because `config.json` doesn't exist.
+The application will create this file automatically. Simply run `usermode.exe` again following this file creation.
+
+## Sharing
 - after you built `usermode` project, open `config.json` and change `m_use_localhost` to `false`
 - in `react` project, `App.jsx` line 10, change `const USE_LOCALHOST = 1;` to `const USE_LOCALHOST = 0;`
 - in `react` project, `App.jsx` line 12, change `const PUBLIC_IP = "your ip";` with your ip address
@@ -28,13 +44,13 @@ no more headaches with setup or configuration. just run it, and a server is auto
 - in your router configuration, find `Port Forwarding` tab and forward port `22006/tcp` and `5173/tcp`
 - now your friends can see the radar by navigating to `your public ip:5173`
 
-## showcase
+## Showcase
 https://github.com/clauadv/cs2_webradar/assets/26169415/718d5969-004b-4300-b152-2051a75d490d
 
-## license
+## License
 this project is licensed under the [GPL-3.0 license](https://github.com/clauadv/cs2_webradar?tab=GPL-3.0-1-ov-file#readme)
 
-## contributors
+## Contributors
 <a href="https://github.com/clauadv/cs2_webradar/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=clauadv/cs2_webradar" />
 </a>
