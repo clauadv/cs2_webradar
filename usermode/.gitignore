@@ -8,3 +8,5 @@ release
 # for debug
 client.dll.json
 offsets.json
+*.vcxproj.user
+
