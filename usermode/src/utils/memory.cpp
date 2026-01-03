@@ -48,99 +48,195 @@ std::optional<uint32_t> c_memory::get_process_id(const std::string_view& process
 	return {};
 }
 
+/// <summary>
+/// Attempts to obtain a process handle by duplicating an existing handle from another process.
+/// </summary>
+/// <returns>
+/// An optional containing the duplicated process handle if successful, std::nullopt otherwise.
+/// The returned handle has PROCESS_VM_READ and PROCESS_QUERY_INFORMATION access rights.
+/// </returns>
+/// <remarks>
+/// Requires SeDebugPrivilege to be enabled for the current process.
+/// Falls back to standard OpenProcess if this method fails.
+/// Properly cleans up any opened handles and restores privileges before returning.
+/// </remarks>
 std::optional<void*> c_memory::hijack_handle()
 {
-	auto cleanup = [](std::vector<uint8_t>& handle_info, void*& process_handle)
-	{
-		handle_info.clear();
+	// validate that we have a target PID
+	if (this->m_id == 0)
+		return {};
 
-		if (process_handle != INVALID_HANDLE_VALUE)
+	// helper to close and clean up process handles
+	auto cleanup_process_handle = [](void*& process_handle)
+	{
+		if (process_handle != nullptr && process_handle != INVALID_HANDLE_VALUE)
 		{
 			CloseHandle(process_handle);
 			process_handle = nullptr;
 		}
 	};
 
+	// Get ntdll.dll module handle to access native API functions
 	const auto ntdll = GetModuleHandleA("ntdll.dll");
 	if (!ntdll)
 		return {};
 
+	// Resolve NtQuerySystemInformation function to enumerate system handles
 	using fn_nt_query_system_information = long(__stdcall*)(unsigned long, void*, unsigned long, unsigned long*);
 	const auto nt_query_system_information = reinterpret_cast<fn_nt_query_system_information>(GetProcAddress(ntdll, "NtQuerySystemInformation"));
 	if (!nt_query_system_information)
 		return {};
 
+	// Resolve NtDuplicateObject function to duplicate handles from other processes
 	using fn_nt_duplicate_object = long(__stdcall*)(void*, void*, void*, void**, unsigned long, unsigned long, unsigned long);
 	const auto nt_duplicate_object = reinterpret_cast<fn_nt_duplicate_object>(GetProcAddress(ntdll, "NtDuplicateObject"));
 	if (!nt_duplicate_object)
 		return {};
 
+	// Resolve NtOpenProcess function to open handles to other processes with handles we want to duplicate
 	using fn_nt_open_process = long(__stdcall*)(void**, unsigned long, OBJECT_ATTRIBUTES*, CLIENT_ID*);
 	const auto nt_open_process = reinterpret_cast<fn_nt_open_process>(GetProcAddress(ntdll, "NtOpenProcess"));
 	if (!nt_open_process)
 		return {};
 
+	// Resolve RtlAdjustPrivilege function to enable SeDebugPrivilege
 	using fn_rtl_adjust_privilege = long(__stdcall*)(unsigned long, unsigned char, unsigned char, unsigned char*);
 	const auto rtl_adjust_privilege = reinterpret_cast<fn_rtl_adjust_privilege>(GetProcAddress(ntdll, "RtlAdjustPrivilege"));
 	if (!rtl_adjust_privilege)
 		return {};
 
-	uint8_t old_privilege = 0;
-	rtl_adjust_privilege(0x14, 1, 0, &old_privilege);
+	// Windows privilege and status code constants
+	constexpr unsigned long SE_DEBUG_PRIVILEGE = 0x14;
+	constexpr unsigned long SYSTEM_HANDLE_INFORMATION = 0x10;
+	constexpr unsigned long STATUS_INFO_LENGTH_MISMATCH = 0xc0000004;
 
+	// Attempt to enable SeDebugPrivilege and store the old privilege state
+	// This is so that we can restore it later to avoid leaving the process in an elevated state
+	uint8_t old_privilege = 0;
+	const auto privilege_status = rtl_adjust_privilege(SE_DEBUG_PRIVILEGE, 1, 0, &old_privilege);
+	const bool privilege_enabled = NT_SUCCESS(privilege_status);
+
+	// Initialize OBJECT_ATTRIBUTES structure for NtOpenProcess calls
 	OBJECT_ATTRIBUTES object_attributes{};
 	InitializeObjectAttributes(&object_attributes, nullptr, 0, nullptr, nullptr);
 
-	std::vector<uint8_t> handle_info(sizeof(system_handle_info_t));
-	std::pair<void*, void*> handle{ nullptr, nullptr };
+	// Allocate initial buffer for system handle information, which will be dynamically resized as needed
+	std::vector<uint8_t> handle_info(4096);
+	void* owner_process_handle = nullptr;
 	CLIENT_ID client_id{};
+	uint32_t current_owner_pid = 0;
 
+	// Query system handle information, resizing buffer until successful
+	// if the buffer is too small, NtQuerySystemInformation returns STATUS_INFO_LENGTH_MISMATCH (0xc0000004)
+	constexpr size_t MAX_BUFFER_SIZE = 64 * 1024 * 1024;
+	constexpr uint32_t MAX_RESIZE_ATTEMPTS = 20;
 	unsigned long status = 0;
+	uint32_t resize_attempts = 0;
 	do
 	{
 		handle_info.resize(handle_info.size() * 2);
-		status = nt_query_system_information(0x10, handle_info.data(), static_cast<unsigned long>(handle_info.size()), nullptr);
-	} while (status == 0xc0000004);
+		// SystemHandleInformation (0x10) requests information about all handles in the system
+		status = nt_query_system_information(SYSTEM_HANDLE_INFORMATION, handle_info.data(), static_cast<unsigned long>(handle_info.size()), nullptr);
 
+		// If we've exceeded max resize attempts or buffer size, clean up and return
+		if (++resize_attempts >= MAX_RESIZE_ATTEMPTS || handle_info.size() >= MAX_BUFFER_SIZE)
+		{
+			cleanup_process_handle(owner_process_handle);
+			if (privilege_enabled)
+			{
+				// Restore the original privilege state before exiting
+				uint8_t restore_privilege = 0;
+				rtl_adjust_privilege(SE_DEBUG_PRIVILEGE, old_privilege, 0, &restore_privilege);
+			}
+			return {};
+		}
+
+	} while (status == STATUS_INFO_LENGTH_MISMATCH);
+
+	// if we failed to get the handle information, clean up and return
 	if (!NT_SUCCESS(status))
 	{
-		cleanup(handle_info, handle.first);
+		cleanup_process_handle(owner_process_handle);
+		if (privilege_enabled)
+		{
+			// Restore the original privilege state before exiting
+			uint8_t restore_privilege = 0;
+			rtl_adjust_privilege(SE_DEBUG_PRIVILEGE, old_privilege, 0, &restore_privilege);
+		}
 		return {};
 	}
 
 	const auto system_handle_info = reinterpret_cast<system_handle_info_t*>(handle_info.data());
+
+	// Iterate through all system handles looking for handles to our target process
 	for (uint32_t idx = 0; idx < system_handle_info->m_handle_count; ++idx)
 	{
-		const auto system_handle = system_handle_info->m_handles[idx];
-		if (reinterpret_cast<void*>(system_handle.m_handle) == INVALID_HANDLE_VALUE || system_handle.m_object_type_number != 0x07)
+		const auto& system_handle = system_handle_info->m_handles[idx];
+
+		// Skip invalid handles
+		if (reinterpret_cast<void*>(system_handle.m_handle) == INVALID_HANDLE_VALUE)
 			continue;
 
-		client_id.UniqueProcess = reinterpret_cast<void*>(system_handle.m_process_id);
+		// Skip handles owned by our target process
+		if (system_handle.m_process_id == this->m_id)
+			continue;
 
-		if (handle.first != nullptr && handle.first == INVALID_HANDLE_VALUE)
+		// Open a handle to the process owning the current handle if we haven't already
+		if (system_handle.m_process_id != current_owner_pid)
 		{
-			CloseHandle(handle.first);
-			continue;
+			// Clean up the previous owner process handle before opening a new one
+			cleanup_process_handle(owner_process_handle);
+
+			// Setup CLIENT_ID for the owner process
+			client_id.UniqueProcess = reinterpret_cast<void*>(static_cast<uintptr_t>(system_handle.m_process_id));
+			client_id.UniqueThread = nullptr;
+
+			// Open the owner process with PROCESS_DUP_HANDLE access
+			status = nt_open_process(&owner_process_handle, PROCESS_DUP_HANDLE, &object_attributes, &client_id);
+			if (!NT_SUCCESS(status))
+				continue;
+
+			// cache the current owner PID to avoid reopening the same process
+			current_owner_pid = system_handle.m_process_id;
 		}
 
-		const auto open_process = nt_open_process(&handle.first, PROCESS_DUP_HANDLE, &object_attributes, &client_id);
-		if (!NT_SUCCESS(open_process))
+		// Attempt to duplicate the handle from the owner process into our own process
+		void* duplicated_handle = nullptr;
+		status = nt_duplicate_object(owner_process_handle, reinterpret_cast<void*>(static_cast<uintptr_t>(system_handle.m_handle)), GetCurrentProcess(), &duplicated_handle, PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, 0, 0);
+		if (!NT_SUCCESS(status))
 			continue;
 
-		const auto duplicate_object = nt_duplicate_object(handle.first, reinterpret_cast<void*>(system_handle.m_handle), GetCurrentProcess(), &handle.second, PROCESS_ALL_ACCESS, 0, 0);
-		if (!NT_SUCCESS(duplicate_object))
-			continue;
-
-		if (GetProcessId(handle.second) == this->m_id)
+		// Verify that the duplicated handle points to our target process by checking its PID
+		const auto duplicated_pid = GetProcessId(duplicated_handle);
+		if (duplicated_pid == this->m_id)
 		{
-			cleanup(handle_info, handle.first);
-			return handle.second;
+			cleanup_process_handle(owner_process_handle);
+			handle_info.clear();
+
+			// Restore the original privilege state before returning
+			if (privilege_enabled)
+			{
+				uint8_t restore_privilege = 0;
+				rtl_adjust_privilege(SE_DEBUG_PRIVILEGE, old_privilege, 0, &restore_privilege);
+			}
+
+			return duplicated_handle;
 		}
 
-		CloseHandle(handle.second);
+		// Not our target process, close the duplicated handle and continue searching
+		CloseHandle(duplicated_handle);
+	}
+	
+	// Enumerated all handles but didn't find one. Clean up and restore privileges before returning.
+	cleanup_process_handle(owner_process_handle);
+	handle_info.clear();
+
+	if (privilege_enabled)
+	{
+		uint8_t restore_privilege = 0;
+		rtl_adjust_privilege(SE_DEBUG_PRIVILEGE, old_privilege, 0, &restore_privilege);
 	}
 
-	cleanup(handle_info, handle.first);
 	return {};
 }
 
@@ -186,12 +282,15 @@ std::optional<c_address> c_memory::find_pattern(const std::string_view& module_n
 	if (!module_base.has_value() || !module_size.has_value())
 		return {};
 
+	const auto pattern_bytes = pattern_to_bytes(pattern);
+	if (pattern_bytes.empty() || pattern_bytes.size() > module_size.value())
+		return {};
+
 	const auto module_data = std::make_unique<uint8_t[]>(module_size.value());
 	if (!this->read_t(module_base.value(), module_data.get(), module_size.value()))
 		return {};
 
-	const auto pattern_bytes = pattern_to_bytes(pattern);
-	for (uint32_t idx = 0; idx < module_size.value() - pattern.size(); ++idx)
+	for (uint32_t idx = 0; idx < module_size.value() - pattern_bytes.size(); ++idx)
 	{
 		bool found = true;
 
@@ -231,9 +330,13 @@ std::pair<std::optional<uintptr_t>, std::optional<uintptr_t>> c_memory::get_modu
 		};
 
 		if (equals_ignore_case(module_entry.szModule, module_name))
+		{
+			CloseHandle(snapshot);
 			return std::make_pair(reinterpret_cast<uintptr_t>(module_entry.modBaseAddr), static_cast<uintptr_t>(module_entry.modBaseSize));
+		}
 	}
 
+	CloseHandle(snapshot);
 	return {};
 }
 
@@ -249,7 +352,7 @@ bool c_memory::is_anticheat_running()
 
 	for (const auto& process_name : m_process_list)
 	{
-		const auto process_id = m_memory->get_process_id(process_name);
+		const auto process_id = get_process_id(process_name);
 		if (!process_id.has_value())
 			continue;
 
