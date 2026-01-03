@@ -25,13 +25,18 @@ no more headaches with setup or configuration. just run it, and a server is auto
     - In Visual Studio's toolbar, click `Build` -> `Build Solution` or press `Ctrl + Shift + B`
 
 3. Start the web application:
-    - Navigate to the `webapp` directory
-    - Run `npm run dev` to start the development server
+    - In the root directory, run `start.bat` to start the web server.
+    - A new terminal will appear. Keep this open.
 
 4. Running the radar:
     - Start `cs2.exe`
     - In the `release` directory, run `usermode.exe`
     - In your browser, navigate to `localhost:5173`
+
+5. Shutting down:
+  - To stop the web server, press `Ctrl + C` in the terminal window or simply close it.
+  - Close `usermode.exe`
+  - As a precaution, fully close `cs2.exe` or restart your system before switching accounts.
 
 > **Note:** On first startup, `usermode.exe` will fail because `config.json` doesn't exist.
 The application will create this file automatically. Simply run `usermode.exe` again following this file creation.
