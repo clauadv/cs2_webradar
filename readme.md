@@ -1,7 +1,7 @@
 # cs2_webradar
 
 > [!IMPORTANT]
-> This version is still supported, but **[hurracan](https://hurracan.com)** provides a plug & play experience with instant sharing, completely new and responsive interface, a custom overlay for seamless integration with the game, and kernel level security. Get your 7 days free trial today!
+> This version is still supported, but **[hurracan](https://hurracan.com)** provides a plug & play experience with instant sharing, completely new and responsive interface, a custom overlay for seamless integration with the game, and kernel level security. Get your 7-day free trial today!
 
 [![discord](https://img.shields.io/badge/discord-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/qEBpufFkXK)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](https://github.com/clauadv/cs2_webradar/blob/master/readme.md)
