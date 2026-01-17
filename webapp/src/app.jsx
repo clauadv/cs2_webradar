@@ -128,7 +128,7 @@ const App = () => {
       {bannerOpened && (
         <section className="w-full flex items-center justify-between p-2 bg-radar-primary">
           <span className="w-full text-center text-[#1E3A54]">
-            <span className="font-medium">€3.49</span> -
+            <span className="font-medium">€4.99</span> -
             HURRACAN - Plug & play feature rich shareable CS2 Web Radar
             <a className="ml-2 inline banner-link text-[#1E3A54]" href="https://hurracan.com">Learn more</a>
           </span>
