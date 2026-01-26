@@ -16,11 +16,11 @@ bool schema::setup()
 		return {};
 
 	const auto table_size = type_scope->m_hash_classes().size();
-	LOG_INFO("found '%d' schema classes in module '%s'", table_size, CLIENT_DLL);
-
 	std::unique_ptr<uintptr_t[]> elements = std::make_unique_for_overwrite<uintptr_t[] >(table_size);
 
 	const auto elements_size = type_scope->m_hash_classes().get_elements(0, table_size, elements.get());
+	LOG_INFO("found '%d' schema classes in module '%s'", elements_size, CLIENT_DLL);
+
 	for (uint32_t idx = 0; idx < elements_size; idx++)
 	{
 		const auto element = elements[idx];

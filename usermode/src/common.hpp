@@ -1,7 +1,7 @@
 #pragma once
 
 /* current build of cs2_webradar */
-#define CS2_WEBRADAR_VERSION "v1.2.8"
+#define CS2_WEBRADAR_VERSION "v1.2.9"
 
 /* game modules */
 #define CLIENT_DLL "client.dll"
@@ -9,7 +9,7 @@
 #define SCHEMASYSTEM_DLL "schemasystem.dll"
 
 /* game signatures */
-#define GET_SCHEMA_SYSTEM "48 89 05 ? ? ? ? 4c 8d 0d ? ? ? ? 0f b6 45 ? 4c 8d 45 ? 33 f6"
+#define GET_SCHEMA_SYSTEM "48 89 05 ? ? ? ? 4c 8d 0d ? ? ? ? 33 c0"
 #define GET_ENTITY_LIST "48 8b 0d ? ? ? ? 48 89 7c 24 ? 8b fa c1 eb"
 #define GET_GLOBAL_VARS "48 89 15 ? ? ? ? 48 89 42"
 #define GET_LOCAL_PLAYER_CONTROLLER "4c 8d 05 ? ? ? ? 33 d2 4d 8b 04 c0"

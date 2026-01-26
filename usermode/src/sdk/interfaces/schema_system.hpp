@@ -38,7 +38,7 @@ public:
 
 	c_utl_ts_hash<c_schema_type_declared_class*, 256, uint32_t> m_hash_classes() const
 	{
-		return m_memory->read_t<c_utl_ts_hash<c_schema_type_declared_class*, 256, uint32_t>>(reinterpret_cast<uintptr_t>(this) + 0x500);
+		return m_memory->read_t<c_utl_ts_hash<c_schema_type_declared_class*, 256, uint32_t>>(reinterpret_cast<uintptr_t>(this) + 0x540);
 	}
 };
 
@@ -47,14 +47,14 @@ class c_schema_system
 public:
 	class c_schema_system_type_scope* find_type_scope_for_module(const std::string_view& name) const
 	{
-		const auto size = m_memory->read_t<uint32_t>(reinterpret_cast<uintptr_t>(this) + 0x188);
+		const auto size = m_memory->read_t<uint32_t>(reinterpret_cast<uintptr_t>(this) + 0x190);
 		if (!size || size >= 50)
 		{
 			LOG_ERROR("type scope size is either empty or not good");
 			return {};
 		}
 
-		const auto data = m_memory->read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x190);
+		const auto data = m_memory->read_t<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x198);
 		if (!data || data <= 0x10000)
 		{
 			LOG_ERROR("type scope data is either empty or not good");

@@ -19,7 +19,7 @@ const std::string c_entity_instance::get_schema_class_name()
 	if (!class_info)
 		return {};
 
-	const auto unk1 = m_memory->read_t<uintptr_t>(class_info + 0x30);
+	const auto unk1 = m_memory->read_t<uintptr_t>(class_info + 0x78);
 	if (!unk1)
 		return {};
 
