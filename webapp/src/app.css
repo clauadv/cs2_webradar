@@ -2,34 +2,297 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Served from public/assets/typefaces — the path is root-relative so the font
+   resolves the same way from any route and after a production build. */
 @font-face {
   font-family: "TASAOrbiter";
-  src: url("./assets/typefaces/TASAOrbiterVF.woff2");
+  src: url("/assets/typefaces/TASAOrbiterVF.woff2") format("woff2-variations"),
+       url("/assets/typefaces/TASAOrbiterVF.woff2") format("woff2");
+  font-weight: 300 800;
+  font-display: swap;
 }
 
+/* Design tokens */
+
 :root {
-  --text-primary: #b1d0e7;
-  --text-secondary: #6492b4;
+  /* surfaces, darkest → lightest */
+  --bg-base: #0b0f16;
+  --bg-sunken: #0e131b;
+  --surface-1: #141a24;
+  --surface-2: #1a2130;
+  --surface-3: #212a3b;
+
+  /* borders */
+  --border-subtle: #232c3b;
+  --border-strong: #2f3b4e;
+
+  /* text — contrast checked against --surface-1 */
+  --text-primary: #eef4fb; /* 15.1:1 */
+  --text-secondary: #a8bbd0; /* 8.2:1  */
+  --text-muted: #7387a0; /* 4.6:1  */
+
+  /* accent */
+  --accent: #4e9bf5;
+  --accent-strong: #6cadf8;
+  --accent-dim: #21365a;
+
+  /* status */
+  --status-green: #43c97a;
+  --status-amber: #eba53c;
+  --status-red: #ef5350;
+
+  /* teams */
+  --team-t: #de6338;
+  --team-ct: #4e9bf5;
+
+  /* dense dashboard spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* layering */
+  --z-radar-entity: 10;
+  --z-hud: 30;
+  --z-overlay: 40;
+  --z-modal: 100;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 140ms;
+  --duration-base: 200ms;
 }
 
 * {
-  outline-offset: 4px;
+  outline-offset: 3px;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
 }
 
 body {
-  margin: 0;
-  font-family: "TASAOrbiter";
+  font-family: "TASAOrbiter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   color: var(--text-primary);
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
 }
 
-.banner-link {
-  transition: all 0.35s ease-in-out;
-  box-shadow: 0px 1.5px 0 0 #1E3A54;
+/* Tabular figures keep timers, money and HP from shifting width per frame. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Surfaces & layers */
+
+.panel {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+}
+
+.panel-sunken {
+  background-color: var(--bg-sunken);
+  border: 1px solid var(--border-subtle);
+}
+
+.panel-raised {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-strong);
+}
+
+/* Modal sits highest, so it gets the lightest surface and a real shadow. */
+.modal-surface {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.75), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+}
+
+.scrim {
+  background-color: rgba(6, 9, 14, 0.78);
+}
+
+/* Custom range inputs */
+
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background-color: var(--surface-3);
+  cursor: pointer;
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
   height: 20px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  border: 3px solid var(--surface-1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  transition: transform var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
 }
 
-.banner-link:hover {
-  box-shadow: 0px 2.5px 0 0 #1E3A54;
+.range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  border: 3px solid var(--surface-1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.range:hover::-webkit-slider-thumb {
+  background-color: var(--accent-strong);
+}
+
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+.range:active::-moz-range-thumb {
+  transform: scale(1.15);
+}
+
+/* Animations & keyframes */
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tab-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-critical {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-modal-in {
+  animation: modal-in var(--duration-base) var(--ease-out) both;
+}
+
+.animate-fade-in {
+  animation: fade-in var(--duration-fast) ease-out both;
+}
+
+.animate-tab-in {
+  animation: tab-in 160ms var(--ease-out) both;
+}
+
+.animate-card-in {
+  animation: card-in 220ms var(--ease-out) both;
+}
+
+.animate-pulse-critical {
+  animation: pulse-critical 900ms ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 900ms linear infinite;
+}
+
+/* Radar entities move constantly; keep their transition separate so it can be
+   tuned independently of decorative motion. */
+.radar-entity {
+  transition: left 100ms linear, top 100ms linear;
+}
+
+.radar-entity-rotor {
+  transition: transform 100ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbars */
+
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.thin-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.thin-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: 999px;
+  border: 3px solid var(--surface-1);
+}
+
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }

@@ -1,87 +1,106 @@
-import { useRef, useState, useEffect } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { getRadarPosition, playerColors } from "../utilities/utilities";
 
+// Unwrap angle, shortest rotation
+const playerRotations = new Map();
 
-let playerRotations = [];
 const calculatePlayerRotation = (playerData) => {
-  const playerViewAngle = 270 - playerData.m_eye_angle;
+  const target = 270 - playerData.m_eye_angle;
   const idx = playerData.m_idx;
 
-  playerRotations[idx] = (playerRotations[idx] || 0) % 360;
-  playerRotations[idx] +=
-    ((playerViewAngle - playerRotations[idx] + 540) % 360) - 180;
+  let current = (playerRotations.get(idx) || 0) % 360;
+  current += ((target - current + 540) % 360) - 180;
+  playerRotations.set(idx, current);
 
-  return playerRotations[idx];
+  return current;
 };
 
-const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
-  const [lastKnownPosition, setLastKnownPosition] = useState(null);
-  const radarPosition = getRadarPosition(mapData, playerData.m_position) || { x: 0, y: 0 };
+const Player = ({ playerData, mapData, localTeam, settings }) => {
+  const radarPosition = getRadarPosition(mapData, playerData.m_position);
   const invalidPosition = radarPosition.x <= 0 && radarPosition.y <= 0;
 
-  const playerRef = useRef();
-  const playerBounding = (playerRef.current &&
-    playerRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
-  const playerRotation = calculatePlayerRotation(playerData);
+  // Death marker stays put
+  const deathPositionRef = useRef(null);
+  const [deathPosition, setDeathPosition] = useState(null);
 
-  const radarImageBounding = (radarImage !== undefined &&
-    radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
-
-  const scaledSize = 0.7 * settings.dotSize;
-
-  // Store the last known position when the player dies
   useEffect(() => {
     if (playerData.m_is_dead) {
-      if (!lastKnownPosition) {
-        setLastKnownPosition(radarPosition);
+      if (!deathPositionRef.current) {
+        deathPositionRef.current = radarPosition;
+        setDeathPosition(radarPosition);
       }
-    } else {
-      setLastKnownPosition(null);
+    } else if (deathPositionRef.current) {
+      deathPositionRef.current = null;
+      setDeathPosition(null);
     }
-  }, [playerData.m_is_dead, radarPosition, lastKnownPosition]);
+    // Snapshot on death
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerData.m_is_dead]);
 
-  const effectivePosition = playerData.m_is_dead ? lastKnownPosition || { x: 0, y: 0 } : radarPosition;
+  if (playerData.m_is_dead && !settings.showDeadOnRadar) return null;
 
-  const radarImageTranslation = {
-    x: radarImageBounding.width * effectivePosition.x - playerBounding.width * 0.5,
-    y: radarImageBounding.height * effectivePosition.y - playerBounding.height * 0.5,
-  };
+  const position = playerData.m_is_dead
+    ? deathPosition || radarPosition
+    : radarPosition;
+
+  const size = 1.4 * settings.dotSize; // % of the radar's width
+  const rotation = playerData.m_is_dead ? 0 : calculatePlayerRotation(playerData);
+  const isLocalTeam = playerData.m_team === localTeam;
+  const color = (isLocalTeam && playerColors[playerData.m_color]) || "#e0453b";
+
+  const opacity = (playerData.m_is_dead && 0.65) || (invalidPosition && 0) || 1;
 
   return (
     <div
-      className={`absolute origin-center rounded-[100%] left-0 top-0`}
-      ref={playerRef}
+      // Percentages, no layout reads
+      className="radar-entity absolute origin-center"
       style={{
-        width: `${scaledSize}vw`,
-        height: `${scaledSize}vw`,
-        transform: `translate(${radarImageTranslation.x}px, ${radarImageTranslation.y}px)`,
-        transition: `transform 100ms linear`,
-        zIndex: `${(playerData.m_is_dead && `0`) || `1`}`,
-        WebkitMask: `${(playerData.m_is_dead && `url('./assets/icons/icon-enemy-death_png.png') no-repeat center / contain`) || `none`}`,
+        left: `${position.x * 100}%`,
+        top: `${position.y * 100}%`,
+        width: `${size}%`,
+        aspectRatio: "1 / 1",
+        transform: "translate(-50%, -50%)",
+        zIndex: playerData.m_is_dead ? 1 : 2,
+        opacity,
+        WebkitMask: playerData.m_is_dead
+          ? `url('./assets/icons/icon-enemy-death_png.png') no-repeat center / contain`
+          : "none",
+        mask: playerData.m_is_dead
+          ? `url('./assets/icons/icon-enemy-death_png.png') no-repeat center / contain`
+          : "none",
+        backgroundColor: playerData.m_is_dead ? color : "transparent",
       }}
+      title={playerData.m_name}
     >
-      {/* Rotating container for player elements */}
-      <div
-        style={{
-          transform: `rotate(${(playerData.m_is_dead && `0`) || playerRotation}deg)`,
-          width: `${scaledSize}vw`,
-          height: `${scaledSize}vw`,
-          transition: `transform 100ms linear`,
-          opacity: `${(playerData.m_is_dead && `0.8`) || (invalidPosition && `0`) || `1`}`,
-        }}
-      >
-        {/* Player dot */}
+      {!playerData.m_is_dead && (
         <div
-          className={`w-full h-full rounded-[50%_50%_50%_0%] rotate-[315deg]`}
-          style={{
+          className="radar-entity-rotor h-full w-full"
+          style={{ transform: `rotate(${rotation}deg)` }}
+        >
+          {/* Teardrop direction marker */}
+          <div
+            className="h-full w-full rotate-[315deg] rounded-[50%_50%_50%_0%]"
+            style={{
+              backgroundColor: color,
+              boxShadow: `0 0 0 1px rgba(3, 6, 11, 0.85), 0 0 8px -2px ${color}`,
+            }}
+          />
+        </div>
+      )}
 
-            backgroundColor: `${(playerData.m_team == localTeam && playerColors[playerData.m_color]) || `red`}`,
-            opacity: `${(playerData.m_is_dead && `0.8`) || (invalidPosition && `0`) || `1`}`,
-          }}
-        />
-      </div>
+      {/* Floating name & HP label */}
+      {settings.showRadarLabels && !playerData.m_is_dead && !invalidPosition && (
+        <span
+          className="pointer-events-none absolute left-1/2 top-full flex -translate-x-1/2 translate-y-1 items-center gap-1 whitespace-nowrap rounded bg-base/90 px-1 py-px text-[9px] font-semibold leading-none text-content-primary"
+        >
+          <span className="max-w-[80px] overflow-hidden text-ellipsis">{playerData.m_name}</span>
+          <span className="tnum" style={{ color }}>
+            {playerData.m_health}
+          </span>
+        </span>
+      )}
     </div>
   );
 };
 
-export default Player;
+export default memo(Player);
