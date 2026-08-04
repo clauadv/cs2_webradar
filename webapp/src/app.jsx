@@ -1,214 +1,360 @@
-import ReactDOM from "react-dom/client";
-import { useEffect, useState } from "react";
-import "./App.css";
-import PlayerCard from "./components/PlayerCard";
-import Radar from "./components/Radar";
+import { useEffect, useMemo, useRef, useState } from "react";
+import "./app.css";
+import PlayerCard from "./components/playercard";
+import Radar from "./components/radar";
 import SettingsButton from "./components/settings";
-import MaskedIcon from "./components/maskedicon";
+import { BombHud } from "./components/bomb";
+import { LanguageProvider, detectLanguage, useT } from "./i18n/i18n";
+import {
+  CONNECTION_KEYS,
+  loadSettings,
+  readSocketPayload,
+  resolveWebSocketURL,
+  saveSettings,
+  teamEnum,
+} from "./utilities/utilities";
 
 const CONNECTION_TIMEOUT = 5000;
+const RECONNECT_DELAY = 2500;
 
-/* change this to '1' if you want to use offline (your own pc only) */
-const USE_LOCALHOST = 0;
-
-/* you can get your public ip from https://ipinfo.io/ip */
-const PUBLIC_IP = "your ip goes here".trim();
-const PORT = 22006;
-
-const EFFECTIVE_IP = USE_LOCALHOST ? "localhost" : PUBLIC_IP.match(/[a-zA-Z]/) ? window.location.hostname : PUBLIC_IP;
-
-const DEFAULT_SETTINGS = {
-  dotSize: 1,
-  bombSize: 0.5,
+const STATUS_COLORS = {
+  connecting: "var(--status-amber)",
+  waiting: "var(--status-green)",
+  live: "var(--status-green)",
+  disconnected: "var(--status-red)",
+  error: "var(--status-red)",
 };
 
-const loadSettings = () => {
-  const savedSettings = localStorage.getItem("radarSettings");
-  return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
+const TEAM_META = {
+  [teamEnum.terrorist]: { id: "terrorist", key: "teams.t", color: "var(--team-t)" },
+  [teamEnum.counterTerrorist]: { id: "counterTerrorist", key: "teams.ct", color: "var(--team-ct)" },
 };
+
+// Team column component
+
+const TeamColumn = ({ team, players, isOnRightSide, settings }) => {
+  const { t } = useT();
+  const meta = TEAM_META[team];
+  const alive = players.filter((player) => !player.m_is_dead).length;
+
+  return (
+    <div className="flex w-full min-w-0 flex-col gap-2 lg:w-[310px] xl:w-[340px]">
+      <div className={`flex items-center gap-2 px-1 ${isOnRightSide ? "flex-row-reverse" : ""}`}>
+        <span
+          className="h-2.5 w-2.5 rounded-full"
+          style={{ backgroundColor: meta.color }}
+          aria-hidden="true"
+        />
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-content-secondary">
+          {t(meta.key)}
+        </h2>
+        <span className="tnum text-[11px] text-content-muted">
+          {t("teams.aliveOf", { alive, total: players.length })}
+        </span>
+      </div>
+
+      <ul id={meta.id} className="m-0 flex list-none flex-col gap-2 p-0">
+        {players.map((player) => (
+          <PlayerCard
+            key={player.m_idx}
+            playerData={player}
+            isOnRightSide={isOnRightSide}
+            settings={settings}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+// Dashboard shell
+
+const Dashboard = ({
+  settings,
+  setSettings,
+  playerArray,
+  mapData,
+  localTeam,
+  bombData,
+  status,
+  statusDetail,
+}) => {
+  const { t } = useT();
+
+  const terrorists = playerArray.filter((player) => player.m_team === teamEnum.terrorist);
+  const counterTerrorists = playerArray.filter(
+    (player) => player.m_team === teamEnum.counterTerrorist
+  );
+
+  const hasRadar = playerArray.length > 0 && mapData;
+  const statusColor = STATUS_COLORS[status] || STATUS_COLORS.connecting;
+
+  // Detail is key or URL
+  const detailText =
+    (statusDetail?.key && t(statusDetail.key, statusDetail.values)) || statusDetail?.text || "";
+
+  return (
+    <div className="flex min-h-[100dvh] w-full flex-col bg-base">
+      {/* Top bar */}
+      <header
+        className="sticky top-0 flex items-center justify-between gap-3 border-b border-line bg-surface-1 px-3 py-2.5"
+        style={{ zIndex: "var(--z-hud)" }}
+      >
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span
+            className={`h-2 w-2 shrink-0 rounded-full ${
+              status === "connecting" ? "animate-pulse-critical" : ""
+            }`}
+            style={{ backgroundColor: statusColor }}
+            aria-hidden="true"
+          />
+          <div className="flex min-w-0 flex-col leading-tight">
+            <span
+              className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+              style={{ color: statusColor }}
+            >
+              {t(`status.${status}`)}
+            </span>
+            <span className="truncate text-[11px] text-content-muted">
+              {(mapData && `${t("app.mapLabel")} · ${mapData.name}`) || detailText}
+            </span>
+          </div>
+        </div>
+
+        <div className="hidden flex-1 justify-center md:flex">
+          <BombHud bombData={bombData} />
+        </div>
+
+        <SettingsButton
+          settings={settings}
+          onSettingsChange={setSettings}
+          connectionState={{
+            label: t(`status.${status}`),
+            detail: detailText,
+            color: statusColor,
+          }}
+        />
+      </header>
+
+      {/* Stacked HUD on narrow screens */}
+      {bombData && (
+        <div className="flex justify-center px-3 pt-2 md:hidden">
+          <BombHud bombData={bombData} />
+        </div>
+      )}
+
+      {/* Main */}
+      <main className="flex w-full flex-1 items-start justify-center px-3 py-3">
+        <div className="flex w-full max-w-[1600px] flex-col items-center gap-4 lg:flex-row lg:items-start lg:justify-center lg:gap-5">
+          <TeamColumn
+            team={teamEnum.terrorist}
+            players={terrorists}
+            isOnRightSide={false}
+            settings={settings}
+          />
+
+          <div className="order-first w-full max-w-[min(92vw,720px)] shrink-0 lg:order-none lg:max-w-none lg:flex-1 lg:basis-[520px]">
+            {hasRadar ? (
+              <Radar
+                playerArray={playerArray}
+                radarImage={`./data/${mapData.name}/radar.png`}
+                mapData={mapData}
+                localTeam={localTeam}
+                bombData={bombData}
+                settings={settings}
+              />
+            ) : (
+              <div
+                id="radar"
+                className="panel flex aspect-square w-full flex-col items-center justify-center gap-4 rounded-2xl px-6 text-center"
+              >
+                <span
+                  className="animate-spin-slow h-9 w-9 rounded-full border-2 border-line-strong"
+                  style={{ borderTopColor: "var(--accent)" }}
+                  aria-hidden="true"
+                />
+                <p
+                  className="radar_message max-w-[38ch] text-[13px] text-content-secondary"
+                  aria-live="polite"
+                >
+                  {status === "error" ? detailText || t("app.connectionFailed") : t("app.waitingData")}
+                </p>
+                {status === "error" && (
+                  <p className="text-[11px] text-content-muted">{t("app.openSettings")}</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          <TeamColumn
+            team={teamEnum.counterTerrorist}
+            players={counterTerrorists}
+            isOnRightSide={true}
+            settings={settings}
+          />
+        </div>
+      </main>
+    </div>
+  );
+};
+
+// Root App component
 
 const App = () => {
   const [playerArray, setPlayerArray] = useState([]);
-  const [mapData, setMapData] = useState();
-  const [localTeam, setLocalTeam] = useState();
-  const [bombData, setBombData] = useState();
-  const [settings, setSettings] = useState(loadSettings());
-  const [bannerOpened, setBannerOpened] = useState(true)
+  const [mapData, setMapData] = useState(null);
+  const [localTeam, setLocalTeam] = useState(teamEnum.none);
+  const [bombData, setBombData] = useState(null);
+  const [settings, setSettings] = useState(() => loadSettings(detectLanguage()));
+  const [status, setStatus] = useState("connecting");
+  const [statusDetail, setStatusDetail] = useState(null);
 
-  // Save settings to local storage whenever they change
   useEffect(() => {
-    localStorage.setItem("radarSettings", JSON.stringify(settings));
+    saveSettings(settings);
   }, [settings]);
 
+  // Sync document language
   useEffect(() => {
-    const fetchData = async () => {
-      let webSocket = null;
-      let webSocketURL = null;
-      let connectionTimeout = null;
+    document.documentElement.lang = settings.language;
+  }, [settings.language]);
 
-      if (PUBLIC_IP.startsWith("192.168")) {
-        document.getElementsByClassName(
-          "radar_message"
-        )[0].textContent = `A public IP address is required! Currently detected IP (${PUBLIC_IP}) is a private/local IP`;
+  // Only connection fields reconnect socket
+  const connectionKey = useMemo(
+    () => CONNECTION_KEYS.map((key) => String(settings[key])).join("|"),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    CONNECTION_KEYS.map((key) => settings[key])
+  );
+
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+
+  // Map already requested
+  const requestedMapRef = useRef(null);
+
+  useEffect(() => {
+    const { url, errorKey, errorValues } = resolveWebSocketURL(settingsRef.current);
+
+    if (!url) {
+      setStatus("error");
+      setStatusDetail({ key: errorKey, values: errorValues });
+      return undefined;
+    }
+
+    let socket = null;
+    let connectionTimeout = null;
+    let reconnectTimeout = null;
+    let cancelled = false;
+
+    // New endpoint may change map
+    requestedMapRef.current = null;
+
+    const connect = () => {
+      if (cancelled) return;
+
+      setStatus("connecting");
+      setStatusDetail({ text: url });
+
+      try {
+        socket = new WebSocket(url);
+      } catch (caught) {
+        setStatus("error");
+        setStatusDetail({ text: `${caught}` });
         return;
       }
 
-      if (!webSocket) {
-        try {
-          if (USE_LOCALHOST) {
-            webSocketURL = `ws://localhost:${PORT}/cs2_webradar`;
-          } else {
-            webSocketURL = `ws://${EFFECTIVE_IP}:${PORT}/cs2_webradar`;
-          }
-
-          if (!webSocketURL) return;
-          webSocket = new WebSocket(webSocketURL);
-        } catch (error) {
-          document.getElementsByClassName(
-            "radar_message"
-          )[0].textContent = `${error}`;
-        }
-      }
-
       connectionTimeout = setTimeout(() => {
-        webSocket.close();
+        if (socket && socket.readyState !== WebSocket.OPEN) socket.close();
       }, CONNECTION_TIMEOUT);
 
-      webSocket.onopen = async () => {
+      socket.onopen = () => {
         clearTimeout(connectionTimeout);
+        if (cancelled) return;
+        setStatus("waiting");
+        setStatusDetail({ text: url });
         console.info("connected to the web socket");
       };
 
-      webSocket.onclose = async () => {
-        clearTimeout(connectionTimeout);
-        console.error("disconnected from the web socket");
-      };
+      socket.onmessage = async (event) => {
+        try {
+          const parsed = await readSocketPayload(event.data);
+          if (cancelled) return;
 
-      webSocket.onerror = async (error) => {
-        clearTimeout(connectionTimeout);
-        document.getElementsByClassName(
-          "radar_message"
-        )[0].textContent = `WebSocket connection to '${webSocketURL}' failed. Please check the IP address and try again`;
-        console.error(error);
-      };
+          setStatus("live");
+          setPlayerArray(parsed.m_players || []);
+          setLocalTeam(parsed.m_local_team);
+          setBombData(parsed.m_bomb || null);
 
-      webSocket.onmessage = async (event) => {
-        const parsedData = JSON.parse(await event.data.text());
-        setPlayerArray(parsedData.m_players);
-        setLocalTeam(parsedData.m_local_team);
-        setBombData(parsedData.m_bomb);
-
-        const map = parsedData.m_map;
-        if (map !== "invalid") {
-          setMapData({
-            ...(await (await fetch(`data/${map}/data.json`)).json()),
-            name: map,
-          });
-          document.body.style.backgroundImage = `url(./data/${map}/background.png)`;
+          const map = parsed.m_map;
+          if (map && map !== "invalid" && requestedMapRef.current !== map) {
+            // Static per map, fetch once
+            requestedMapRef.current = map;
+            try {
+              const response = await fetch(`./data/${map}/data.json`);
+              const data = await response.json();
+              if (!cancelled) setMapData({ ...data, name: map });
+            } catch (caught) {
+              requestedMapRef.current = null;
+              console.error(`failed to load data for '${map}'`, caught);
+            }
+          }
+        } catch (caught) {
+          console.error("failed to parse websocket payload", caught);
         }
+      };
+
+      socket.onerror = (caught) => {
+        clearTimeout(connectionTimeout);
+        console.error(caught);
+        if (cancelled) return;
+        setStatus("error");
+        setStatusDetail({ key: "connection.unreachable", values: { url } });
+      };
+
+      socket.onclose = () => {
+        clearTimeout(connectionTimeout);
+        if (cancelled) return;
+        setStatus((previous) => (previous === "error" ? "error" : "disconnected"));
+        setStatusDetail((previous) =>
+          previous?.key === "connection.unreachable" ? previous : { key: "status.retrying" }
+        );
+        console.warn("disconnected from the web socket");
+        reconnectTimeout = setTimeout(connect, RECONNECT_DELAY);
       };
     };
 
-    fetchData();
-  }, []);
+    connect();
+
+    // Detach before close, avoid stray reconnect
+    return () => {
+      cancelled = true;
+      clearTimeout(connectionTimeout);
+      clearTimeout(reconnectTimeout);
+
+      if (socket) {
+        socket.onopen = null;
+        socket.onmessage = null;
+        socket.onerror = null;
+        socket.onclose = null;
+        if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+          socket.close();
+        }
+      }
+    };
+  }, [connectionKey]);
 
   return (
-    <div className="w-screen h-screen flex flex-col"
-      style={{
-        background: `radial-gradient(50% 50% at 50% 50%, rgba(20, 40, 55, 0.95) 0%, rgba(7, 20, 30, 0.95) 100%)`,
-        backdropFilter: `blur(7.5px)`,
-      }}
-    >
-      {bannerOpened && (
-        <section className="w-full flex items-center justify-between p-2 bg-radar-primary">
-          <span className="w-full text-center text-[#1E3A54]">
-            <span className="font-medium">€4.99</span> -
-            HURRACAN - Plug & play feature rich shareable CS2 Web Radar
-            <a className="ml-2 inline banner-link text-[#1E3A54]" href="https://hurracan.com">Learn more</a>
-          </span>
-          <button onClick={() => setBannerOpened(false)} className="hover:bg-[#9BC5E4]">
-            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-              <path fill="#4E799F" d="M 7.21875 5.78125 L 5.78125 7.21875 L 14.5625 16 L 5.78125 24.78125 L 7.21875 26.21875 L 16 17.4375 L 24.78125 26.21875 L 26.21875 24.78125 L 17.4375 16 L 26.21875 7.21875 L 24.78125 5.78125 L 16 14.5625 Z" />
-            </svg>
-          </button>
-        </section>
-      )}
-      <div className={`w-full h-full flex flex-col justify-center overflow-hidden relative`}>
-        <div className={`absolute right-2.5 top-2.5 z-50`}>
-          <SettingsButton settings={settings} onSettingsChange={setSettings} />
-        </div>
-
-        {bombData && bombData.m_blow_time > 0 && !bombData.m_is_defused && (
-          <div className={`absolute left-1/2 top-2 flex-col items-center gap-1 z-50`}>
-            <div className={`flex justify-center items-center gap-1`}>
-              <MaskedIcon
-                path={`./assets/icons/c4_sml.png`}
-                height={32}
-                color={
-                  (bombData.m_is_defusing &&
-                    bombData.m_blow_time - bombData.m_defuse_time > 0 &&
-                    `bg-radar-green`) ||
-                  (bombData.m_blow_time - bombData.m_defuse_time < 0 &&
-                    `bg-radar-red`) ||
-                  `bg-radar-secondary`
-                }
-              />
-              <span>{`${bombData.m_blow_time.toFixed(1)}s ${(bombData.m_is_defusing &&
-                `(${bombData.m_defuse_time.toFixed(1)}s)`) ||
-                ""
-                }`}</span>
-            </div>
-          </div>
-        )}
-
-        <div className={`flex items-center justify-evenly`}>
-          <ul id="terrorist" className="lg:flex hidden flex-col gap-7 m-0 p-0">
-            {playerArray
-              .filter((player) => player.m_team == 2)
-              .map((player) => (
-                <PlayerCard
-                  right={false}
-                  key={player.m_idx}
-                  playerData={player}
-                />
-              ))}
-          </ul>
-
-          {(playerArray.length > 0 && mapData && (
-            <Radar
-              playerArray={playerArray}
-              radarImage={`./data/${mapData.name}/radar.png`}
-              mapData={mapData}
-              localTeam={localTeam}
-              bombData={bombData}
-              settings={settings}
-            />
-          )) || (
-              <div id="radar" className={`relative overflow-hidden origin-center`}>
-                <h1 className="radar_message">
-                  Connected! Waiting for data from usermode
-                </h1>
-              </div>
-            )}
-
-          <ul
-            id="counterTerrorist"
-            className="lg:flex hidden flex-col gap-7 m-0 p-0"
-          >
-            {playerArray
-              .filter((player) => player.m_team == 3)
-              .map((player) => (
-                <PlayerCard
-                  right={true}
-                  key={player.m_idx}
-                  playerData={player}
-                  settings={settings}
-                />
-              ))}
-          </ul>
-        </div>
-      </div>
-    </div>
+    <LanguageProvider language={settings.language}>
+      <Dashboard
+        settings={settings}
+        setSettings={setSettings}
+        playerArray={playerArray}
+        mapData={mapData}
+        localTeam={localTeam}
+        bombData={bombData}
+        status={status}
+        statusDetail={statusDetail}
+      />
+    </LanguageProvider>
   );
 };
 
